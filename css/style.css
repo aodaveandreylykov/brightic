@@ -19,6 +19,7 @@
   --font-display: 'Unbounded', 'Manrope', Arial, sans-serif;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --header-h: 74px;
 }
 
 *,
@@ -997,6 +998,9 @@ ul { list-style: none; }
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
+  /* место под фиксированную шапку: иначе на экранах ниже 1000px
+     заголовок галереи оказывается под ней */
+  padding-top: var(--header-h);
 }
 
 .hscroll__head {
@@ -1025,7 +1029,16 @@ ul { list-style: none; }
 
 .shot {
   flex: 0 0 auto;
-  width: min(62vw, 820px, calc((100vh - 380px) * 1.45));
+  width: min(62vw, 820px, calc((100vh - 380px - var(--header-h)) * 1.45));
+}
+
+/* на невысоких экранах ноутбуков отступы вокруг галереи ужимаются,
+   чтобы кадры не мельчали из-за места, отданного шапке */
+@media (min-width: 901px) and (max-height: 1000px) {
+  .hscroll__head .section-head { margin-bottom: 24px; }
+  .hscroll__counter { margin-bottom: 30px; }
+  .hscroll__bar { margin-top: 22px; }
+  .shot { width: min(62vw, 820px, calc((100vh - 310px - var(--header-h)) * 1.45)); }
 }
 
 .shot__img {
