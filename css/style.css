@@ -48,6 +48,12 @@ ul { list-style: none; }
 
 ::selection { background: var(--accent); color: #fff; }
 
+/* Свой контур фокуса: системный на тёмном фоне почти не читается в Firefox и Safari */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .container {
   width: 100%;
   max-width: var(--container);
@@ -423,10 +429,17 @@ ul { list-style: none; }
   flex-direction: column;
   justify-content: space-between;
   clip-path: circle(0 at calc(100% - 55px) 40px);
-  transition: clip-path 0.8s var(--ease-in-out);
+  /* visibility убирает закрытое меню из обхода по Tab: только clip-path
+     оставлял семь невидимых остановок фокуса. Переключается после анимации. */
+  visibility: hidden;
+  transition: clip-path 0.8s var(--ease-in-out), visibility 0s linear 0.8s;
 }
 
-.menu-open .menu { clip-path: circle(150% at calc(100% - 55px) 40px); }
+.menu-open .menu {
+  clip-path: circle(150% at calc(100% - 55px) 40px);
+  visibility: visible;
+  transition: clip-path 0.8s var(--ease-in-out), visibility 0s;
+}
 
 .menu__nav { display: flex; flex-direction: column; gap: 8px; }
 
