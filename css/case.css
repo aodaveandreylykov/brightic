@@ -885,19 +885,26 @@
   margin-bottom: 6px;
 }
 
-.next__info span { color: rgba(255, 255, 255, 0.7); font-size: 15px; }
+.next__info > div span { color: rgba(255, 255, 255, 0.7); font-size: 15px; }
 
 .next__arrow {
   width: 56px;
   height: 56px;
+  flex: 0 0 auto;
   border-radius: 50%;
   display: grid;
   place-items: center;
   background: #fff;
-  color: var(--bg);
-  transform: rotate(-45deg) scale(0.8);
+  color: #111;
+  transform: scale(0.72);
   opacity: 0;
-  transition: transform 0.6s var(--ease-out), opacity 0.4s;
+  transition: transform 0.5s var(--ease-out), opacity 0.35s;
+}
+
+.next__arrow svg {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .next__card:hover .next__arrow { transform: none; opacity: 1; }

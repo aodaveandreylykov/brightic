@@ -505,6 +505,19 @@ ul { list-style: none; }
 .chip--2 { top: 52%; right: -6%; }
 .chip--3 { bottom: 14%; left: 4%; }
 
+@media (hover: hover) and (pointer: fine) {
+  .chip {
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+    pointer-events: none;
+  }
+  .hero__visual:hover .chip,
+  .hero__visual:focus-within .chip { opacity: 1; }
+  .hero__visual:hover .chip--1 { transition-delay: 0.02s; }
+  .hero__visual:hover .chip--2 { transition-delay: 0.08s; }
+  .hero__visual:hover .chip--3 { transition-delay: 0.14s; }
+}
+
 /* ---------- Marquee ---------- */
 /* Обёртка обрезает наклон и overscale секции: без неё страница получает
    горизонтальную прокрутку в Safari на iOS, где overflow-x у body не спасает.
