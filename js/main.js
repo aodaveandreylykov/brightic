@@ -397,8 +397,7 @@
     const r = hs.getBoundingClientRect();
     const total = hs.offsetHeight - innerHeight;
     const p = total > 0 ? clamp(-r.top / total, 0, 1) : 0;
-    const skew = clamp(velocity * 0.15, -6, 6);
-    hsTrack.style.transform = `translate3d(${-p * hsDistance}px,0,0) skewX(${reducedMotion ? 0 : -skew}deg)`;
+    hsTrack.style.transform = `translate3d(${-p * hsDistance}px,0,0)`;
     setHsIndicator(p);
   }
 

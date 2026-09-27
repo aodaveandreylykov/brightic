@@ -351,15 +351,15 @@ ul { list-style: none; }
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr 1.05fr;
   align-items: center;
-  gap: 40px;
+  gap: 24px;
 }
 
 .hero__title {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(52px, 8.4vw, 128px);
+  font-size: clamp(42px, 6.6vw, 96px);
   line-height: 0.98;
   letter-spacing: -0.03em;
   margin-bottom: 28px;
@@ -453,7 +453,7 @@ ul { list-style: none; }
 .hero__visual {
   position: relative;
   aspect-ratio: 1;
-  max-width: 580px;
+  max-width: 680px;
   width: 100%;
   justify-self: end;
 }
@@ -730,23 +730,20 @@ ul { list-style: none; }
 
 .card__media img {
   position: absolute;
-  top: 50%;
-  right: 0;
-  height: 132%;
+  top: 0;
+  right: 8px;
+  bottom: 0;
+  height: 100%;
   width: auto;
-  max-width: none;
-  object-fit: cover;
+  max-width: calc(100% - 8px);
+  object-fit: contain;
   object-position: center right;
   filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.45));
-  transform: translateY(-50%);
+  transform: none;
   transition: transform 0.8s var(--ease-out);
 }
 
-.card--flowbot .card__media img { height: 155%; }
-.card--online .card__media img { height: 128%; }
-.card--alike .card__media img { height: 138%; }
-
-.card__inner:hover .card__media img { transform: translateY(-50%) translateZ(60px) scale(1.03); }
+.card__inner:hover .card__media img { transform: translateZ(40px) scale(1.02); }
 
 .card__btn {
   pointer-events: none;
@@ -1458,16 +1455,12 @@ ul { list-style: none; }
   .card__inner::after { background: linear-gradient(180deg, rgba(10, 12, 16, 0.8) 0%, rgba(10, 12, 16, 0.5) 55%, rgba(10, 12, 16, 0.1) 100%); }
   .card__content { padding: 28px 24px 0; }
   .card__media { position: relative; height: 240px; }
-  .card__media img,
-  .card--flowbot .card__media img,
-  .card--online .card__media img,
-  .card--alike .card__media img {
+  .card__media img {
     position: relative;
-    top: auto;
-    right: auto;
+    inset: auto;
     width: 100%;
     height: 100%;
-    max-height: none;
+    max-height: 100%;
     object-fit: contain;
     transform: none;
   }
