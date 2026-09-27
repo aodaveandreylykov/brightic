@@ -1708,8 +1708,14 @@ ul { list-style: none; }
   }
   .hscroll__track::-webkit-scrollbar { display: none; }
   .shot { width: 82vw; scroll-snap-align: center; }
-  .hscroll__counter,
-  .hscroll__bar { display: none; }
+  .hscroll__counter { display: none; }
+
+  /* полоса прокрутки остаётся: без неё не видно, что галерея листается свайпом */
+  .hscroll__bar { margin-top: 20px; height: 3px; }
+  .hscroll__bar::before,
+  .hscroll__bar i { left: 20px; border-radius: 3px; }
+  .hscroll__bar::before { right: 20px; }
+  .hscroll__bar i { width: calc(100% - 40px); }
 
   .experience { padding: 80px 0 60px; }
   .timeline { padding-left: 32px; }

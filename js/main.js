@@ -466,6 +466,8 @@
     if (!isDesktop()) {
       hs.style.height = '';
       hsTrack.style.transform = '';
+      const max = hsTrack.scrollWidth - hsTrack.clientWidth;
+      setHsIndicator(max > 0 ? clamp(hsTrack.scrollLeft / max, 0, 1) : 0);
       return;
     }
     hsDistance = Math.max(0, hsTrack.scrollWidth - innerWidth);
@@ -475,6 +477,12 @@
   let lastScrollY = scrollY;
   let velocity = 0;
 
+  function setHsIndicator(p) {
+    hsBar.style.transform = `scaleX(${p})`;
+    const idx = Math.min(shots.length - 1, Math.round(p * (shots.length - 1)));
+    hsCurrent.textContent = String(idx + 1).padStart(2, '0');
+  }
+
   function updateHScroll() {
     if (!isDesktop()) return;
     const r = hs.getBoundingClientRect();
@@ -482,10 +490,15 @@
     const p = total > 0 ? clamp(-r.top / total, 0, 1) : 0;
     const skew = clamp(velocity * 0.15, -6, 6);
     hsTrack.style.transform = `translate3d(${-p * hsDistance}px,0,0) skewX(${reducedMotion ? 0 : -skew}deg)`;
-    hsBar.style.transform = `scaleX(${p})`;
-    const idx = Math.min(shots.length - 1, Math.round(p * (shots.length - 1)));
-    hsCurrent.textContent = String(idx + 1).padStart(2, '0');
+    setHsIndicator(p);
   }
+
+  // на мобильных галерея листается нативным свайпом, поэтому индикатор ведём по scrollLeft
+  hsTrack.addEventListener('scroll', () => {
+    if (isDesktop()) return;
+    const max = hsTrack.scrollWidth - hsTrack.clientWidth;
+    setHsIndicator(max > 0 ? clamp(hsTrack.scrollLeft / max, 0, 1) : 0);
+  }, { passive: true });
 
   /* ---------------------------------------------------------
      Таймлайн опыта
