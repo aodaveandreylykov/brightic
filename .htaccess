@@ -1,0 +1,60 @@
+# Настройки для Apache-хостинга (hoster.by и любой другой с mod_rewrite).
+# Файл лежит в корне сайта рядом с index.html.
+
+# Своя страница «не найдено» вместо стандартной страницы хостинга
+ErrorDocument 404 /404.html
+
+# Не показывать список файлов, если в каталоге нет index.html
+Options -Indexes
+
+DirectoryIndex index.html
+
+# Переадресация на HTTPS. Вторая проверка нужна, если TLS завершается
+# на прокси хостинга — без неё получился бы цикл переадресаций.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# Сжатие текстовых файлов: HTML, CSS и JS весят примерно вчетверо меньше
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Кеширование. Картинки и видео меняются редко, поэтому год;
+# HTML всегда свежий, чтобы правки были видны сразу после выгрузки.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpg|jpeg|png|webp|svg|mp4|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Правильные типы на случай, если хостинг их не знает
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType video/mp4 .mp4
+  AddType font/woff2 .woff2
+</IfModule>
