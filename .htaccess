@@ -9,13 +9,30 @@ Options -Indexes
 
 DirectoryIndex index.html
 
-# Переадресация на HTTPS. Вторая проверка нужна, если TLS завершается
-# на прокси хостинга — без неё получился бы цикл переадресаций.
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # www.andydesign.pro -> andydesign.pro: у сайта должен быть один адрес
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
+  # Переадресация на HTTPS. Вторая проверка нужна, если TLS завершается
+  # на прокси хостинга — без неё получился бы цикл переадресаций.
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP:X-Forwarded-Proto} !https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Адреса страниц со старого сайта на Тильде: на них ведут ссылки
+  # из резюме, LinkedIn и Behance
+  # Полный https-адрес: за прокси хостинга Apache видит http и иначе
+  # отправил бы посетителя через лишнюю переадресацию
+  RewriteRule ^flowbot/?$ https://%{HTTP_HOST}/flowbot.html [R=301,L]
+  RewriteRule ^alike/?$ https://%{HTTP_HOST}/alike.html [R=301,L]
+  RewriteRule ^onlineplus/?$ https://%{HTTP_HOST}/onlineplus.html [R=301,L]
+  RewriteRule ^(h|n|photo)/?$ https://%{HTTP_HOST}/ [R=301,L]
+  # Временная (302): английской версии и кейса Atoma пока нет, но они могут
+  # вернуться — постоянная переадресация закешировалась бы в браузерах
+  RewriteRule ^(en|atoma)/?$ https://%{HTTP_HOST}/ [R=302,L]
 </IfModule>
 
 # Сжатие текстовых файлов: HTML, CSS и JS весят примерно вчетверо меньше
