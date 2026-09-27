@@ -518,6 +518,13 @@ ul { list-style: none; }
   .hero__visual:hover .chip--3 { transition-delay: 0.14s; }
 }
 
+@media (max-width: 900px) {
+  .chip {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 /* ---------- Marquee ---------- */
 /* Обёртка обрезает наклон и overscale секции: без неё страница получает
    горизонтальную прокрутку в Safari на iOS, где overflow-x у body не спасает.
@@ -1453,7 +1460,7 @@ ul { list-style: none; }
   .hero__inner { grid-template-columns: 1fr; gap: 24px; }
   .hero__visual { order: -1; max-width: 360px; justify-self: center; }
   .hero__content { text-align: left; }
-  .chip { font-size: 12px; padding: 8px 12px; }
+  .chip { font-size: 12px; padding: 8px 12px; opacity: 1; pointer-events: auto; }
   .chip b { font-size: 15px; }
 
   .stats__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
