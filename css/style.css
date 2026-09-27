@@ -739,6 +739,13 @@ ul { list-style: none; }
 @keyframes scrollLine { to { top: 110%; } }
 
 /* ---------- Marquee ---------- */
+/* Обёртка обрезает наклон и overscale секции: без неё страница получает
+   горизонтальную прокрутку в Safari на iOS, где overflow-x у body не спасает.
+   Обрезать через html нельзя — это ломает position: sticky у галереи UI. */
+.marquee-clip {
+  overflow: hidden;
+}
+
 .marquee {
   position: relative;
   padding: 28px 0;
