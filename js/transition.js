@@ -8,8 +8,20 @@
   pt.innerHTML = '<i></i><i></i><i></i><i></i><i></i>';
   document.body.appendChild(pt);
 
-  // шторки уезжают при загрузке страницы
-  requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('is-in')));
+  // Шторки раскрываются, только если на страницу перешли по ссылке внутри сайта.
+  // При заходе извне страница видна сразу, без анимации.
+  let fromInside = false;
+  try {
+    fromInside = sessionStorage.getItem('pt-leave') === '1';
+    sessionStorage.removeItem('pt-leave');
+  } catch { /* приватный режим */ }
+
+  if (fromInside) {
+    requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('is-in')));
+  } else {
+    pt.classList.add('is-instant', 'is-in');
+    requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.remove('is-instant')));
+  }
 
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
@@ -26,6 +38,7 @@
     if (!/(\.html|\/)$/.test(url.pathname)) return;
 
     e.preventDefault();
+    try { sessionStorage.setItem('pt-leave', '1'); } catch { /* приватный режим */ }
     pt.classList.remove('is-in');
     pt.classList.add('is-leave');
     setTimeout(() => { location.href = a.href; }, 700);

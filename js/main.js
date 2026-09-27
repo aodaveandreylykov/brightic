@@ -68,101 +68,8 @@
     if (el.classList.contains('contact__title-grad')) spreadGradient(chars);
   });
 
-  /* ---------------------------------------------------------
-     Прелоадер
-     --------------------------------------------------------- */
-  const preloader = $('.preloader');
-  const countEl = $('.js-count');
-  const barEl = $('.preloader__bar i');
-
-  function runPreloader() {
-    // прелоадер показываем только при первом заходе за сессию
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem('ad-visited') === '1';
-      sessionStorage.setItem('ad-visited', '1');
-    } catch { /* приватный режим */ }
-    if (reducedMotion || seen) {
-      preloader.style.transition = 'none';
-      return finishPreloader();
-    }
-
-    const imgs = $$('img').filter((img) => img.loading !== 'lazy');
-    let loaded = 0;
-    const total = Math.max(imgs.length, 1);
-    const onLoad = () => { loaded++; };
-    imgs.forEach((img) => {
-      if (img.complete) loaded++;
-      else {
-        img.addEventListener('load', onLoad, { once: true });
-        img.addEventListener('error', onLoad, { once: true });
-      }
-    });
-
-    const minTime = 1400;
-    const start = performance.now();
-    let shown = 0;
-
-    (function tick(now) {
-      const timeP = clamp((now - start) / minTime, 0, 1);
-      const loadP = loaded / total;
-      const target = Math.min(timeP, loadP) * 100;
-      shown = lerp(shown, target, 0.12);
-      if (target >= 100 && shown > 99.5) shown = 100;
-
-      countEl.textContent = Math.round(shown);
-      barEl.style.width = shown + '%';
-
-      if (shown >= 100) setTimeout(finishPreloader, 200);
-      else requestAnimationFrame(tick);
-    })(start);
-
-    // страховка на случай медленной сети
-    setTimeout(() => { loaded = total; }, 5000);
-  }
-
-  let preloaderDone = false;
-  function finishPreloader() {
-    if (preloaderDone) return;
-    preloaderDone = true;
-    preloader.classList.add('is-done');
-    body.classList.remove('is-loading');
-    setTimeout(() => body.classList.add('is-ready'), 250);
-    setTimeout(() => preloader.remove(), 1300);
-  }
-
-  runPreloader();
-
-  /* ---------------------------------------------------------
-     Кастомный курсор
-     --------------------------------------------------------- */
-  const cursor = $('.cursor');
-  const cursorDot = $('.cursor-dot');
-  const cursorLabel = $('.cursor__label');
-  const cur = { x: mouse.x, y: mouse.y };
-
-  if (finePointer && !reducedMotion) {
-    addEventListener('mousemove', () => body.classList.add('has-cursor'), { once: true });
-
-    document.addEventListener('mouseover', (e) => {
-      const labelEl = e.target.closest('[data-cursor]');
-      const hoverEl = e.target.closest('a, button, summary, [data-magnetic]');
-      if (labelEl) {
-        cursorLabel.textContent = labelEl.dataset.cursor;
-        cursor.classList.add('is-label');
-        cursor.classList.remove('is-hover');
-      } else {
-        cursor.classList.remove('is-label');
-        cursor.classList.toggle('is-hover', !!hoverEl);
-      }
-    });
-
-    document.addEventListener('mouseleave', () => body.classList.remove('has-cursor'));
-    document.addEventListener('mouseenter', () => body.classList.add('has-cursor'));
-  } else {
-    cursor.remove();
-    cursorDot.remove();
-  }
+  // двойной rAF: первый кадр рисуется без is-ready, иначе анимации появления не запустятся
+  requestAnimationFrame(() => requestAnimationFrame(() => body.classList.add('is-ready')));
 
   /* ---------------------------------------------------------
      Магнитные кнопки
@@ -193,6 +100,9 @@
     let raf;
     el.addEventListener('mouseenter', () => {
       if (reducedMotion) return;
+      // случайные глифы шире букв: без фиксации ширины ссылка растягивалась,
+      // и плашка навигации запоминала растянутый размер и вылезала за меню
+      if (!el.style.width) el.style.width = el.offsetWidth + 'px';
       let frame = 0;
       cancelAnimationFrame(raf);
       (function step() {
@@ -202,7 +112,7 @@
         }).join('');
         frame++;
         if (frame / 2 <= original.length) raf = requestAnimationFrame(step);
-        else el.textContent = original;
+        else { el.textContent = original; el.style.width = ''; }
       })();
     });
   });
@@ -666,13 +576,6 @@
     const y = scrollY;
 
     velocity = lerp(velocity, y - lastScrollY, 0.2);
-
-    if (cursor.isConnected) {
-      cur.x = lerp(cur.x, mouse.x, 0.18);
-      cur.y = lerp(cur.y, mouse.y, 0.18);
-      cursor.style.transform = `translate3d(${cur.x}px, ${cur.y}px, 0)`;
-      cursorDot.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`;
-    }
 
     if (heroVisible) {
       drawAurora(t);

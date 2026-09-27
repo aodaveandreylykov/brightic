@@ -44,35 +44,16 @@
 
   $$('.js-split').forEach((el, i) => splitChars(el, 0.35 + i * 0.15));
 
-  // старт анимаций первого экрана — после того как уедут шторки перехода
+  // старт анимаций первого экрана — после того как уедут шторки перехода;
+  // при заходе извне шторок нет (transition.js ставит is-instant), и ждать не нужно
+  const noCurtains = !!$('.pt.is-instant');
   setTimeout(() => {
     body.classList.add('is-ready');
     $$('.case-hero .char').forEach((c) => c.classList.add('is-in'));
-  }, 250);
+  }, noCurtains ? 50 : 250);
 
-  /* ---------- Cursor ---------- */
-  const cursor = $('.cursor');
-  const cursorDot = $('.cursor-dot');
-  const cursorLabel = $('.cursor__label');
-  const cur = { x: mouse.x, y: mouse.y };
-
+  /* ---------- Магнитные кнопки ---------- */
   if (finePointer && !reducedMotion) {
-    addEventListener('mousemove', () => body.classList.add('has-cursor'), { once: true });
-    document.addEventListener('mouseover', (e) => {
-      const labelEl = e.target.closest('[data-cursor]');
-      const hoverEl = e.target.closest('a, button, summary, [data-magnetic]');
-      if (labelEl) {
-        cursorLabel.textContent = labelEl.dataset.cursor;
-        cursor.classList.add('is-label');
-        cursor.classList.remove('is-hover');
-      } else {
-        cursor.classList.remove('is-label');
-        cursor.classList.toggle('is-hover', !!hoverEl);
-      }
-    });
-    document.addEventListener('mouseleave', () => body.classList.remove('has-cursor'));
-    document.addEventListener('mouseenter', () => body.classList.add('has-cursor'));
-
     $$('[data-magnetic]').forEach((el) => {
       el.addEventListener('mousemove', (e) => {
         const r = el.getBoundingClientRect();
@@ -86,9 +67,6 @@
         el.style.transform = '';
       });
     });
-  } else {
-    cursor.remove();
-    cursorDot.remove();
   }
 
   /* ---------- Mobile menu ---------- */
@@ -275,7 +253,6 @@
   }
 
   zoomables.forEach((z, i) => {
-    z.setAttribute('data-cursor', z.dataset.cursor || 'Увеличить');
     z.addEventListener('click', () => openLb(i));
   });
   $('.lightbox__close').addEventListener('click', closeLb);
@@ -321,13 +298,6 @@
 
   function loop() {
     const y = scrollY;
-
-    if (cursor.isConnected) {
-      cur.x = lerp(cur.x, mouse.x, 0.18);
-      cur.y = lerp(cur.y, mouse.y, 0.18);
-      cursor.style.transform = `translate3d(${cur.x}px, ${cur.y}px, 0)`;
-      cursorDot.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`;
-    }
 
     if (y !== lastY || y === 0) {
       header.classList.toggle('is-scrolled', y > 40);
