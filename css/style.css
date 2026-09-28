@@ -68,7 +68,9 @@ ul { list-style: none; }
   to { background-position: 200% center; }
 }
 
-/* Крупные заголовки: чисто белые, переливающийся градиент только при ховере */
+/* Крупные заголовки: чисто белые, переливающийся градиент только при ховере.
+   Градиент вешаем на сам заголовок (как у «Концепты»), а не на каждую букву —
+   иначе split-символы получают свой градиент и перелив ломается. */
 .hero__title,
 .section-title,
 .contact__title,
@@ -86,12 +88,12 @@ ul { list-style: none; }
 .case-hero__title .word {
   color: inherit;
   -webkit-text-fill-color: inherit;
+  background: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .hero__title:hover,
   .section-title:hover,
-  .contact__title:hover,
   .case-hero__title:hover,
   .e404__title:hover {
     background-image: linear-gradient(
@@ -109,22 +111,17 @@ ul { list-style: none; }
     animation: gradientShift 5s linear infinite;
   }
 
+  /* inline-block у .char ломает background-clip родителя — на ховере
+     собираем буквы обратно в текст, чтобы перелив шёл по всему имени */
+  .hero__title:hover .word,
   .hero__title:hover .char,
-  .contact__title:hover .char,
+  .case-hero__title:hover .word,
   .case-hero__title:hover .char {
-    background-image: linear-gradient(
-      90deg,
-      var(--accent) 0%,
-      var(--accent-2) 32%,
-      var(--warm) 64%,
-      var(--accent) 100%
-    );
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    animation: gradientShift 5s linear infinite;
+    display: inline;
+    transform: none;
+    background: none;
+    color: inherit;
+    -webkit-text-fill-color: inherit;
   }
 }
 
@@ -582,7 +579,11 @@ ul { list-style: none; }
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   overflow: hidden;
-  background: linear-gradient(90deg, rgba(61, 119, 255, 0.06), rgba(139, 92, 246, 0.06));
+  background:
+    linear-gradient(90deg, rgba(61, 119, 255, 0.06), rgba(139, 92, 246, 0.06)),
+    rgba(15, 17, 19, 0.7);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   transform: rotate(-1.5deg) scale(1.03);
   margin: 40px 0;
 }
@@ -1171,7 +1172,44 @@ ul { list-style: none; }
   margin-bottom: 56px;
 }
 
-.contact__title .line { display: block; overflow: hidden; padding-bottom: 0.08em; }
+.contact__title .line {
+  display: block;
+  overflow: visible;
+  padding-top: 0.14em;
+  padding-bottom: 0.18em;
+}
+
+.contact__title .char.is-in {
+  transition: transform 0.45s var(--ease-out);
+  transition-delay: 0s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact__title:hover .char {
+    background-image: linear-gradient(
+      90deg,
+      var(--accent) 0%,
+      var(--accent-2) 32%,
+      var(--warm) 64%,
+      var(--accent) 100%
+    );
+    background-size: var(--flow-size, 200%) 100%;
+    background-position: var(--flow-pos, 0%) 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: contactFlow 5s linear infinite;
+  }
+
+  .contact__title .char.is-in:hover {
+    transform: translateY(-8%);
+  }
+}
+
+@keyframes contactFlow {
+  to { background-position: calc(var(--flow-pos, 0%) + 200%) 0; }
+}
 
 .contact__links {
   display: flex;

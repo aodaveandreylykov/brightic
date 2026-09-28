@@ -46,6 +46,14 @@
     return $$('.char', el);
   }
 
+  function flowChars(chars) {
+    const n = chars.length;
+    chars.forEach((c, i) => {
+      c.style.setProperty('--flow-pos', n > 1 ? `${(i / (n - 1)) * 100}%` : '0%');
+      c.style.setProperty('--flow-size', `${n * 200}%`);
+    });
+  }
+
   $$('.hero .js-split').forEach((el, i) => {
     splitChars(el, 0.15 + i * 0.18);
   });
@@ -53,6 +61,9 @@
   $$('.js-split-scroll').forEach((el) => {
     splitChars(el);
   });
+
+  const contactTitle = $('.contact__title');
+  if (contactTitle) flowChars($$('.char', contactTitle));
 
   // двойной rAF: первый кадр рисуется без is-ready, иначе анимации появления не запустятся
   requestAnimationFrame(() => requestAnimationFrame(() => body.classList.add('is-ready')));
