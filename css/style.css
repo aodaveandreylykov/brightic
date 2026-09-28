@@ -61,16 +61,71 @@ ul { list-style: none; }
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 50%, var(--warm) 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gradientShift 6s linear infinite;
+  color: inherit;
 }
 
 @keyframes gradientShift {
   to { background-position: 200% center; }
+}
+
+/* Крупные заголовки: чисто белые, переливающийся градиент только при ховере */
+.hero__title,
+.section-title,
+.contact__title,
+.case-hero__title,
+.e404__title {
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+
+.hero__title .char,
+.hero__title .word,
+.contact__title .char,
+.contact__title .word,
+.case-hero__title .char,
+.case-hero__title .word {
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero__title:hover,
+  .section-title:hover,
+  .contact__title:hover,
+  .case-hero__title:hover,
+  .e404__title:hover {
+    background-image: linear-gradient(
+      90deg,
+      var(--accent) 0%,
+      var(--accent-2) 32%,
+      var(--warm) 64%,
+      var(--accent) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 5s linear infinite;
+  }
+
+  .hero__title:hover .char,
+  .contact__title:hover .char,
+  .case-hero__title:hover .char {
+    background-image: linear-gradient(
+      90deg,
+      var(--accent) 0%,
+      var(--accent-2) 32%,
+      var(--warm) 64%,
+      var(--accent) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 5s linear infinite;
+  }
 }
 
 /* ---------- Grain + progress ---------- */
@@ -231,8 +286,8 @@ ul { list-style: none; }
 .nav__link {
   position: relative;
   z-index: 1;
-  padding: 8px 18px;
-  font-size: 15px;
+  padding: 8px 14px;
+  font-size: 14px;
   font-weight: 500;
   border-radius: 100px;
   color: var(--muted);
@@ -325,6 +380,7 @@ ul { list-style: none; }
 .menu-open .menu__link:nth-child(2) { transition-delay: 0.3s; }
 .menu-open .menu__link:nth-child(3) { transition-delay: 0.35s; }
 .menu-open .menu__link:nth-child(4) { transition-delay: 0.4s; }
+.menu-open .menu__link:nth-child(5) { transition-delay: 0.45s; }
 
 .menu__foot { display: flex; gap: 24px; color: var(--muted); }
 
@@ -366,22 +422,6 @@ ul { list-style: none; }
 }
 
 .hero__title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
-
-.hero__title-accent {
-  background: linear-gradient(95deg, #fff 10%, #9db8ff 45%, var(--accent-2) 75%, var(--warm) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.hero__title-accent.is-split { background: none; }
-
-.hero__title-accent.is-split .char {
-  background-image: linear-gradient(95deg, #fff 10%, #9db8ff 45%, var(--accent-2) 75%, var(--warm) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
 
 /* split chars */
 .word { display: inline-block; white-space: nowrap; }
@@ -531,6 +571,9 @@ ul { list-style: none; }
    Обрезать через html нельзя — это ломает position: sticky у галереи UI. */
 .marquee-clip {
   overflow: hidden;
+  margin-top: -88px;
+  position: relative;
+  z-index: 2;
 }
 
 .marquee {
@@ -865,6 +908,8 @@ ul { list-style: none; }
 
 .shot:hover .shot__img::after { transform: translateX(100%); }
 
+.shot--soon { cursor: default; }
+
 .shot figcaption {
   display: flex;
   align-items: baseline;
@@ -900,6 +945,24 @@ ul { list-style: none; }
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   transform-origin: 0 50%;
   transform: scaleX(0);
+}
+
+/* ---------- Concepts ---------- */
+.concepts {
+  padding: 140px 0 80px;
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+.concepts__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.concepts .shot {
+  width: auto;
+  min-width: 0;
+  flex: none;
 }
 
 /* ---------- Experience ---------- */
@@ -1110,17 +1173,6 @@ ul { list-style: none; }
 }
 
 .contact__title .line { display: block; overflow: hidden; padding-bottom: 0.08em; }
-
-.contact__title-grad .char {
-  background-image: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 50%, var(--warm) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  transition: transform 1s var(--ease-out), color 0.3s;
-  transition-delay: calc(var(--ci) * 0.045s), 0s;
-}
-
-.contact__title .char.is-in:hover { color: #fff; transform: translateY(-6%); transition-delay: 0s; }
 
 .contact__links {
   display: flex;
@@ -1511,6 +1563,9 @@ ul { list-style: none; }
   .hscroll__bar i { left: 20px; border-radius: 3px; }
   .hscroll__bar::before { right: 20px; }
   .hscroll__bar i { width: calc(100% - 40px); }
+
+  .concepts { padding: 80px 0 40px; }
+  .concepts__grid { grid-template-columns: 1fr; gap: 20px; }
 
   .experience { padding: 80px 0 60px; }
   .timeline { padding-left: 32px; }

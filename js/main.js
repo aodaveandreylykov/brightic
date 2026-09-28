@@ -46,26 +46,12 @@
     return $$('.char', el);
   }
 
-  // Градиент, растянутый на всё слово, а не на каждую букву
-  function spreadGradient(chars) {
-    const n = chars.length;
-    chars.forEach((c, i) => {
-      c.style.backgroundSize = `${n * 100}% 100%`;
-      c.style.backgroundPosition = `${n > 1 ? (i / (n - 1)) * 100 : 0}% 0`;
-    });
-  }
-
   $$('.hero .js-split').forEach((el, i) => {
-    const chars = splitChars(el, 0.15 + i * 0.18);
-    if (el.classList.contains('hero__title-accent')) {
-      spreadGradient(chars);
-      el.classList.add('is-split');
-    }
+    splitChars(el, 0.15 + i * 0.18);
   });
 
   $$('.js-split-scroll').forEach((el) => {
-    const chars = splitChars(el);
-    if (el.classList.contains('contact__title-grad')) spreadGradient(chars);
+    splitChars(el);
   });
 
   // двойной rAF: первый кадр рисуется без is-ready, иначе анимации появления не запустятся
@@ -147,7 +133,7 @@
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
 
-  ['projects', 'ui', 'experience', 'contact'].forEach((id) => {
+  ['projects', 'ui', 'concepts', 'experience', 'contact'].forEach((id) => {
     const s = document.getElementById(id);
     if (s) sectionObserver.observe(s);
   });
@@ -368,7 +354,7 @@
   const hsTrack = $('.hscroll__track');
   const hsBar = $('.js-hs-bar');
   const hsCurrent = $('.js-hs-current');
-  const shots = $$('.shot');
+  const shots = $$('.hscroll .shot');
   let hsDistance = 0;
 
   function sizeHScroll() {
@@ -614,11 +600,15 @@
   const lb = $('.lightbox');
   const lbImg = $('.lightbox__img');
   const lbCap = $('.lightbox__caption');
+  let lbItems = [];
   let lbIdx = 0;
 
-  function openLb(i) {
-    lbIdx = (i + shots.length) % shots.length;
-    const img = $('img', shots[lbIdx]);
+  function openLb(list, i) {
+    if (!list.length) return;
+    lbItems = list;
+    lbIdx = (i + lbItems.length) % lbItems.length;
+    const img = $('img', lbItems[lbIdx]);
+    if (!img || !img.getAttribute('src')) return;
     lbImg.src = img.src;
     lbImg.alt = img.alt;
     lbCap.textContent = img.alt;
@@ -633,10 +623,26 @@
     body.style.overflow = '';
   }
 
-  shots.forEach((s, i) => s.addEventListener('click', () => openLb(i)));
+  function shotsForLightbox(from) {
+    const root = from.closest('.hscroll, .concepts') || document;
+    return $$('.shot', root).filter((el) => {
+      if (el.classList.contains('shot--soon')) return false;
+      const img = $('img', el);
+      return img && img.getAttribute('src');
+    });
+  }
+
+  $$('.shot').forEach((s) => {
+    s.addEventListener('click', () => {
+      const list = shotsForLightbox(s);
+      const i = list.indexOf(s);
+      if (i < 0) return;
+      openLb(list, i);
+    });
+  });
   $('.lightbox__close').addEventListener('click', closeLb);
-  $('.lightbox__nav--prev').addEventListener('click', (e) => { e.stopPropagation(); openLb(lbIdx - 1); });
-  $('.lightbox__nav--next').addEventListener('click', (e) => { e.stopPropagation(); openLb(lbIdx + 1); });
+  $('.lightbox__nav--prev').addEventListener('click', (e) => { e.stopPropagation(); openLb(lbItems, lbIdx - 1); });
+  $('.lightbox__nav--next').addEventListener('click', (e) => { e.stopPropagation(); openLb(lbItems, lbIdx + 1); });
   lb.addEventListener('click', (e) => { if (e.target === lb) closeLb(); });
   addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -644,8 +650,8 @@
       else if (body.classList.contains('menu-open')) toggleMenu(false);
     }
     if (!lb.classList.contains('is-open')) return;
-    if (e.key === 'ArrowLeft') openLb(lbIdx - 1);
-    if (e.key === 'ArrowRight') openLb(lbIdx + 1);
+    if (e.key === 'ArrowLeft') openLb(lbItems, lbIdx - 1);
+    if (e.key === 'ArrowRight') openLb(lbItems, lbIdx + 1);
   });
 
   /* ---------------------------------------------------------
