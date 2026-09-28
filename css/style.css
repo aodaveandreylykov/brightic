@@ -1170,13 +1170,17 @@ ul { list-style: none; }
   line-height: 1;
   letter-spacing: -0.03em;
   margin-bottom: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12em;
 }
 
 .contact__title .line {
   display: block;
   overflow: visible;
-  padding-top: 0.14em;
-  padding-bottom: 0.18em;
+  padding: 0;
+  white-space: nowrap;
 }
 
 .contact__title .char.is-in {
