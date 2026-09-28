@@ -1693,12 +1693,15 @@ ul { list-style: none; }
   width: min(640px, 100%);
   padding: 22px 24px 20px;
   border-radius: 22px;
-  background: rgba(15, 17, 19, 0.82);
+  background: rgba(15, 17, 19, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 24px 80px -24px rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
+
+.cookie__card:focus,
+.cookie__card:focus-visible { outline: none; }
 
 .cookie__kicker {
   font-size: 11px;
@@ -1733,6 +1736,38 @@ ul { list-style: none; }
 
 .cookie__text a:hover { text-decoration-color: #fff; }
 
+.cookie__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.cookie__links a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+}
+
+.cookie__links a:hover { text-decoration-color: #fff; }
+
+.cookie__textbtn {
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+}
+
+.cookie__textbtn:hover { text-decoration-color: #fff; }
+
 .cookie__actions {
   display: flex;
   flex-wrap: wrap;
@@ -1749,6 +1784,7 @@ ul { list-style: none; }
   font-size: 14px;
   font-weight: 600;
   border: 1px solid transparent;
+  white-space: nowrap;
   transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
 
@@ -1855,8 +1891,7 @@ ul { list-style: none; }
 @media (max-width: 640px) {
   .cookie { left: 12px; right: 12px; bottom: 12px; }
   .cookie__card { padding: 18px 16px 16px; border-radius: 18px; }
-  .cookie__btn { min-width: 0; flex: 1 1 calc(50% - 8px); }
-  .cookie__btn.js-cookie-settings { flex: 1 1 100%; }
+  .cookie__btn { min-width: 0; flex: 1 1 100%; }
 }
 
 /* ---------- Legal pages ---------- */

@@ -60,13 +60,14 @@
                 Оператор — Андрей Лыков, Республика Беларусь.
                 Нужны только технические cookie: работа сайта и сохранение согласия.
                 Аналитику не включаю, пока вы не разрешите — отказаться можно так же просто, сайт от этого не закроется.
+              </p>
+              <p class="cookie__links">
                 <a href="cookies.html">Политика cookie</a>
-                ·
                 <a href="privacy.html">Конфиденциальность</a>
+                <button type="button" class="cookie__textbtn js-cookie-settings">Настроить</button>
               </p>
             </div>
             <div class="cookie__actions">
-              <button type="button" class="cookie__btn cookie__btn--ghost js-cookie-settings">Настроить</button>
               <button type="button" class="cookie__btn cookie__btn--ghost js-cookie-reject">Только необходимые</button>
               <button type="button" class="cookie__btn cookie__btn--solid js-cookie-accept">Принять все</button>
             </div>
