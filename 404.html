@@ -68,11 +68,16 @@
     <div class="container">
       <div class="footer__bottom">
         <span>© <span class="js-year">2026</span> Андрей Лыков</span>
-        <span>Product Designer</span>
+        <nav class="footer__legal" aria-label="Правовая информация">
+          <a href="privacy.html">Конфиденциальность</a>
+          <a href="cookies.html">Cookies</a>
+          <button type="button" class="footer__cookie-btn js-cookie-settings">Настройки cookie</button>
+        </nav>
       </div>
     </div>
   </footer>
 
+  <script src="js/cookies.js"></script>
   <script>
     document.querySelector('.js-year').textContent = new Date().getFullYear();
   </script>
