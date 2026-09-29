@@ -620,7 +620,7 @@
     lbIdx = (i + lbItems.length) % lbItems.length;
     const img = $('img', lbItems[lbIdx]);
     if (!img || !img.getAttribute('src')) return;
-    lbImg.src = img.src;
+    lbImg.src = img.currentSrc || img.src;
     lbImg.alt = img.alt;
     lbCap.textContent = img.alt;
     lb.classList.add('is-open');

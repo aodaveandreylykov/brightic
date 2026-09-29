@@ -884,6 +884,12 @@ ul { list-style: none; }
   border: 1px solid var(--border);
 }
 
+.shot__img picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
 .shot__img img {
   position: absolute;
   inset: 0;
@@ -1621,6 +1627,8 @@ ul { list-style: none; }
   }
   .hscroll__track::-webkit-scrollbar { display: none; }
   .shot { width: 82vw; scroll-snap-align: center; }
+  .hscroll .shot { width: 72vw; }
+  .hscroll .shot__img { aspect-ratio: 3 / 4; }
   .shot figcaption {
     flex-direction: column;
     align-items: flex-start;
