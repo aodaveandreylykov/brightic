@@ -1621,6 +1621,12 @@ ul { list-style: none; }
   }
   .hscroll__track::-webkit-scrollbar { display: none; }
   .shot { width: 82vw; scroll-snap-align: center; }
+  .shot figcaption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .shot figcaption span { line-height: 1.4; }
   .hscroll__counter { display: none; }
 
   /* полоса прокрутки остаётся: без неё не видно, что галерея листается свайпом */
