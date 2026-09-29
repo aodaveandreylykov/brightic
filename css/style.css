@@ -1641,16 +1641,17 @@ ul { list-style: none; }
   .concepts .shot { width: 100%; }
 
   .experience { padding: 80px 0 60px; }
-  .timeline { padding-left: 32px; }
+  .timeline { padding-left: 16px; }
   .timeline__line { left: 5px; }
-  .job::before { left: -33px; top: 28px; width: 12px; height: 12px; }
-  .job summary { grid-template-columns: 1fr 40px; gap: 4px 16px; padding: 20px 0; }
+  .job::before { left: -16px; top: 28px; width: 12px; height: 12px; }
+  .job::after { inset: 0 -20px -1px 0; }
+  .job summary { grid-template-columns: 1fr 40px; gap: 4px 16px; padding: 16px 0 16px 12px; }
   .job__years { grid-column: 1; grid-row: 1; font-size: 13px; }
   .job__company { grid-column: 1; grid-row: 2; }
   .job__role { grid-column: 1; grid-row: 3; text-align: left; font-size: 14px; }
   .job__toggle { grid-column: 2; grid-row: 1 / 4; }
-  .job summary:hover { padding-left: 0; }
-  .job__body { grid-template-columns: 1fr; gap: 16px; font-size: 15px; }
+  .job summary:hover { padding-left: 12px; }
+  .job__body { grid-template-columns: 1fr; gap: 16px; font-size: 15px; padding: 0 0 24px 12px; }
 
   .contact { padding: 100px 0; }
   .contact__blob { width: 500px; height: 500px; margin: -250px 0 0 -250px; }
