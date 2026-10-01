@@ -223,67 +223,72 @@
     </section>
 
     <!-- UI GALLERY (горизонтальный скролл) -->
-    <section class="hscroll" id="ui">
+    <section class="hscroll" id="ui" data-tab="apps">
       <div class="hscroll__sticky">
         <div class="container hscroll__head">
           <div class="section-head">
             <h2 class="section-title">Проекты для оценки UI</h2>
+            <div class="seg" role="tablist" aria-label="Тип проектов">
+              <span class="seg__pill" aria-hidden="true"></span>
+              <button type="button" class="seg__btn is-active" role="tab" id="tab-apps" aria-controls="ui-apps" aria-selected="true" data-tab="apps">Приложения</button>
+              <button type="button" class="seg__btn" role="tab" id="tab-web" aria-controls="ui-web" aria-selected="false" data-tab="web">Веб сервисы</button>
+            </div>
           </div>
-          <div class="hscroll__counter"><span class="js-hs-current">01</span> / <span>08</span></div>
+          <div class="hscroll__counter"><span class="js-hs-current">01</span> / <span class="js-hs-total">06</span></div>
         </div>
-        <div class="hscroll__track">
-          <figure class="shot">
-            <div class="shot__img">
-              <picture>
-                <source media="(max-width: 900px)" srcset="assets/img/cms-m.jpg" width="900" height="1200">
-                <img src="assets/img/cms.jpg" width="1338" height="950" alt="CMS — внутренняя система для управления проектами" loading="lazy">
-              </picture>
-            </div>
-            <figcaption><b>CMS</b><span>Внутренняя система для управления проектами</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <div class="shot__img">
-              <picture>
-                <source media="(max-width: 900px)" srcset="assets/img/frostbyte-m.jpg" width="900" height="1200">
-                <img src="assets/img/Frame_2147223400.jpg" width="1338" height="950" alt="Frostbyte — мобильное приложение" loading="lazy">
-              </picture>
-            </div>
-            <figcaption><b>Frostbyte</b><span>Мобильное приложение с вознаграждениями</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <div class="shot__img">
-              <picture>
-                <source media="(max-width: 900px)" srcset="assets/img/ice-m.jpg" width="900" height="1200">
-                <img src="assets/img/Frame_2147223401.jpg" width="1338" height="950" alt="ICE — майнинг-приложение" loading="lazy">
-              </picture>
-            </div>
-            <figcaption><b>ICE</b><span>Майнинг-приложение, 40M пользователей</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <div class="shot__img">
-              <picture>
-                <source media="(max-width: 900px)" srcset="assets/img/ipool-m.jpg" width="900" height="1200">
-                <img src="assets/img/ipool.jpg" width="1338" height="950" alt="iPool — удалённое управление бассейном" loading="lazy">
-              </picture>
-            </div>
-            <figcaption><b>iPool</b><span>Удалённое управление всеми функциями бассейна</span></figcaption>
-          </figure>
-          <figure class="shot shot--soon">
-            <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
-            <figcaption><b>Скоро</b><span>Новый проект</span></figcaption>
-          </figure>
-          <figure class="shot shot--soon">
-            <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
-            <figcaption><b>Скоро</b><span>Новый проект</span></figcaption>
-          </figure>
-          <figure class="shot shot--soon">
-            <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
-            <figcaption><b>Скоро</b><span>Новый проект</span></figcaption>
-          </figure>
-          <figure class="shot shot--soon">
-            <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
-            <figcaption><b>Скоро</b><span>Новый проект</span></figcaption>
-          </figure>
+        <div class="hscroll__stage">
+          <div class="hscroll__track is-active" id="ui-apps" data-tab="apps" role="tabpanel" aria-labelledby="tab-apps">
+            <figure class="shot">
+              <div class="shot__img"><img src="assets/img/frostbyte-m.jpg" width="900" height="1200" alt="Frostbyte — мобильное приложение с вознаграждениями" loading="lazy"></div>
+              <figcaption><b>Frostbyte</b><span>Мобильное приложение с вознаграждениями</span></figcaption>
+            </figure>
+            <figure class="shot">
+              <div class="shot__img"><img src="assets/img/ice-m.jpg" width="900" height="1200" alt="ICE — майнинг-приложение, 40M пользователей" loading="lazy"></div>
+              <figcaption><b>ICE</b><span>Майнинг-приложение, 40M пользователей</span></figcaption>
+            </figure>
+            <figure class="shot">
+              <div class="shot__img"><img src="assets/img/ipool-m.jpg" width="900" height="1200" alt="iPool — удалённое управление всеми функциями бассейна" loading="lazy"></div>
+              <figcaption><b>iPool</b><span>Удалённое управление всеми функциями бассейна</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder-phone.svg" width="900" height="1600" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Приложение</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder-phone.svg" width="900" height="1600" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Приложение</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder-phone.svg" width="900" height="1600" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Приложение</span></figcaption>
+            </figure>
+          </div>
+          <div class="hscroll__track" id="ui-web" data-tab="web" role="tabpanel" aria-labelledby="tab-web" aria-hidden="true">
+            <figure class="shot">
+              <div class="shot__img"><img src="assets/img/cms.jpg" width="1338" height="950" alt="CMS — внутренняя система для управления проектами" loading="lazy"></div>
+              <figcaption><b>CMS</b><span>Внутренняя система для управления проектами</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Веб-сервис</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Веб-сервис</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Веб-сервис</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Веб-сервис</span></figcaption>
+            </figure>
+            <figure class="shot shot--soon">
+              <div class="shot__img"><img src="assets/img/placeholder.svg" width="1338" height="950" alt="" loading="lazy"></div>
+              <figcaption><b>Скоро</b><span>Веб-сервис</span></figcaption>
+            </figure>
+          </div>
         </div>
         <div class="container hscroll__bar"><i class="js-hs-bar"></i></div>
       </div>

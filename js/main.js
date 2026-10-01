@@ -359,19 +359,34 @@
   }
 
   /* ---------------------------------------------------------
-     Горизонтальная галерея
+     Горизонтальная галерея + сегмент Приложения / Веб
      --------------------------------------------------------- */
   const hs = $('.hscroll');
-  const hsTrack = $('.hscroll__track');
   const hsBar = $('.js-hs-bar');
   const hsCurrent = $('.js-hs-current');
-  const shots = $$('.hscroll .shot');
+  const hsTotal = $('.js-hs-total');
+  const seg = $('.seg');
+  const segPill = $('.seg__pill');
+  let hsTrack = $('.hscroll__track.is-active');
+  let shots = $$('.shot', hsTrack);
   let hsDistance = 0;
+  let hsSwitching = false;
+
+  function activeTrack() {
+    return $('.hscroll__track.is-active');
+  }
+
+  function refreshShots() {
+    hsTrack = activeTrack();
+    shots = $$('.shot', hsTrack);
+    if (hsTotal) hsTotal.textContent = String(shots.length).padStart(2, '0');
+  }
 
   function sizeHScroll() {
+    refreshShots();
     if (!isDesktop()) {
       hs.style.height = '';
-      hsTrack.style.transform = '';
+      $$('.hscroll__track').forEach((t) => { t.style.transform = ''; });
       const max = hsTrack.scrollWidth - hsTrack.clientWidth;
       setHsIndicator(max > 0 ? clamp(hsTrack.scrollLeft / max, 0, 1) : 0);
       return;
@@ -384,13 +399,13 @@
   let velocity = 0;
 
   function setHsIndicator(p) {
-    hsBar.style.transform = `scaleX(${p})`;
-    const idx = Math.min(shots.length - 1, Math.round(p * (shots.length - 1)));
-    hsCurrent.textContent = String(idx + 1).padStart(2, '0');
+    if (hsBar) hsBar.style.transform = `scaleX(${p})`;
+    const idx = Math.min(Math.max(shots.length - 1, 0), Math.round(p * Math.max(shots.length - 1, 0)));
+    if (hsCurrent) hsCurrent.textContent = String(idx + 1).padStart(2, '0');
   }
 
   function updateHScroll() {
-    if (!isDesktop()) return;
+    if (!isDesktop() || hsSwitching) return;
     const r = hs.getBoundingClientRect();
     const total = hs.offsetHeight - innerHeight;
     const p = total > 0 ? clamp(-r.top / total, 0, 1) : 0;
@@ -398,12 +413,76 @@
     setHsIndicator(p);
   }
 
-  // на мобильных галерея листается нативным свайпом, поэтому индикатор ведём по scrollLeft
-  hsTrack.addEventListener('scroll', () => {
-    if (isDesktop()) return;
-    const max = hsTrack.scrollWidth - hsTrack.clientWidth;
-    setHsIndicator(max > 0 ? clamp(hsTrack.scrollLeft / max, 0, 1) : 0);
-  }, { passive: true });
+  $$('.hscroll__track').forEach((track) => {
+    track.addEventListener('scroll', () => {
+      if (isDesktop() || track !== activeTrack()) return;
+      const max = track.scrollWidth - track.clientWidth;
+      setHsIndicator(max > 0 ? clamp(track.scrollLeft / max, 0, 1) : 0);
+    }, { passive: true });
+  });
+
+  function moveSegPill() {
+    if (!seg || !segPill) return;
+    const btn = $('.seg__btn.is-active', seg);
+    if (!btn) return;
+    const wrap = seg.getBoundingClientRect();
+    const box = btn.getBoundingClientRect();
+    segPill.style.width = box.width + 'px';
+    segPill.style.left = (box.left - wrap.left) + 'px';
+  }
+
+  function setUiTab(tab) {
+    if (!hs || hs.dataset.tab === tab || hsSwitching) return;
+    const next = $(`.hscroll__track[data-tab="${tab}"]`);
+    const prev = activeTrack();
+    if (!next || !prev || next === prev) return;
+
+    const dir = tab === 'web' ? 1 : -1;
+    hs.dataset.tab = tab;
+    let settled = false;
+    $$('.seg__btn').forEach((b) => {
+      const       on = b.dataset.tab === tab;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    $$('.hscroll__track').forEach((t) => {
+      t.setAttribute('aria-hidden', String(t.dataset.tab !== tab));
+    });
+    moveSegPill();
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      prev.classList.remove('is-active', 'is-leaving');
+      next.classList.remove('is-entering');
+      next.classList.add('is-active');
+      prev.style.transform = '';
+      next.style.transform = '';
+      next.scrollLeft = 0;
+      hsSwitching = false;
+      sizeHScroll();
+      setHsIndicator(0);
+      needsUpdate = true;
+    };
+
+    if (reducedMotion) {
+      finish();
+      return;
+    }
+
+    hsSwitching = true;
+    prev.style.setProperty('--hs-out', `${-28 * dir}px`);
+    next.style.setProperty('--hs-in', `${28 * dir}px`);
+    next.classList.add('is-active', 'is-entering');
+    prev.classList.add('is-leaving');
+    next.addEventListener('animationend', finish, { once: true });
+    setTimeout(finish, 520);
+  }
+
+  $$('.seg__btn').forEach((btn) => {
+    btn.addEventListener('click', () => setUiTab(btn.dataset.tab));
+  });
+  moveSegPill();
 
   /* ---------------------------------------------------------
      Таймлайн опыта
@@ -596,6 +675,7 @@
     sizeHScroll();
     measureStack();
     movePill(activeLink);
+    moveSegPill();
     needsUpdate = true;
   }
 
@@ -635,7 +715,7 @@
   }
 
   function shotsForLightbox(from) {
-    const root = from.closest('.hscroll, .concepts') || document;
+    const root = from.closest('.hscroll__track, .concepts') || document;
     return $$('.shot', root).filter((el) => {
       if (el.classList.contains('shot--soon')) return false;
       const img = $('img', el);
