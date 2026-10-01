@@ -456,6 +456,7 @@
     const prev = activeTrack();
     if (!next || !prev || next === prev) return;
 
+    lockStageHeight();
     const dir = tab === 'web' ? 1 : -1;
     hs.dataset.tab = tab;
     let settled = false;

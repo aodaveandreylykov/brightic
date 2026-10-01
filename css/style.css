@@ -1732,11 +1732,8 @@ ul { list-style: none; }
   .card__btn { height: 48px; padding: 0 22px; font-size: 15px; }
 
   /* горизонтальная галерея — нативный свайп */
-  .hscroll {
-    height: auto !important;
-    padding: 80px 0;
-    --shot-h: min(68vw, 480px);
-  }
+  .hscroll { height: auto !important; padding: 80px 0; }
+  .hscroll__stage { min-height: 0; }
   .hscroll__sticky { position: static; height: auto; }
   .hscroll__head {
     flex-direction: column;
@@ -1754,11 +1751,11 @@ ul { list-style: none; }
   }
   .hscroll__track::-webkit-scrollbar { display: none; }
   .shot { width: 82vw; scroll-snap-align: center; }
-  .hscroll__track[data-tab="apps"] .shot { width: calc(var(--shot-h) * 9 / 16); }
-  .hscroll__track[data-tab="web"] .shot { width: min(82vw, calc(var(--shot-h) * 1.45)); }
+  .hscroll__track[data-tab="apps"] .shot { width: 56vw; }
+  .hscroll__track[data-tab="web"] .shot { width: 82vw; }
   .hscroll__track[data-tab="apps"] .shot__img,
   .hscroll__track[data-tab="web"] .shot__img {
-    height: var(--shot-h);
+    height: auto;
     width: 100%;
   }
   .seg { width: 100%; }
