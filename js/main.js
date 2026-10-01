@@ -382,17 +382,36 @@
     if (hsTotal) hsTotal.textContent = String(shots.length).padStart(2, '0');
   }
 
+  function lockStageHeight() {
+    const stage = $('.hscroll__stage');
+    if (!stage) return;
+    let maxH = 0;
+    $$('.hscroll__track').forEach((t) => {
+      maxH = Math.max(maxH, t.offsetHeight, t.scrollHeight);
+    });
+    if (maxH) stage.style.minHeight = maxH + 'px';
+  }
+
+  function trackOverflow(track) {
+    return Math.max(0, track.scrollWidth - (isDesktop() ? innerWidth : track.clientWidth));
+  }
+
   function sizeHScroll() {
     refreshShots();
+    lockStageHeight();
     if (!isDesktop()) {
       hs.style.height = '';
       $$('.hscroll__track').forEach((t) => { t.style.transform = ''; });
-      const max = hsTrack.scrollWidth - hsTrack.clientWidth;
+      const max = trackOverflow(hsTrack);
       setHsIndicator(max > 0 ? clamp(hsTrack.scrollLeft / max, 0, 1) : 0);
       return;
     }
-    hsDistance = Math.max(0, hsTrack.scrollWidth - innerWidth);
-    hs.style.height = hsDistance + innerHeight + 'px';
+    let maxDist = 0;
+    $$('.hscroll__track').forEach((t) => {
+      maxDist = Math.max(maxDist, trackOverflow(t));
+    });
+    hsDistance = trackOverflow(hsTrack);
+    hs.style.height = maxDist + innerHeight + 'px';
   }
 
   let lastScrollY = scrollY;
