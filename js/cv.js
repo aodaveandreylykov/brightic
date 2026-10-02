@@ -3,7 +3,7 @@
   'use strict';
 
   const RU = 'https://www.dropbox.com/scl/fi/tz5b1p7gqfhq4m2d01whn/_-_-_.pdf?rlkey=va6bunb1asd64kpsn2iarnfaq&st=e85355oj&dl=1';
-  const EN = 'https://www.dropbox.com/scl/fi/6iaixu3ivxpemxmdij4ue/Andrey_Lykov_Senior_Product_Designer_2026.pdf?rlkey=x4hgdzase34klcfmozkmrmkpx&st=8usotfjk&dl=1';
+  const EN = 'https://www.dropbox.com/scl/fi/xxtnig7c8jgp63cg6wj4e/Andrey_Lykov_Product_Designer_EN.pdf?rlkey=4306j1wt2yogwtkixwv6d1uc8&st=ldlhzi50&dl=1';
 
   const root = document.createElement('div');
   root.className = 'cvdlg';
