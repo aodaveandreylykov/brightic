@@ -286,12 +286,12 @@ ul { list-style: none; }
   top: calc(100% + 4px);
   right: 0;
   z-index: 120;
-  min-width: 86px;
-  padding: 6px;
-  border-radius: 14px;
-  background: rgba(18, 20, 23, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.7);
+  min-width: 92px;
+  padding: 5px;
+  border-radius: 12px;
+  background: #16181b;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.8);
 }
 
 .lang__menu[hidden] { display: none; }
