@@ -58,6 +58,23 @@
     splitChars(el, 0.15 + i * 0.18);
   });
 
+  const heroTitle = $('.hero__title');
+  function syncHeroTitlePaint() {
+    if (!heroTitle) return;
+    const box = heroTitle.getBoundingClientRect();
+    heroTitle.style.setProperty('--hero-w', box.width + 'px');
+    heroTitle.style.setProperty('--hero-h', box.height + 'px');
+    $$('.char', heroTitle).forEach((c) => {
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--hero-x', (box.left - r.left) + 'px');
+      c.style.setProperty('--hero-y', (box.top - r.top) + 'px');
+    });
+  }
+  if (heroTitle) {
+    heroTitle.addEventListener('mouseenter', syncHeroTitlePaint);
+    addEventListener('resize', syncHeroTitlePaint);
+  }
+
   $$('.js-split-scroll').forEach((el) => {
     splitChars(el);
   });

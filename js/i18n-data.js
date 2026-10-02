@@ -155,7 +155,7 @@ window.ANDY_I18N_EN = {
   "Принятие решений": "Decision-making",
   "Слабая навигация": "Weak navigation",
   "Следующий проект": "Next project",
-  "Смотреть проекты": "See the work",
+  "Смотреть проекты": "View projects",
   "Что даёт продукт": "What it does",
   "Экономия времени": "Time saved",
   "Детали транзакции": "Transaction details",
