@@ -2282,6 +2282,8 @@ body.cvdlg-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .hscroll__track.is-leaving,
   .hscroll__track.is-entering { animation: none; }
+  .cvdlg,
+  .cvdlg__card { transition: none; }
 
   *,
   *::before,
