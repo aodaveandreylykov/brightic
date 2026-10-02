@@ -5,9 +5,6 @@
   const RU = 'https://www.dropbox.com/scl/fi/tz5b1p7gqfhq4m2d01whn/_-_-_.pdf?rlkey=va6bunb1asd64kpsn2iarnfaq&st=e85355oj&dl=1';
   const EN = 'https://www.dropbox.com/scl/fi/6iaixu3ivxpemxmdij4ue/Andrey_Lykov_Senior_Product_Designer_2026.pdf?rlkey=x4hgdzase34klcfmozkmrmkpx&st=8usotfjk&dl=1';
 
-  const triggers = [...document.querySelectorAll('.js-cv')];
-  if (!triggers.length) return;
-
   const root = document.createElement('div');
   root.className = 'cvdlg';
   root.hidden = true;
@@ -30,6 +27,10 @@
   const firstBtn = root.querySelector('.cvdlg__btn');
   let lastFocus = null;
 
+  document.querySelectorAll('.js-cv').forEach((el) => {
+    el.setAttribute('aria-haspopup', 'dialog');
+  });
+
   function isOpen() {
     return root.classList.contains('is-open');
   }
@@ -39,8 +40,7 @@
     root.hidden = false;
     document.body.classList.add('cvdlg-open');
     requestAnimationFrame(() => root.classList.add('is-open'));
-    card.focus({ preventScroll: true });
-    firstBtn.focus({ preventScroll: true });
+    (firstBtn || card).focus({ preventScroll: true });
   }
 
   function close() {
@@ -58,18 +58,18 @@
     setTimeout(done, 400);
   }
 
-  triggers.forEach((el) => {
-    el.setAttribute('aria-haspopup', 'dialog');
-    el.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('.js-cv');
+    if (trigger) {
       e.preventDefault();
+      e.stopPropagation();
       open();
-    });
-  });
-
-  root.addEventListener('click', (e) => {
+      return;
+    }
+    if (!isOpen()) return;
     if (e.target.closest('[data-cv-close]')) close();
     if (e.target.closest('.cvdlg__btn')) setTimeout(close, 80);
-  });
+  }, true);
 
   addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isOpen()) {
