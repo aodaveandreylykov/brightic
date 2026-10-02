@@ -11,9 +11,20 @@
   const href = FILES[lang];
 
   document.querySelectorAll('.js-cv').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.open(href, '_blank', 'noopener');
-    });
+    if (el.tagName === 'A') {
+      el.href = href;
+      el.target = '_blank';
+      el.rel = 'noopener';
+      return;
+    }
+
+    const a = document.createElement('a');
+    a.className = el.className;
+    a.href = href;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    if (el.hasAttribute('data-magnetic')) a.setAttribute('data-magnetic', '');
+    a.innerHTML = el.innerHTML;
+    el.replaceWith(a);
   });
 })();
