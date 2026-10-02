@@ -1,0 +1,80 @@
+/* Выбор языка CV: русская и английская версии с Dropbox. */
+(() => {
+  'use strict';
+
+  const RU = 'https://www.dropbox.com/scl/fi/tz5b1p7gqfhq4m2d01whn/_-_-_.pdf?rlkey=va6bunb1asd64kpsn2iarnfaq&st=e85355oj&dl=1';
+  const EN = 'https://www.dropbox.com/scl/fi/6iaixu3ivxpemxmdij4ue/Andrey_Lykov_Senior_Product_Designer_2026.pdf?rlkey=x4hgdzase34klcfmozkmrmkpx&st=8usotfjk&dl=1';
+
+  const triggers = [...document.querySelectorAll('.js-cv')];
+  if (!triggers.length) return;
+
+  const root = document.createElement('div');
+  root.className = 'cvdlg';
+  root.hidden = true;
+  root.innerHTML = `
+    <div class="cvdlg__backdrop" data-cv-close></div>
+    <div class="cvdlg__card" role="dialog" aria-modal="true" aria-labelledby="cvdlg-title" tabindex="-1">
+      <button type="button" class="cvdlg__close" aria-label="Закрыть" data-cv-close>×</button>
+      <p class="cvdlg__kicker">Резюме</p>
+      <h2 class="cvdlg__title" id="cvdlg-title">Скачать CV</h2>
+      <p class="cvdlg__text">Выберите язык файла</p>
+      <div class="cvdlg__actions">
+        <a class="cvdlg__btn cvdlg__btn--solid" href="${RU}" target="_blank" rel="noopener">Русская</a>
+        <a class="cvdlg__btn cvdlg__btn--ghost" href="${EN}" target="_blank" rel="noopener">English</a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(root);
+
+  const card = root.querySelector('.cvdlg__card');
+  const firstBtn = root.querySelector('.cvdlg__btn');
+  let lastFocus = null;
+
+  function isOpen() {
+    return root.classList.contains('is-open');
+  }
+
+  function open() {
+    lastFocus = document.activeElement;
+    root.hidden = false;
+    document.body.classList.add('cvdlg-open');
+    requestAnimationFrame(() => root.classList.add('is-open'));
+    card.focus({ preventScroll: true });
+    firstBtn.focus({ preventScroll: true });
+  }
+
+  function close() {
+    if (!isOpen()) return;
+    root.classList.remove('is-open');
+    document.body.classList.remove('cvdlg-open');
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      root.hidden = true;
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus({ preventScroll: true });
+    };
+    root.addEventListener('transitionend', done, { once: true });
+    setTimeout(done, 400);
+  }
+
+  triggers.forEach((el) => {
+    el.setAttribute('aria-haspopup', 'dialog');
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      open();
+    });
+  });
+
+  root.addEventListener('click', (e) => {
+    if (e.target.closest('[data-cv-close]')) close();
+    if (e.target.closest('.cvdlg__btn')) setTimeout(close, 80);
+  });
+
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen()) {
+      e.preventDefault();
+      close();
+    }
+  });
+})();
