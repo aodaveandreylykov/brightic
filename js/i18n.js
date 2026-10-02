@@ -78,7 +78,10 @@
       wrap.classList.remove('is-open');
       const menu = wrap.querySelector('.lang__menu');
       const toggle = wrap.querySelector('.lang__toggle');
-      if (menu) menu.hidden = true;
+      if (menu) {
+        menu.hidden = true;
+        menu.style.width = '';
+      }
       if (toggle) toggle.setAttribute('aria-expanded', 'false');
     });
   }
@@ -152,7 +155,7 @@
         const menu = wrap.querySelector('.lang__menu');
         menu.style.width = '';
         menu.hidden = false;
-        menu.style.width = Math.ceil(menu.getBoundingClientRect().width * 1.3) + 'px';
+        menu.style.width = Math.ceil(menu.getBoundingClientRect().width * 2.6) + 'px';
         toggle.setAttribute('aria-expanded', 'true');
       }
       return;
