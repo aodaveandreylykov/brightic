@@ -253,7 +253,7 @@ ul { list-style: none; }
   gap: 10px;
 }
 
-.lang { position: relative; }
+.lang { position: relative; width: max-content; }
 
 .lang__toggle {
   display: inline-flex;
@@ -290,9 +290,10 @@ ul { list-style: none; }
   width: max-content;
   padding: 4px 0;
   border: 0;
+  outline: 0;
+  box-shadow: none;
   border-radius: 10px;
   background: #16181b;
-  box-shadow: 0 14px 32px -12px rgba(0, 0, 0, 0.75);
 }
 
 .lang__menu[hidden] { display: none; }
@@ -302,6 +303,9 @@ ul { list-style: none; }
   width: auto;
   text-align: right;
   padding: 6px 0 6px 14px;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 700;
