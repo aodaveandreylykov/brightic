@@ -73,15 +73,33 @@
     if (locale) locale.setAttribute('content', lang === 'en' ? 'en_US' : 'ru_RU');
   }
 
+  function closeMenus() {
+    document.querySelectorAll('.lang').forEach((wrap) => {
+      wrap.classList.remove('is-open');
+      const menu = wrap.querySelector('.lang__menu');
+      const toggle = wrap.querySelector('.lang__toggle');
+      if (menu) menu.hidden = true;
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    });
+  }
+
   function mountSwitcher() {
     document.querySelectorAll('.header__inner').forEach((inner) => {
       if (inner.querySelector('.lang')) return;
+      const label = lang === 'en' ? 'Language' : 'Язык';
+      const current = lang === 'en' ? 'EN' : 'RU';
       const box = document.createElement('div');
       box.className = 'header__tools';
       box.innerHTML = `
-        <div class="lang" role="group" aria-label="${lang === 'en' ? 'Language' : 'Язык'}">
-          <button type="button" class="lang__btn${lang === 'ru' ? ' is-active' : ''}" data-set-lang="ru" aria-pressed="${lang === 'ru'}">RU</button>
-          <button type="button" class="lang__btn${lang === 'en' ? ' is-active' : ''}" data-set-lang="en" aria-pressed="${lang === 'en'}">EN</button>
+        <div class="lang">
+          <button type="button" class="lang__toggle" aria-label="${label}" aria-haspopup="listbox" aria-expanded="false">
+            <span>${current}</span>
+            <svg class="lang__chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.4 4.2 6 7.8l3.6-3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="lang__menu" role="listbox" aria-label="${label}" hidden>
+            <button type="button" class="lang__opt${lang === 'ru' ? ' is-active' : ''}" role="option" aria-selected="${lang === 'ru'}" data-set-lang="ru">RU</button>
+            <button type="button" class="lang__opt${lang === 'en' ? ' is-active' : ''}" role="option" aria-selected="${lang === 'en'}" data-set-lang="en">EN</button>
+          </div>
         </div>`;
       const cv = inner.querySelector('.header__cv');
       const home = !cv ? [...inner.querySelectorAll('.btn--sm')].find((b) => !b.classList.contains('header__cv')) : null;
@@ -100,6 +118,10 @@
 
   function setLang(next) {
     if (next !== 'en' && next !== 'ru') return;
+    if (next === lang) {
+      closeMenus();
+      return;
+    }
     try { localStorage.setItem(KEY, next); } catch { /* private mode */ }
     const url = new URL(location.href);
     if (next === 'en') url.searchParams.set('lang', 'en');
@@ -113,10 +135,30 @@
   document.documentElement.classList.remove('i18n-wait');
 
   document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-set-lang]');
-    if (!btn) return;
-    e.preventDefault();
-    setLang(btn.getAttribute('data-set-lang'));
+    const opt = e.target.closest('[data-set-lang]');
+    if (opt) {
+      e.preventDefault();
+      setLang(opt.getAttribute('data-set-lang'));
+      return;
+    }
+    const toggle = e.target.closest('.lang__toggle');
+    if (toggle) {
+      e.preventDefault();
+      const wrap = toggle.closest('.lang');
+      const willOpen = !wrap.classList.contains('is-open');
+      closeMenus();
+      if (willOpen) {
+        wrap.classList.add('is-open');
+        wrap.querySelector('.lang__menu').hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+      return;
+    }
+    if (!e.target.closest('.lang')) closeMenus();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenus();
   });
 
   window.AndyI18n = { lang, t, setLang };
