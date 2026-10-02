@@ -39,9 +39,11 @@
 
     e.preventDefault();
     try { sessionStorage.setItem('pt-leave', '1'); } catch { /* приватный режим */ }
+    if (window.AndyI18n && AndyI18n.lang === 'en') url.searchParams.set('lang', 'en');
+    else url.searchParams.delete('lang');
     pt.classList.remove('is-in');
     pt.classList.add('is-leave');
-    setTimeout(() => { location.href = a.href; }, 700);
+    setTimeout(() => { location.href = url.pathname + url.search + url.hash; }, 700);
   });
 
   // возврат кнопкой «назад» из bfcache

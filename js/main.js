@@ -91,7 +91,9 @@
   /* ---------------------------------------------------------
      Scramble-эффект в навигации
      --------------------------------------------------------- */
-  const glyphs = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ!<>-_\\/[]{}=+*^?#';
+  const glyphs = (window.AndyI18n && AndyI18n.lang === 'en')
+    ? 'ABCDEFGHJKLMNOPQRSTUVWXYZ!<>-_\\/[]{}=+*^?#'
+    : 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ!<>-_\\/[]{}=+*^?#';
   $$('[data-scramble]').forEach((el) => {
     const original = el.textContent;
     let raf;
@@ -782,7 +784,10 @@
       const email = btn.dataset.copy;
       try {
         await navigator.clipboard.writeText(email);
-        showToast('Почта скопирована: ' + email);
+        const prefix = (window.AndyI18n && AndyI18n.t)
+          ? AndyI18n.t('Почта скопирована:')
+          : 'Почта скопирована:';
+        showToast(prefix + ' ' + email);
       } catch {
         location.href = 'mailto:' + email;
       }

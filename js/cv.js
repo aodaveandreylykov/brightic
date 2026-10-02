@@ -4,6 +4,7 @@
 
   const RU = 'https://www.dropbox.com/scl/fi/tz5b1p7gqfhq4m2d01whn/_-_-_.pdf?rlkey=va6bunb1asd64kpsn2iarnfaq&st=e85355oj&dl=1';
   const EN = 'https://www.dropbox.com/scl/fi/xxtnig7c8jgp63cg6wj4e/Andrey_Lykov_Product_Designer_EN.pdf?rlkey=4306j1wt2yogwtkixwv6d1uc8&st=ldlhzi50&dl=1';
+  const t = (s) => (window.AndyI18n && AndyI18n.t) ? AndyI18n.t(s) : s;
 
   const root = document.createElement('div');
   root.className = 'cvdlg';
@@ -11,12 +12,12 @@
   root.innerHTML = `
     <div class="cvdlg__backdrop" data-cv-close></div>
     <div class="cvdlg__card" role="dialog" aria-modal="true" aria-labelledby="cvdlg-title" tabindex="-1">
-      <button type="button" class="cvdlg__close" aria-label="Закрыть" data-cv-close>×</button>
-      <p class="cvdlg__kicker">Резюме</p>
-      <h2 class="cvdlg__title" id="cvdlg-title">Скачать CV</h2>
-      <p class="cvdlg__text">Выберите язык файла</p>
+      <button type="button" class="cvdlg__close" aria-label="${t('Закрыть')}" data-cv-close>×</button>
+      <p class="cvdlg__kicker">${t('Резюме')}</p>
+      <h2 class="cvdlg__title" id="cvdlg-title">${t('Скачать CV')}</h2>
+      <p class="cvdlg__text">${t('Выберите язык файла')}</p>
       <div class="cvdlg__actions">
-        <a class="cvdlg__btn cvdlg__btn--solid" href="${RU}" target="_blank" rel="noopener">Русская</a>
+        <a class="cvdlg__btn cvdlg__btn--solid" href="${RU}" target="_blank" rel="noopener">${t('Русская')}</a>
         <a class="cvdlg__btn cvdlg__btn--ghost" href="${EN}" target="_blank" rel="noopener">English</a>
       </div>
     </div>

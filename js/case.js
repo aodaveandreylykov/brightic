@@ -179,7 +179,8 @@
   const tocSections = $$('[data-rail]');
   const toc = document.createElement('nav');
   toc.className = 'toc';
-  toc.setAttribute('aria-label', 'Разделы кейса');
+  const tocLabel = (window.AndyI18n && AndyI18n.t) ? AndyI18n.t('Разделы кейса') : 'Разделы кейса';
+  toc.setAttribute('aria-label', tocLabel);
   toc.innerHTML = '<div class="toc__inner"><span class="toc__pill" aria-hidden="true"></span></div>';
   const tocInner = $('.toc__inner', toc);
   const tocPill = $('.toc__pill', toc);
@@ -277,7 +278,10 @@
       const email = btn.dataset.copy;
       try {
         await navigator.clipboard.writeText(email);
-        toast.textContent = 'Почта скопирована: ' + email;
+        const prefix = (window.AndyI18n && AndyI18n.t)
+          ? AndyI18n.t('Почта скопирована:')
+          : 'Почта скопирована:';
+        toast.textContent = prefix + ' ' + email;
         toast.classList.add('is-show');
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => toast.classList.remove('is-show'), 2600);

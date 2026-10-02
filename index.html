@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('lang');
+        var s = localStorage.getItem('ad_lang');
+        if (q === 'en' || (!q && s === 'en')) document.documentElement.classList.add('i18n-wait');
+      } catch (e) {}
+    })();
+  </script>
   <title>Андрей Лыков — Продуктовый дизайнер</title>
   <meta name="description" content="Продуктовый дизайнер. Помогаю бизнесу запускать и масштабировать цифровые продукты: ресёрч, гипотезы, сценарии, дизайн-системы и релиз.">
   <meta property="og:title" content="Андрей Лыков — Продуктовый дизайнер">
@@ -513,6 +522,8 @@
   <div class="toast" role="status" aria-live="polite"></div>
 
   <script src="js/transition.js"></script>
+  <script src="js/i18n-data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/cookies.js"></script>
   <script src="js/cv.js"></script>
   <script src="js/main.js"></script>

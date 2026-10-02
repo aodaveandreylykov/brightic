@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('lang');
+        var s = localStorage.getItem('ad_lang');
+        if (q === 'en' || (!q && s === 'en')) document.documentElement.classList.add('i18n-wait');
+      } catch (e) {}
+    })();
+  </script>
   <title>FlowBot — кейс · Андрей Лыков</title>
   <meta name="description" content="Кейс FlowBot: как редизайн табличного вида и поиска ускорил принятие торговых решений на 35%.">
   <meta property="og:title" content="FlowBot — кейс Андрея Лыкова">
@@ -171,6 +180,8 @@
   <div class="toast" role="status" aria-live="polite"></div>
 
   <script src="js/transition.js"></script>
+  <script src="js/i18n-data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/cookies.js"></script>
   <script src="js/cv.js"></script>
   <script src="js/case.js"></script>

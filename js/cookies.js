@@ -48,64 +48,64 @@
     // Сейчас счётчиков нет: Метрика / GA не грузятся ни до, ни после отказа.
   }
 
+  const t = (s) => (window.AndyI18n && AndyI18n.t) ? AndyI18n.t(s) : s;
+
   function panelTemplate() {
     return `
       <div class="cookie" id="cookie-banner" hidden>
         <div class="cookie__card" role="dialog" aria-modal="false" aria-labelledby="cookie-title" aria-describedby="cookie-desc">
           <div class="cookie__view" data-view="banner">
             <div class="cookie__copy">
-              <p class="cookie__kicker">Файлы cookie</p>
-              <p class="cookie__title" id="cookie-title">Как сайт запоминает ваш выбор</p>
+              <p class="cookie__kicker">${t('Файлы cookie')}</p>
+              <p class="cookie__title" id="cookie-title">${t('Как сайт запоминает ваш выбор')}</p>
               <p class="cookie__text" id="cookie-desc">
-                Нужны только технические cookie: работа сайта и сохранение согласия.
-                Аналитику не включаю, пока вы не разрешите — отказаться можно так же просто, сайт от этого не закроется.
-                Оператор — Лыков Андрей Игоревич, самозанятый, г. Минск.
+                ${t('Нужны только технические cookie: работа сайта и сохранение согласия. Аналитику не включаю, пока вы не разрешите — отказаться можно так же просто, сайт от этого не закроется. Оператор — Лыков Андрей Игоревич, самозанятый, г. Минск.')}
               </p>
               <p class="cookie__links">
-                <a href="cookies.html">Политика cookie</a>
-                <a href="privacy.html">Конфиденциальность</a>
-                <button type="button" class="cookie__textbtn js-cookie-settings">Настроить</button>
+                <a href="cookies.html">${t('Политика cookie')}</a>
+                <a href="privacy.html">${t('Конфиденциальность')}</a>
+                <button type="button" class="cookie__textbtn js-cookie-settings">${t('Настроить')}</button>
               </p>
             </div>
             <div class="cookie__actions">
-              <button type="button" class="cookie__btn cookie__btn--ghost js-cookie-reject">Только необходимые</button>
-              <button type="button" class="cookie__btn cookie__btn--solid js-cookie-accept">Принять все</button>
+              <button type="button" class="cookie__btn cookie__btn--ghost js-cookie-reject">${t('Только необходимые')}</button>
+              <button type="button" class="cookie__btn cookie__btn--solid js-cookie-accept">${t('Принять все')}</button>
             </div>
           </div>
           <div class="cookie__view" data-view="settings" hidden>
             <div class="cookie__copy">
-              <p class="cookie__kicker">Файлы cookie</p>
-              <p class="cookie__title" id="cookie-settings-title">Настройки cookie</p>
+              <p class="cookie__kicker">${t('Файлы cookie')}</p>
+              <p class="cookie__title" id="cookie-settings-title">${t('Настройки cookie')}</p>
               <p class="cookie__text">
-                Согласие можно отозвать в любой момент. Подробности — в
-                <a href="cookies.html">политике cookie</a>.
+                ${t('Согласие можно отозвать в любой момент. Подробности — в')}
+                <a href="cookies.html">${t('политике cookie')}</a>.
               </p>
             </div>
             <div class="cookie__cats">
               <div class="cookie-cat">
                 <div class="cookie-cat__text">
-                  <b>Необходимые</b>
-                  <span>Анимация переходов и запоминание вашего выбора. Без них сайт не сможет сохранить отказ или согласие.</span>
+                  <b>${t('Необходимые')}</b>
+                  <span>${t('Анимация переходов и запоминание вашего выбора. Без них сайт не сможет сохранить отказ или согласие.')}</span>
                 </div>
                 <label class="switch switch--locked">
                   <input type="checkbox" checked disabled tabindex="-1">
-                  <span>Вкл</span>
+                  <span>${t('Вкл')}</span>
                 </label>
               </div>
               <div class="cookie-cat">
                 <div class="cookie-cat__text">
-                  <b>Аналитика</b>
-                  <span>Счётчики посещаемости. Сейчас не подключены: скрипты не загрузятся, пока вы не согласитесь.</span>
+                  <b>${t('Аналитика')}</b>
+                  <span>${t('Счётчики посещаемости. Сейчас не подключены: скрипты не загрузятся, пока вы не согласитесь.')}</span>
                 </div>
                 <label class="switch">
                   <input type="checkbox" class="js-cookie-analytics">
-                  <span>Выкл</span>
+                  <span>${t('Выкл')}</span>
                 </label>
               </div>
             </div>
             <div class="cookie__actions">
-              <button type="button" class="cookie__btn cookie__btn--ghost js-cookie-reject">Только необходимые</button>
-              <button type="button" class="cookie__btn cookie__btn--solid js-cookie-save">Сохранить</button>
+              <button type="button" class="cookie__btn cookie__btn--ghost js-cookie-reject">${t('Только необходимые')}</button>
+              <button type="button" class="cookie__btn cookie__btn--solid js-cookie-save">${t('Сохранить')}</button>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@
       const data = read();
       box.checked = !!(data && data.analytics);
     }
-    if (label) label.textContent = box.checked ? 'Вкл' : 'Выкл';
+    if (label) label.textContent = box.checked ? t('Вкл') : t('Выкл');
   }
 
   function bind(el) {

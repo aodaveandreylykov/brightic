@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('lang');
+        var s = localStorage.getItem('ad_lang');
+        if (q === 'en' || (!q && s === 'en')) document.documentElement.classList.add('i18n-wait');
+      } catch (e) {}
+    })();
+  </script>
   <title>Страница не найдена — Андрей Лыков</title>
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#0f1113">
@@ -77,6 +86,8 @@
     </div>
   </footer>
 
+  <script src="js/i18n-data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/cookies.js"></script>
   <script>
     document.querySelector('.js-year').textContent = new Date().getFullYear();

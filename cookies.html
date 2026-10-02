@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('lang');
+        var s = localStorage.getItem('ad_lang');
+        if (q === 'en' || (!q && s === 'en')) document.documentElement.classList.add('i18n-wait');
+      } catch (e) {}
+    })();
+  </script>
   <title>Политика cookie — Андрей Лыков</title>
   <meta name="description" content="Какие cookie и сходные технологии использует andydesign.pro, зачем они нужны и как отозвать согласие.">
   <link rel="canonical" href="https://andydesign.pro/cookies.html">
@@ -70,6 +79,13 @@
               <td>Запомнить согласие или отказ, чтобы не спрашивать на каждой странице</td>
             </tr>
             <tr>
+              <td>ad_lang</td>
+              <td>localStorage</td>
+              <td>до смены языка</td>
+              <td>необходимая</td>
+              <td>Запомнить выбранный язык интерфейса</td>
+            </tr>
+            <tr>
               <td>pt-leave</td>
               <td>sessionStorage</td>
               <td>сессия вкладки</td>
@@ -127,6 +143,8 @@
   </footer>
 
   <script src="js/transition.js"></script>
+  <script src="js/i18n-data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/cookies.js"></script>
   <script>
     document.querySelectorAll('.js-year').forEach((el) => { el.textContent = new Date().getFullYear(); });

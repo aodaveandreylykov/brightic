@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('lang');
+        var s = localStorage.getItem('ad_lang');
+        if (q === 'en' || (!q && s === 'en')) document.documentElement.classList.add('i18n-wait');
+      } catch (e) {}
+    })();
+  </script>
   <title>Политика конфиденциальности — Андрей Лыков</title>
   <meta name="description" content="Как Андрей Лыков обрабатывает персональные данные на сайте andydesign.pro в соответствии с Законом Республики Беларусь № 99-З.">
   <link rel="canonical" href="https://andydesign.pro/privacy.html">
@@ -131,6 +140,8 @@
   </footer>
 
   <script src="js/transition.js"></script>
+  <script src="js/i18n-data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/cookies.js"></script>
   <script>
     document.querySelectorAll('.js-year').forEach((el) => { el.textContent = new Date().getFullYear(); });
