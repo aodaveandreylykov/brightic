@@ -149,7 +149,10 @@
       closeMenus();
       if (willOpen) {
         wrap.classList.add('is-open');
-        wrap.querySelector('.lang__menu').hidden = false;
+        const menu = wrap.querySelector('.lang__menu');
+        menu.style.width = '';
+        menu.hidden = false;
+        menu.style.width = Math.ceil(menu.getBoundingClientRect().width * 1.3) + 'px';
         toggle.setAttribute('aria-expanded', 'true');
       }
       return;

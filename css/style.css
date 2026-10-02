@@ -300,9 +300,9 @@ ul { list-style: none; }
 
 .lang__opt {
   display: block;
-  width: auto;
-  text-align: right;
-  padding: 6px 0 6px 14px;
+  width: 100%;
+  text-align: center;
+  padding: 6px 0;
   border: 0;
   outline: 0;
   box-shadow: none;
