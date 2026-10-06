@@ -1197,6 +1197,11 @@ html.i18n-wait body { visibility: hidden; }
   flex: none;
 }
 
+.concepts .shot__img {
+  aspect-ratio: 1338 / 950;
+  height: auto;
+}
+
 /* ---------- Experience ---------- */
 .experience { padding: 140px 0 100px; }
 
@@ -1886,6 +1891,7 @@ html.i18n-wait body { visibility: hidden; }
   .concepts { padding: 80px 0 40px; }
   .concepts__grid { grid-template-columns: 1fr; gap: 24px; }
   .concepts .shot { width: 100%; }
+  .concepts .shot__img { aspect-ratio: 1338 / 950; height: auto; }
 
   .experience { padding: 80px 0 60px; }
   .timeline { padding-left: 16px; }
