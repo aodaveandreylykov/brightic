@@ -1808,9 +1808,13 @@ html.i18n-wait body { visibility: hidden; }
 
 @media (max-width: 900px) {
   .container { padding: 0 20px; }
+  .header__inner { gap: 28px; }
   .nav,
   .header__cv { display: none; }
-  .header__tools { gap: 0; }
+  .header__tools {
+    gap: 0;
+    margin-left: auto;
+  }
   .burger { display: block; }
 
   .hero { padding-top: 110px; }
