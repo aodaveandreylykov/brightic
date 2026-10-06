@@ -1828,23 +1828,10 @@ html.i18n-wait body { visibility: hidden; }
 
   .projects { padding: 80px 0 40px; }
   .card { top: calc(80px + var(--i) * 16px); margin-bottom: 30px; }
-  .card__inner { grid-template-columns: 1fr; height: auto; min-height: 0; }
-  .card__inner::after { background: linear-gradient(180deg, rgba(10, 12, 16, 0.8) 0%, rgba(10, 12, 16, 0.5) 55%, rgba(10, 12, 16, 0.1) 100%); }
-  .card__content { padding: 28px 24px 0; }
-  .card__media { position: relative; height: 240px; }
-  .card__media img {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    transform: none;
-  }
-  .shot__img img { inset: 0; width: 100%; height: 100%; }
   .card__text { font-size: 15px; margin-bottom: 20px; }
   .card__metric { margin-bottom: 20px; }
   .card__btn { height: 48px; padding: 0 22px; font-size: 15px; }
+  .shot__img img { inset: 0; width: 100%; height: 100%; }
 
   /* горизонтальная галерея — нативный свайп */
   .hscroll { height: auto !important; padding: 80px 0; }
@@ -1918,6 +1905,60 @@ html.i18n-wait body { visibility: hidden; }
 
   .e404 { padding: 120px 0 60px; }
   .e404__cases { grid-template-columns: 1fr; margin-top: 48px; }
+}
+
+/* 650–900: карточки проектов как на десктопе — фото справа */
+@media (min-width: 650px) and (max-width: 900px) {
+  .card__inner {
+    grid-template-columns: 0.9fr 1.1fr;
+    height: min(400px, 48vh);
+  }
+  .card__content { padding: 24px 0 24px 24px; }
+  .card__media {
+    position: relative;
+    height: auto;
+    min-height: 0;
+  }
+  .card__media img {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    bottom: 0;
+    left: auto;
+    width: auto;
+    height: 100%;
+    max-width: calc(100% - 8px);
+    max-height: none;
+    object-fit: contain;
+    object-position: center right;
+  }
+}
+
+/* уже 650: фото по центру блока */
+@media (max-width: 649px) {
+  .card__inner { grid-template-columns: 1fr; height: auto; min-height: 0; }
+  .card__inner::after {
+    background: linear-gradient(180deg, rgba(10, 12, 16, 0.8) 0%, rgba(10, 12, 16, 0.5) 55%, rgba(10, 12, 16, 0.1) 100%);
+  }
+  .card__content { padding: 28px 24px 0; }
+  .card__media {
+    position: relative;
+    height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .card__media img {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transform: none;
+  }
 }
 
 @media (max-width: 480px) {
