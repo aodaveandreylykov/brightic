@@ -1856,10 +1856,12 @@ html.i18n-wait body { visibility: hidden; }
     transform: none !important;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    scroll-padding-inline-end: var(--hs-end);
     padding: 0 0 10px 20px;
     gap: var(--hs-gap);
     scrollbar-width: none;
   }
+  .hscroll__track .shot:last-of-type { scroll-snap-align: end; }
   .hscroll__track::-webkit-scrollbar { display: none; }
   .shot { width: 82vw; scroll-snap-align: center; }
   .hscroll__track[data-tab="apps"] .shot { width: 67.2vw; }

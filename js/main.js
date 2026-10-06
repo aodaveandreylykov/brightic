@@ -412,7 +412,7 @@
   }
 
   function trackOverflow(track) {
-    const view = isDesktop() ? innerWidth : track.clientWidth;
+    const view = isDesktop() ? document.documentElement.clientWidth : track.clientWidth;
     const last = track.querySelector('.shot:last-of-type');
     if (!last) return Math.max(0, track.scrollWidth - view);
     return Math.max(0, last.offsetLeft + last.offsetWidth + 100 - view);
