@@ -396,7 +396,7 @@ window.ANDY_I18N_EN = {
   "быстрее торговые решения после редизайна FlowBot": "faster trading decisions after the FlowBot redesign",
   "CMS — внутренняя система для управления проектами": "CMS — internal project-management system",
   "HugAmi — приложения для медитаций": "HugAmi — meditation apps",
-  "BSB — игровая копилка с заданиями": "BSB — a piggy-bank game with quests",
+  "QuestKid — игровая копилка с заданиями": "QuestKid — a piggy-bank game with quests",
   "Обучение инвестициям для новичков": "Investing lessons for beginners",
   "Админка финтеха и контроль доступа": "Fintech admin and access control",
   "Frostbyte — мобильное приложение с вознаграждениями": "Frostbyte — mobile rewards app",
