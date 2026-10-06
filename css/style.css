@@ -1003,10 +1003,21 @@ html.i18n-wait body { visibility: hidden; }
 }
 
 .hscroll__track {
+  --hs-gap: 32px;
+  --hs-end: 100px;
   display: flex;
-  gap: 32px;
-  padding: 0 max(32px, calc((100vw - var(--container)) / 2 + 32px));
+  gap: var(--hs-gap);
+  padding: 0 0 0 max(32px, calc((100vw - var(--container)) / 2 + 32px));
   will-change: transform, opacity;
+}
+
+/* пустое место справа от последнего кадра: дальше страница снова едет вертикально */
+.hscroll__track::after {
+  content: '';
+  flex: 0 0 var(--hs-end);
+  width: var(--hs-end);
+  margin-left: calc(-1 * var(--hs-gap));
+  pointer-events: none;
 }
 
 .hscroll__track:not(.is-active) {
@@ -1841,11 +1852,12 @@ html.i18n-wait body { visibility: hidden; }
   }
   .hscroll__head .section-head { margin-bottom: 40px; gap: 26px; }
   .hscroll__track {
+    --hs-gap: 16px;
     transform: none !important;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    padding: 0 20px 10px;
-    gap: 16px;
+    padding: 0 0 10px 20px;
+    gap: var(--hs-gap);
     scrollbar-width: none;
   }
   .hscroll__track::-webkit-scrollbar { display: none; }

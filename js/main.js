@@ -412,7 +412,10 @@
   }
 
   function trackOverflow(track) {
-    return Math.max(0, track.scrollWidth - (isDesktop() ? innerWidth : track.clientWidth));
+    const view = isDesktop() ? innerWidth : track.clientWidth;
+    const last = track.querySelector('.shot:last-of-type');
+    if (!last) return Math.max(0, track.scrollWidth - view);
+    return Math.max(0, last.offsetLeft + last.offsetWidth + 100 - view);
   }
 
   function sizeHScroll() {
@@ -454,7 +457,7 @@
   $$('.hscroll__track').forEach((track) => {
     track.addEventListener('scroll', () => {
       if (isDesktop() || track !== activeTrack()) return;
-      const max = track.scrollWidth - track.clientWidth;
+      const max = trackOverflow(track);
       setHsIndicator(max > 0 ? clamp(track.scrollLeft / max, 0, 1) : 0);
     }, { passive: true });
   });
