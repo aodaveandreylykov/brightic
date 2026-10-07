@@ -129,7 +129,10 @@
     const url = new URL(location.href);
     if (next === 'en') url.searchParams.set('lang', 'en');
     else url.searchParams.delete('lang');
-    location.replace(url.pathname + url.search + url.hash);
+    url.hash = '';
+    const path = url.pathname.replace(/\/index(\.html)?$/, '/') || '/';
+    const pretty = path.endsWith('.html') ? path.slice(0, -5) : path;
+    location.replace(pretty + url.search);
   }
 
   if (lang === 'en') applyTree(document);

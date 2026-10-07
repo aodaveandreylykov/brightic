@@ -27,16 +27,16 @@
 
   <header class="header is-scrolled">
     <div class="container header__inner">
-      <a href="index.html" class="logo">
+      <a href="/" class="logo">
         <span class="logo__mark">A</span>
         <span class="logo__text">ANDY DESIGN</span>
       </a>
       <nav class="nav" aria-label="Основная навигация">
-        <a href="index.html#projects" class="nav__link">Проекты</a>
-        <a href="index.html#ui" class="nav__link">UI</a>
-        <a href="index.html#concepts" class="nav__link">Концепты</a>
-        <a href="index.html#experience" class="nav__link">Опыт</a>
-        <a href="index.html#contact" class="nav__link">Контакты</a>
+        <a href="/" data-home-section="projects" class="nav__link">Проекты</a>
+        <a href="/" data-home-section="ui" class="nav__link">UI</a>
+        <a href="/" data-home-section="concepts" class="nav__link">Концепты</a>
+        <a href="/" data-home-section="experience" class="nav__link">Опыт</a>
+        <a href="/" data-home-section="contact" class="nav__link">Контакты</a>
       </nav>
     </div>
   </header>
@@ -48,24 +48,24 @@
       <h1 class="e404__title">Такой страницы нет</h1>
       <p class="e404__text">Возможно, ссылка устарела или в адресе опечатка. Загляните на главную или сразу в кейсы — там вся работа.</p>
       <div class="e404__actions">
-        <a href="index.html" class="btn btn--primary">
+        <a href="/" class="btn btn--primary">
           <span>На главную</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
-        <a href="index.html#projects" class="btn btn--ghost">
+        <a href="/" data-home-section="projects" class="btn btn--ghost">
           <span>Смотреть проекты</span>
         </a>
       </div>
       <div class="e404__cases">
-        <a href="onlineplus.html" class="e404__case">
+        <a href="/onlineplus" class="e404__case">
           <img src="assets/cases/covers/onlineplus.jpg" alt="Кейс Online+" width="1920" height="971" loading="lazy">
           <span><b>Online+</b>Social &amp; Crypto app</span>
         </a>
-        <a href="flowbot.html" class="e404__case">
+        <a href="/flowbot" class="e404__case">
           <img src="assets/cases/covers/flowbot.jpg" alt="Кейс FlowBot" width="1680" height="900" loading="lazy">
           <span><b>FlowBot</b>Trading platform</span>
         </a>
-        <a href="alike.html" class="e404__case">
+        <a href="/alike" class="e404__case">
           <img src="assets/cases/covers/alike.jpg" alt="Кейс Alike" width="1680" height="900" loading="lazy">
           <span><b>Alike</b>Dating app</span>
         </a>
@@ -78,14 +78,15 @@
       <div class="footer__bottom">
         <span>© <span class="js-year">2026</span> Андрей Лыков</span>
         <nav class="footer__legal" aria-label="Правовая информация">
-          <a href="privacy.html">Конфиденциальность</a>
-          <a href="cookies.html">Cookies</a>
+          <a href="/privacy">Конфиденциальность</a>
+          <a href="/cookies">Cookies</a>
           <button type="button" class="footer__cookie-btn js-cookie-settings">Настройки cookie</button>
         </nav>
       </div>
     </div>
   </footer>
 
+  <script src="js/transition.js"></script>
   <script src="js/i18n-data.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/cookies.js"></script>
