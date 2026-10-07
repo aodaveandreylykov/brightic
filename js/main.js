@@ -157,7 +157,7 @@
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       const id = entry.target.id;
-      navLinks.forEach((l) => l.classList.toggle('is-active', l.getAttribute('href') === '#' + id));
+      navLinks.forEach((l) => l.classList.toggle('is-active', (l.getAttribute('data-home-section') || (l.getAttribute('href') || '').replace(/^#/, '')) === id));
       activeLink = navLinks.find((l) => l.classList.contains('is-active')) || null;
       if (!nav.matches(':hover')) movePill(activeLink);
     });

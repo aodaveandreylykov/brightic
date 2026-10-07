@@ -39,10 +39,14 @@
     return p || '/';
   }
 
-  function cleanHref(url, dropHash) {
-    const path = prettyPath(url.pathname);
-    const hash = dropHash ? '' : url.hash;
-    return path + url.search + hash;
+  function cleanUrl(search) {
+    const q = search == null ? location.search : search;
+    return location.origin + prettyPath(location.pathname) + q;
+  }
+
+  function stripHash() {
+    if (!location.hash && prettyPath(location.pathname) === location.pathname) return;
+    history.replaceState(null, '', cleanUrl());
   }
 
   function scrollToId(id, behavior) {
@@ -72,12 +76,8 @@
     }
   }
 
-  // Старые закладки /index#projects и /#projects: адрес сразу без index и без якоря.
   const hashId = location.hash.replace(/^#/, '');
-  const pretty = prettyPath(location.pathname);
-  if (pretty !== location.pathname || location.hash) {
-    history.replaceState(null, '', pretty + location.search);
-  }
+  stripHash();
 
   let pendingSection = takeHomeSection() || hashId;
   if (pendingSection) {
@@ -85,6 +85,9 @@
     if (document.readyState === 'complete') go();
     else addEventListener('load', go, { once: true });
   }
+
+  // Если браузер всё же поставил якорь — сразу убираем его из адреса
+  addEventListener('hashchange', () => { stripHash(); });
 
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
@@ -94,13 +97,12 @@
     const href = a.getAttribute('href');
     if (!href || href.startsWith('mailto:') || href.startsWith('tel:')) return;
 
-    // Якорь на этой же странице — прокрутка без # в адресе
     if (href.startsWith('#')) {
       const id = href.slice(1);
       if (!id) return;
       e.preventDefault();
       scrollToId(id, 'smooth');
-      history.replaceState(null, '', prettyPath(location.pathname) + location.search);
+      stripHash();
       return;
     }
 
@@ -114,11 +116,10 @@
     const section = a.getAttribute('data-home-section') || (url.hash ? url.hash.slice(1) : '');
 
     if (destPath === herePath) {
-      if (section) {
-        e.preventDefault();
-        scrollToId(section, 'smooth');
-        history.replaceState(null, '', destPath + location.search);
-      }
+      e.preventDefault();
+      if (section) scrollToId(section, 'smooth');
+      else scrollTo({ top: 0, behavior: 'smooth' });
+      stripHash();
       return;
     }
 
@@ -128,19 +129,17 @@
 
     if (window.AndyI18n && AndyI18n.lang === 'en') url.searchParams.set('lang', 'en');
     else url.searchParams.delete('lang');
-    url.pathname = destPath;
-    url.hash = '';
 
     pt.classList.remove('is-in');
     pt.classList.add('is-leave');
-    setTimeout(() => { location.href = cleanHref(url, true); }, 700);
-  });
+    setTimeout(() => { location.href = destPath + url.search; }, 700);
+  }, true);
 
-  // возврат кнопкой «назад» из bfcache
   addEventListener('pageshow', (e) => {
     if (e.persisted) {
       pt.classList.remove('is-leave');
       pt.classList.add('is-in');
     }
+    stripHash();
   });
 })();
