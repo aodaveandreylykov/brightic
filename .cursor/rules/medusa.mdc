@@ -1,0 +1,34 @@
+---
+description: Стек Brightic — Medusa, Next.js и TypeScript. Playwright в проекте не используется.
+alwaysApply: true
+---
+
+# Medusa + Next.js
+
+Стек: Medusa v2 на TypeScript и витрина на Next.js (App Router, TypeScript). Стили лежат рядом с компонентами витрины.
+
+## Папки
+
+- `backend/` — сервер Medusa: API, модули, workflows
+- `storefront/` — витрина Next.js
+- `storefront/src/app/` — страницы App Router
+- `storefront/src/lib/medusa.ts` — клиент JS SDK к Store API
+- `storefront/src/modules/` — блоки витрины
+
+Новый код магазина пишется в `storefront/` и `backend/`. Статические `index.html` и `portfolio.html` не разрастаются в приложение Medusa.
+
+## Запреты
+
+- Не добавлять Playwright: ни `@playwright/test`, ни `playwright.config`, ни запуск Playwright в CI.
+- Не вызывать Admin API из витрины. Витрина ходит только в Store API через JS SDK.
+- Не коммитить секреты: `.env`, токены, ключи доступа.
+
+```ts
+// ❌ BAD — Playwright в этом проекте не используется
+import { test } from "@playwright/test"
+
+// ✅ GOOD — данные витрины через Medusa JS SDK
+import { sdk } from "@/lib/medusa"
+
+const { products } = await sdk.store.product.list()
+```
