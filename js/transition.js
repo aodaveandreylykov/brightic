@@ -124,7 +124,7 @@
     }
 
     e.preventDefault();
-    if (destPath === '/' && section) storeHomeSection(section);
+    if ((destPath === '/' || destPath === '/portfolio') && section) storeHomeSection(section);
     try { sessionStorage.setItem('pt-leave', '1'); } catch { /* приватный режим */ }
 
     if (window.AndyI18n && AndyI18n.lang === 'en') url.searchParams.set('lang', 'en');

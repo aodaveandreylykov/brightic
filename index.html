@@ -1,531 +1,362 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    (function () {
-      try {
-        var q = new URLSearchParams(location.search).get('lang');
-        var s = localStorage.getItem('ad_lang');
-        if (q === 'en' || (!q && s === 'en')) document.documentElement.classList.add('i18n-wait');
-      } catch (e) {}
-    })();
-  </script>
-  <title>Андрей Лыков — Продуктовый дизайнер</title>
-  <meta name="description" content="Продуктовый дизайнер. Помогаю бизнесу запускать и масштабировать цифровые продукты: ресёрч, гипотезы, сценарии, дизайн-системы и релиз.">
-  <meta property="og:title" content="Андрей Лыков — Продуктовый дизайнер">
-  <meta property="og:description" content="Проектирую цифровые продукты с нуля: ресёрч, гипотезы, сценарии, дизайн-системы и релиз.">
-  <link rel="canonical" href="https://andydesign.pro/">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://andydesign.pro/">
-  <meta property="og:site_name" content="ANDY DESIGN">
-  <meta property="og:locale" content="ru_RU">
-  <meta property="og:image" content="https://andydesign.pro/assets/img/og.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#0f1113">
+  <title>Brightic — Design born of light</title>
+  <meta name="description" content="Designer table lamps by Brightic. Collections, best-sellers, and light that turns a room into a gallery.">
+  <meta name="theme-color" content="#37291f">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/shop.css">
 </head>
 <body>
-
-  <!-- Декор -->
-  <div class="grain" aria-hidden="true"></div>
-  <div class="progress" aria-hidden="true"><i></i></div>
-
-  <!-- Header -->
-  <header class="header">
-    <div class="container header__inner">
-      <a href="/" class="logo" data-magnetic>
-        <span class="logo__mark">A</span>
-        <span class="logo__text">ANDY DESIGN</span>
+  <div class="page">
+    <header class="header">
+      <a class="logo" href="/" aria-label="Brightic">
+        <img src="assets/shop/logo.svg" width="175" height="42" alt="">
       </a>
-      <nav class="nav" aria-label="Основная навигация">
-        <a href="/" data-home-section="projects" class="nav__link" data-scramble>Проекты</a>
-        <a href="/" data-home-section="ui" class="nav__link" data-scramble>UI</a>
-        <a href="/" data-home-section="concepts" class="nav__link" data-scramble>Концепты</a>
-        <a href="/" data-home-section="experience" class="nav__link" data-scramble>Опыт</a>
-        <a href="/" data-home-section="contact" class="nav__link" data-scramble>Контакты</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#catalog">Catalog</a>
+        <a href="#collections">News</a>
+        <a href="#contact">Contact</a>
+        <a href="#about">Help</a>
       </nav>
-      <button type="button" class="btn btn--ghost btn--sm header__cv js-cv" data-magnetic>
-        <span>Скачать CV</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v12m0 0 5-5m-5 5-5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <button class="burger" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span></button>
+      <div class="header__tools">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" class="lang__btn is-active" data-lang="en" aria-pressed="true">EN</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" class="lang__btn" data-lang="ru" aria-pressed="false">RU</button>
+        </div>
+        <div class="header__icons header__icons--desk">
+          <button type="button" class="icon-btn" data-panel="search" aria-expanded="false" aria-controls="panel-search" aria-label="Search">
+            <img src="assets/shop/icon-a.svg" width="30" height="30" alt="">
+          </button>
+          <button type="button" class="icon-btn" data-panel="account" aria-expanded="false" aria-controls="panel-account" aria-label="Account">
+            <img src="assets/shop/icon-b.svg" width="30" height="30" alt="">
+          </button>
+          <button type="button" class="icon-btn" data-panel="saved" aria-expanded="false" aria-controls="panel-saved" aria-label="Saved">
+            <img src="assets/shop/icon-c.svg" width="30" height="30" alt="">
+          </button>
+          <button type="button" class="icon-btn" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket">
+            <img src="assets/shop/icon-d.svg" width="30" height="30" alt="">
+          </button>
+        </div>
+        <div class="header__icons header__icons--compact">
+          <button type="button" class="icon-btn icon-btn--profile" data-panel="account" aria-expanded="false" aria-controls="panel-account" aria-label="Account">
+            <img src="assets/shop/icon-profile.svg" width="24" height="24" alt="">
+          </button>
+          <button type="button" class="icon-btn" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket">
+            <img src="assets/shop/icon-union.svg" width="21" height="22" alt="">
+          </button>
+          <button type="button" class="burger" aria-expanded="false" aria-controls="menu">
+            <span></span><span></span><span></span>
+            <span class="visually-hidden">Open menu</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="menu" id="menu" hidden>
+      <nav aria-label="Mobile">
+        <a href="#catalog">Catalog</a>
+        <a href="#collections">News</a>
+        <a href="#contact">Contact</a>
+        <a href="#about">Help</a>
+      </nav>
     </div>
-  </header>
 
-  <!-- Мобильное меню -->
-  <div class="menu" aria-hidden="true">
-    <nav class="menu__nav">
-      <a href="/" data-home-section="projects" class="menu__link"><i>01</i>Проекты</a>
-      <a href="/" data-home-section="ui" class="menu__link"><i>02</i>UI</a>
-      <a href="/" data-home-section="concepts" class="menu__link"><i>03</i>Концепты</a>
-      <a href="/" data-home-section="experience" class="menu__link"><i>04</i>Опыт</a>
-      <a href="/" data-home-section="contact" class="menu__link"><i>05</i>Контакты</a>
-    </nav>
-    <div class="menu__foot">
-      <a href="https://t.me/uxuiandrei" target="_blank" rel="noopener">Telegram</a>
-      <a href="https://www.linkedin.com/in/andreylykov" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="https://www.behance.net/andreylykov" target="_blank" rel="noopener">Behance</a>
+    <div class="panel" id="panel-search" hidden>
+      <form class="panel__form" role="search">
+        <label class="visually-hidden" for="q">Search the catalog</label>
+        <input id="q" name="q" type="search" placeholder="Search lamps">
+        <button type="submit" class="btn">Search</button>
+      </form>
     </div>
-  </div>
+    <div class="panel" id="panel-account" hidden>
+      <p>Sign in to save lamps and track an order.</p>
+      <a class="btn" href="#contact">Contact</a>
+    </div>
+    <div class="panel" id="panel-saved" hidden>
+      <p>Saved lamps will appear here.</p>
+      <a class="btn" href="#catalog">View catalogue</a>
+    </div>
+    <div class="panel" id="panel-cart" hidden>
+      <p>Your basket is empty.</p>
+      <a class="btn" href="#catalog">View catalogue</a>
+    </div>
 
-  <main id="top">
+    <main>
+      <section class="hero" aria-label="Design born of light">
+        <div class="hero__media">
+          <img src="assets/shop/hero.jpg" alt="">
+        </div>
+        <p class="hero__eyebrow">Create an atmosphere</p>
+        <p class="hero__lead">Turn every room into a gallery: our designer table lamps are designed to be the main accent of the interior – with impeccable detail workmanship, noble materials and light that highlights textures and creates the atmosphere you need at any time of the day</p>
+        <a class="btn hero__cta" href="#collections">View collection</a>
+        <h1 class="hero__title">
+          <span class="hero__design">Design</span>
+          <span class="hero__born">born <em>of light</em></span>
+        </h1>
+      </section>
 
-    <!-- HERO -->
-    <section class="hero">
-      <canvas class="hero__canvas" aria-hidden="true"></canvas>
-
-      <div class="container hero__inner">
-        <div class="hero__content">
-          <h1 class="hero__title">
-            <span class="line"><span class="js-split">Андрей</span></span>
-            <span class="line"><span class="js-split">Лыков</span></span>
-          </h1>
-
-          <div class="hero__role" data-hero>
-            <span class="hero__role-static">Продуктовый дизайнер —</span>
-            <span class="hero__rotator" aria-live="polite">
-              <span class="is-active">ресёрч</span>
-              <span>гипотезы</span>
-              <span>сценарии</span>
-              <span>дизайн-системы</span>
-              <span>релиз</span>
-            </span>
-          </div>
-
-          <p class="hero__text" data-hero>
-            Помогаю бизнесу запускать и масштабировать цифровые продукты. Проектирую с нуля: ресёрч, гипотезы, сценарии, дизайн-системы и релиз
-          </p>
-
-          <div class="hero__actions" data-hero>
-            <a href="/" data-home-section="projects" class="btn btn--primary" data-magnetic>
-              <span>Смотреть проекты</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <section class="band" id="catalog">
+        <div class="band__head">
+          <h2>best-sellers</h2>
+          <a class="link-more" href="#catalog">View catalog</a>
+          <a class="btn band__btn" href="#catalog">View catalogue</a>
+        </div>
+        <div class="scroller scroller--best">
+          <article class="card">
+            <a href="#catalog">
+              <div class="card__media"><img src="assets/shop/product-orbita.png" alt=""></div>
+              <h3>Orbita</h3>
+              <p class="price"><span class="p-m">$ 1200</span><span class="p-t">$ 1200</span><span class="p-d">$ 1200</span></p>
             </a>
-            <button type="button" class="btn btn--ghost js-cv" data-magnetic>
-              <span>Скачать CV</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4v12m0 0 5-5m-5 5-5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </article>
+          <article class="card card--desk-tab">
+            <a href="#catalog">
+              <div class="card__media"><img src="assets/shop/product-velum.png" alt=""></div>
+              <h3>Velum</h3>
+              <p class="price"><span class="p-m">$ 1100</span><span class="p-t">$ 1100</span><span class="p-d">$ 1100</span></p>
+            </a>
+          </article>
+          <article class="card card--desk-tab">
+            <a href="#catalog">
+              <div class="card__media"><img src="assets/shop/product-forge.png" alt=""></div>
+              <h3>Forge Point</h3>
+              <p class="price"><span class="p-m">$ 800</span><span class="p-t">$ 800</span><span class="p-d">$ 800</span></p>
+            </a>
+          </article>
+          <article class="card">
+            <a href="#catalog">
+              <div class="card__media"><img src="assets/shop/product-ripple.png" alt=""></div>
+              <h3>Ripple</h3>
+              <p class="price"><span class="p-m">$ 1100</span><span class="p-t">$ 1400</span><span class="p-d">$ 1450</span></p>
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <section class="store" aria-labelledby="store-title">
+        <h2 id="store-title"><span>Store</span> <span>sections</span></h2>
+        <ul class="store__list">
+          <li><a href="#collections">Facets of light</a></li>
+          <li><a href="#collections">Warm outline</a></li>
+          <li><a href="#collections">Urban glow</a></li>
+          <li><a href="#collections" class="is-active">Lunar path</a></li>
+          <li><a href="#collections">Echo of materials</a></li>
+          <li><a href="#collections">Momentum</a></li>
+          <li><a href="#collections">Quiet light</a></li>
+          <li><a href="#collections">Golden hour</a></li>
+          <li><a href="#collections">Geometry of shadow</a></li>
+          <li><a href="#collections">Flow of forms</a></li>
+          <li><a href="#collections">Industrial pulse</a></li>
+          <li><a href="#collections">Crystal haze</a></li>
+        </ul>
+        <img class="store__photo" src="assets/shop/store-lamp.png" alt="Table lamp from the Lunar Path collection">
+      </section>
+
+      <section class="collections" id="collections">
+        <div class="collections__copy">
+          <h2>All collections</h2>
+          <p class="collections__lead collections__lead--full">Discover all our collections—each light fixture is designed to serve as a meaningful focal point. From understated minimalism to expressive artistic forms—find the style that matches your mood. A variety of styles, materials, and lighting scenarios to suit any interior</p>
+          <p class="collections__lead collections__lead--short">Discover all our collections—each light fixture is designed to serve as a meaningful focal point. From understated minimalism to expressive artistic forms—find the style that matches your mood. A variety of styles and lighting scenarios to suit any interior</p>
+          <a class="btn btn--dark" href="#catalog">View collections</a>
+        </div>
+        <figure class="tile tile--crystal"><img src="assets/shop/col-crystal.jpg" alt=""><figcaption>Crystal Haze</figcaption></figure>
+        <figure class="tile tile--golden"><img src="assets/shop/col-golden.jpg" alt=""><figcaption>Golden Hour</figcaption></figure>
+        <figure class="tile tile--warm"><img src="assets/shop/col-warm.jpg" alt=""><figcaption>Warm Outline</figcaption></figure>
+        <figure class="tile tile--facets"><img src="assets/shop/col-facets.jpg" alt=""><figcaption>Facets of Light</figcaption></figure>
+        <figure class="tile tile--geometry"><img src="assets/shop/col-geometry.jpg" alt=""><figcaption>Geometry of Shadow</figcaption></figure>
+        <figure class="tile tile--lunar"><img src="assets/shop/col-lunar.jpg" alt=""><figcaption>Lunar Path</figcaption></figure>
+        <figure class="tile tile--quiet"><img src="assets/shop/col-quiet.jpg" alt=""><figcaption>Quiet Light</figcaption></figure>
+        <figure class="tile tile--industrial"><img src="assets/shop/col-industrial.jpg" alt=""><figcaption>Industrial Pulse</figcaption></figure>
+        <figure class="tile tile--urban"><img src="assets/shop/col-urban.jpg" alt=""><figcaption>Urban Glow</figcaption></figure>
+        <figure class="tile tile--momentum"><img src="assets/shop/col-momentum.jpg" alt=""><figcaption>Momentum</figcaption></figure>
+      </section>
+
+      <section class="band" id="popular">
+        <div class="band__head">
+          <h2>Most popular lamps</h2>
+          <a class="btn band__btn" href="#catalog">View catalogue</a>
+        </div>
+        <div class="scroller scroller--pop">
+          <article class="card card--pop">
+            <a href="#catalog">
+              <div class="card__media"><img src="assets/shop/product-lumenora.png" alt=""></div>
+              <h3>Lumenora</h3>
+              <p class="price"><span class="p-m">$ 1000</span><span class="p-t">$ 1100</span><span class="p-d">$ 1200</span></p>
+            </a>
+          </article>
+          <article class="card card--pop">
+            <a href="#catalog">
+              <div class="card__media">
+                <img class="img-d" src="assets/shop/product-stria.png" alt="">
+                <img class="img-s" src="assets/shop/product-stria-tab.png" alt="">
+              </div>
+              <h3>Stria</h3>
+              <p class="price"><span class="p-m">$ 950</span><span class="p-t">$ 950</span><span class="p-d">$ 1450</span></p>
+            </a>
+          </article>
+          <article class="card card--pop card--desk-tab">
+            <a href="#catalog">
+              <div class="card__media">
+                <img class="img-d" src="assets/shop/product-aether.png" alt="">
+                <img class="img-s" src="assets/shop/product-aether-tab.png" alt="">
+              </div>
+              <h3>Aether</h3>
+              <p class="price"><span class="p-m">$ 1300</span><span class="p-t">$ 1300</span><span class="p-d">$ 750</span></p>
+            </a>
+          </article>
+        </div>
+        <a class="link-more link-more--center" href="#catalog">Show more</a>
+        <a class="btn band__btn band__btn--center" href="#catalog">View catalogue</a>
+      </section>
+
+      <section class="about" id="about">
+        <div class="about__intro">
+          <h2>About the brand</h2>
+          <p class="about__lead about__lead--full">We create designer table lamps, where every detail is subject to the idea: the light should not only illuminate, but also reveal the space. Our collections combine original design, noble materials and thoughtful ergonomics. We work with proven manufacturers and control quality at every stage – from sketch to final assembly</p>
+          <p class="about__lead about__lead--mid">We create designer table lamps, where every detail is subject to the idea: the light should not only illuminate, but also reveal the space. Our collections combine original design, noble materials and thoughtful ergonomics. We work with proven manufacturers and control quality at every stage</p>
+          <p class="about__lead about__lead--short">We create designer table lamps, where every detail is subject to the idea: the light should not only illuminate, but also reveal the space</p>
+          <a class="btn about__btn" href="#about">Learn more</a>
+          <a class="link-more about__link" href="#about">Learn more</a>
+        </div>
+        <div class="stats">
+          <article class="stat">
+            <div class="stat__mark"><span>buyers ///</span></div>
+            <p class="stat__num">70%+</p>
+            <p class="stat__text">Clients appreciate that the actual product perfectly matches the photos and descriptions on our website. They love how the light fixtures look in their interiors and enjoy the experience of interacting with our brand. This loyalty is the result of our attention to detail at every stage, from design to delivery. We view repeat purchases as the most valuable validation of the quality of our work.</p>
+          </article>
+          <article class="stat">
+            <div class="stat__mark"><span>raiting ///</span></div>
+            <p class="stat__num">4.8+</p>
+            <p class="stat__text">Buyers particularly highlight the striking design of the light fixtures and their well-thought-out ergonomics. Reviews also frequently mention the reliability of the materials and the quality of the craftsmanship. The way the light from our lamps transforms the room's atmosphere plays a significant role as well.</p>
+          </article>
+          <article class="stat">
+            <div class="stat__mark"><span>collections ///</span></div>
+            <p class="stat__num">10+</p>
+            <p class="stat__text">Each collection represents a carefully considered stylistic narrative, ranging from minimalist forms to expressive art objects. This approach enables the customer to instantly gauge the interior’s mood and find a light fixture that does more than just fit in—it becomes a focal point that defines the room's character.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="reviews" id="reviews" aria-roledescription="carousel" aria-label="Reviews">
+        <div class="reviews__intro">
+          <h2><span>Confidence confirmed</span> <span>by reviews</span></h2>
+          <p>Our luminaires live in real interiors – and we are proud of every feedback. Here are the honest opinions of buyers: about the quality of materials, ease of use and how light changes the atmosphere of the room. Let someone else’s experience help you find your perfect accent for home</p>
+        </div>
+        <div class="reviews__viewport">
+          <div class="reviews__track">
+            <article class="review review--beige">
+              <p>“I bought a Velum lamp for the bedroom – and it was a top ten. The light is so soft that you always have a “golden hour”. It became the main emphasis: guests immediately notice and ask where it was taken. Looks more expensive, materials are nice, assembly is neat. Now I'm looking at another one! “</p>
+              <footer>
+                <img src="assets/shop/avatar-marina.jpg" width="65" height="65" alt="">
+                <span><strong>Marina Smirnova</strong>Moscow</span>
+              </footer>
+            </article>
+            <article class="review">
+              <p>"I was looking for a unique gift for a designer friend and stumbled upon your 'Urban Glow' collection. I chose a model with graphic shapes and a metal body—it fit perfectly into her loft-style interior. She absolutely loves it; she says it’s not just a lamp, but a genuine art piece. Thanks for the great selection and fast delivery—it arrived just in time for her birthday!"</p>
+              <footer>
+                <img src="assets/shop/avatar-elena.jpg" width="65" height="65" alt="">
+                <span><strong>Elena Fischer</strong>Vienna</span>
+              </footer>
+            </article>
+            <article class="review review--desk">
+              <p>“I work as an interior designer in Milan, often picking accent items for projects. The Geometry of Shadow collection is one of the best solutions for creating expressive light scenarios. Customers regularly ask me where I get these lamps. Quality and packaging at the height! »</p>
+              <footer>
+                <img src="assets/shop/avatar-sofia.jpg" width="65" height="65" alt="">
+                <span><strong>Sofia Rossi</strong>Rome</span>
+              </footer>
+            </article>
+          </div>
+        </div>
+        <div class="reviews__nav reviews__nav--desk">
+          <div class="reviews__bar" aria-hidden="true"><i></i></div>
+          <div class="reviews__arrows">
+            <button type="button" class="arrow" data-dir="-1" aria-label="Previous review">
+              <img src="assets/shop/arrow-a.svg" width="60" height="56" alt="">
+            </button>
+            <button type="button" class="arrow" data-dir="1" aria-label="Next review">
+              <img src="assets/shop/arrow-b.svg" width="60" height="56" alt="">
             </button>
           </div>
         </div>
-
-        <div class="hero__visual" data-hero>
-          <div class="hero__glow" aria-hidden="true"></div>
-          <div class="hero__photo js-parallax" data-speed="0.08">
-            <img src="assets/img/photo.png" alt="Андрей Лыков" width="2500" height="2500" fetchpriority="high">
-          </div>
-          <div class="chip chip--1 js-float"><b>9</b> лет в дизайне</div>
-          <div class="chip chip--2 js-float"><b>15</b> приложений в портфолио</div>
-          <div class="chip chip--3 js-float"><b>40M</b> MAU</div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- MARQUEE -->
-    <div class="marquee-clip">
-      <section class="marquee" aria-label="Направления">
-        <div class="marquee__track">
-          <div class="marquee__row">
-            <span>Research</span><em>✦</em><span>Гипотезы</span><em>✦</em><span>User Flow</span><em>✦</em><span>Design Systems</span><em>✦</em><span>MVP</span><em>✦</em>
-          </div>
-          <div class="marquee__row" aria-hidden="true">
-            <span>Research</span><em>✦</em><span>Гипотезы</span><em>✦</em><span>User Flow</span><em>✦</em><span>Design Systems</span><em>✦</em><span>MVP</span><em>✦</em>
-          </div>
+        <div class="reviews__nav reviews__nav--mob">
+          <button type="button" class="arrow arrow--line" data-dir="-1" aria-label="Previous review">
+            <img src="assets/shop/arrow-mob.svg" width="71" height="15" alt="">
+          </button>
+          <button type="button" class="arrow arrow--line" data-dir="1" aria-label="Next review">
+            <img src="assets/shop/arrow-mob.svg" width="71" height="15" alt="">
+          </button>
         </div>
       </section>
-    </div>
 
-    <!-- STATS -->
-    <section class="stats">
-      <div class="container stats__grid">
-        <div class="stat" data-reveal>
-          <div class="stat__num"><span class="js-counter" data-to="9">0</span></div>
-          <div class="stat__label">лет в продуктовом и&nbsp;графическом дизайне</div>
-        </div>
-        <div class="stat" data-reveal>
-          <div class="stat__num">×<span class="js-counter" data-to="2">0</span></div>
-          <div class="stat__label">быстрее торговые решения после редизайна FlowBot</div>
-        </div>
-        <div class="stat" data-reveal>
-          <div class="stat__num">+<span class="js-counter" data-to="30">0</span>%</div>
-          <div class="stat__label">транзакционной активности в&nbsp;Online+</div>
-        </div>
-        <div class="stat" data-reveal>
-          <div class="stat__num"><span class="js-counter" data-to="40">0</span>M</div>
-          <div class="stat__label">пользователей в экосистеме ICE</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROJECTS -->
-    <section class="projects" id="projects">
-      <div class="container">
-        <div class="section-head">
-          <h2 class="section-title" data-reveal>Проекты c&nbsp;продуктовым процессом</h2>
-        </div>
-
-        <div class="stack">
-          <!-- Online+ -->
-          <article class="card card--online" style="--i:0">
-            <a href="/onlineplus" class="card__inner">
-              <img class="card__bg" src="assets/img/online_back.jpg" width="1920" height="660" alt="" loading="lazy">
-              <div class="card__content">
-                <h3 class="card__title">Online+</h3>
-                <p class="card__text">Соцсеть с&nbsp;крипто-вознаграждением за&nbsp;контент. Каждый пост и&nbsp;профиль&nbsp;— токен, который можно купить или продать. Повысил транзакционную активность на&nbsp;30%.</p>
-                <div class="card__metric"><b>+30%</b><span>транзакционной активности</span></div>
-                <span class="btn btn--light card__btn">
-                  <span>Смотреть проект</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7m0 0H8m9 0v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </span>
-              </div>
-              <div class="card__media js-tilt">
-                <img src="assets/img/onli_photo.png" width="2235" height="1650" alt="Интерфейс Online+" loading="lazy">
-              </div>
-            </a>
-          </article>
-
-          <!-- FlowBot -->
-          <article class="card card--flowbot" style="--i:1">
-            <a href="/flowbot" class="card__inner">
-              <img class="card__bg" src="assets/img/fb_back.jpg" width="1920" height="660" alt="" loading="lazy">
-              <div class="card__content">
-                <h3 class="card__title">Flow Bot</h3>
-                <p class="card__text">Как редизайн повысил скорость принятия торговых решений в&nbsp;2&nbsp;раза в&nbsp;сервисе для автоматизированного трейдинга</p>
-                <div class="card__metric"><b>×2</b><span>скорость принятия решений</span></div>
-                <span class="btn btn--light card__btn">
-                  <span>Смотреть проект</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7m0 0H8m9 0v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </span>
-              </div>
-              <div class="card__media js-tilt">
-                <img src="assets/img/flowbot_photo.png" width="1490" height="1100" alt="Интерфейс FlowBot" loading="lazy">
-              </div>
-            </a>
-          </article>
-
-          <!-- Alike -->
-          <article class="card card--alike" style="--i:2">
-            <a href="/alike" class="card__inner">
-              <img class="card__bg" src="assets/img/alike_back.jpg" width="2400" height="825" alt="" loading="lazy">
-              <div class="card__content">
-                <h3 class="card__title">Alike</h3>
-                <p class="card__text">Подготовил дизайн приложения для осознанных знакомств к&nbsp;MVP и&nbsp;заложил основу для монетизации с&nbsp;первого дня</p>
-                <div class="card__metric"><b>MVP</b><span>монетизация с первого дня</span></div>
-                <span class="btn btn--light card__btn">
-                  <span>Смотреть проект</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7m0 0H8m9 0v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </span>
-              </div>
-              <div class="card__media js-tilt">
-                <img src="assets/img/alike_photo.png" width="1490" height="1100" alt="Интерфейс Alike" loading="lazy">
-              </div>
-            </a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- UI GALLERY (горизонтальный скролл) -->
-    <section class="hscroll" id="ui" data-tab="apps">
-      <div class="hscroll__sticky">
-        <div class="container hscroll__head">
-          <div class="section-head">
-            <h2 class="section-title">Проекты для оценки UI</h2>
-            <div class="seg" role="tablist" aria-label="Тип проектов">
-              <span class="seg__pill" aria-hidden="true"></span>
-              <button type="button" class="seg__btn is-active" role="tab" id="tab-apps" aria-controls="ui-apps" aria-selected="true" data-tab="apps">Приложения</button>
-              <button type="button" class="seg__btn" role="tab" id="tab-web" aria-controls="ui-web" aria-selected="false" data-tab="web">Веб сервисы</button>
-            </div>
+      <section class="contact" id="contact">
+        <h2>Get in touch</h2>
+        <form class="form" action="#contact" method="post">
+          <div class="form__row">
+            <label class="field">
+              <span>Name</span>
+              <input type="text" name="name" required autocomplete="name">
+            </label>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" required autocomplete="email">
+            </label>
           </div>
-          <div class="hscroll__counter"><span class="js-hs-current">01</span> / <span class="js-hs-total">08</span></div>
-        </div>
-        <div class="hscroll__stage">
-          <div class="hscroll__track is-active" id="ui-apps" data-tab="apps" role="tabpanel" aria-labelledby="tab-apps">
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/frostbyte-m.jpg" width="900" height="1200" alt="Frostbyte — мобильное приложение с вознаграждениями" loading="lazy"></div>
-              <figcaption><b>Frostbyte</b><span>Мобильное приложение с вознаграждениями</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/ipool-m.jpg" width="1620" height="2400" alt="iPool — удалённое управление всеми функциями бассейна" loading="lazy"></div>
-              <figcaption><b>iPool</b><span>Удалённое управление всеми функциями бассейна</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/ice-m.jpg" width="900" height="1200" alt="ICE — майнинг-приложение, 40M пользователей" loading="lazy"></div>
-              <figcaption><b>ICE</b><span>Майнинг-приложение, 40M пользователей</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/hugami-m.jpg" width="1620" height="2400" alt="HugAmi — приложения для медитаций" loading="lazy"></div>
-              <figcaption><b>HugAmi</b><span>Приложения для медитаций</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/mysplits-m.jpg" width="1620" height="2400" alt="Mysplits — правильное питание и тренировки" loading="lazy"></div>
-              <figcaption><b>Mysplits</b><span>Правильное питание и тренировки</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/homevision-m.jpg" width="1620" height="2400" alt="Homevision — дизайн интерьеров с ИИ" loading="lazy"></div>
-              <figcaption><b>Homevision</b><span>Дизайн интерьеров с ИИ</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/hermatic-m.jpg" width="1620" height="2400" alt="Hermatic — автоматизированный трейдинг" loading="lazy"></div>
-              <figcaption><b>Hermatic</b><span>Автоматизированный трейдинг</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/framey-m.jpg" width="1620" height="2400" alt="Framey — приложения для путешествий" loading="lazy"></div>
-              <figcaption><b>Framey</b><span>Приложения для путешествий</span></figcaption>
-            </figure>
-          </div>
-          <div class="hscroll__track" id="ui-web" data-tab="web" role="tabpanel" aria-labelledby="tab-web" aria-hidden="true">
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/atoma.jpg" width="1338" height="950" alt="Atoma — DeFi-сейф и аналитика позиций" loading="lazy"></div>
-              <figcaption><b>Atoma</b><span>DeFi-сейф и аналитика позиций</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/dashboard.jpg" width="1338" height="950" alt="VaultFlow — кабинет депозитов и комплаенса" loading="lazy"></div>
-              <figcaption><b>VaultFlow</b><span>Кабинет депозитов и комплаенса</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/broker.jpg" width="1338" height="950" alt="Go Invest — платформа персонального брокера" loading="lazy"></div>
-              <figcaption><b>Go Invest</b><span>Платформа персонального брокера</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/finance.jpg" width="1338" height="950" alt="Financier — админка финтеха и контроль доступа" loading="lazy"></div>
-              <figcaption><b>Financier</b><span>Админка финтеха и контроль доступа</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/valetax.jpg" width="1338" height="950" alt="Valetax — обучение инвестициям для новичков" loading="lazy"></div>
-              <figcaption><b>Valetax</b><span>Обучение инвестициям для новичков</span></figcaption>
-            </figure>
-            <figure class="shot">
-              <div class="shot__img"><img src="assets/img/cms.jpg" width="1338" height="950" alt="CMS — внутренняя система для управления проектами" loading="lazy"></div>
-              <figcaption><b>CMS</b><span>Внутренняя система для управления проектами</span></figcaption>
-            </figure>
-          </div>
-        </div>
-        <div class="container hscroll__bar"><i class="js-hs-bar"></i></div>
+          <label class="field field--message">
+            <span>Message</span>
+            <textarea name="message" required></textarea>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="terms" required>
+            <span>I have read and accepting with <a href="#contact">Privacy Policy</a> and <a href="#contact">Terms Conditions</a></span>
+          </label>
+          <button class="btn btn--submit" type="submit">submit</button>
+          <p class="form__note" role="status" hidden>Message sent. We will write back shortly.</p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <img class="footer__mark" src="assets/shop/wordmark.svg" width="403" height="100" alt="Brightic">
+      <div class="footer__col">
+        <h2>Navigation</h2>
+        <a href="#catalog">Catalog</a>
+        <a href="#about">About the company</a>
+        <a href="#about">FAQ</a>
+        <a href="#contact">Contacts</a>
       </div>
-    </section>
-
-    <!-- CONCEPTS -->
-    <section class="concepts" id="concepts">
-      <div class="container">
-        <div class="section-head">
-          <h2 class="section-title" data-reveal>Концепты</h2>
-        </div>
-        <div class="concepts__grid">
-          <figure class="shot">
-            <div class="shot__img"><img src="assets/img/bsb.jpg" width="1338" height="950" alt="QuestKid — игровая копилка с заданиями" loading="lazy"></div>
-            <figcaption><b>QuestKid</b><span>Игровая копилка с заданиями</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <div class="shot__img"><img src="assets/img/plata.jpg" width="1338" height="950" alt="Plata — конструктор дизайна банковской карты" loading="lazy"></div>
-            <figcaption><b>Plata</b><span>Конструктор дизайна банковской карты</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <div class="shot__img"><img src="assets/img/sber.jpg" width="1338" height="950" alt="Сбер Здоровье — поиск врача и запись на приём" loading="lazy"></div>
-            <figcaption><b>Сбер Здоровье</b><span>Поиск врача и запись на приём</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <div class="shot__img"><img src="assets/img/parking.jpg" width="1338" height="950" alt="Parking — бронирование парковочного места" loading="lazy"></div>
-            <figcaption><b>Parking</b><span>Бронирование парковочного места</span></figcaption>
-          </figure>
-        </div>
+      <div class="footer__col">
+        <h2>Internal sections</h2>
+        <a href="#collections">New collections</a>
+        <a href="#popular">Popular products</a>
+        <a href="#catalog">Selected</a>
+        <button type="button" data-panel="cart" aria-controls="panel-cart">Basket</button>
       </div>
-    </section>
-
-    <!-- EXPERIENCE -->
-    <section class="experience" id="experience">
-      <div class="container">
-        <div class="section-head">
-          <h2 class="section-title" data-reveal>Мой опыт</h2>
-        </div>
-
-        <div class="timeline">
-          <div class="timeline__line" aria-hidden="true"><i class="js-timeline-fill"></i></div>
-
-          <details class="job" data-reveal>
-            <summary>
-              <span class="job__years">2024 — 2026</span>
-              <span class="job__company">Ice Open Network</span>
-              <span class="job__role">Senior Product Designer</span>
-              <span class="job__toggle" aria-hidden="true"></span>
-            </summary>
-            <div class="job__body">
-              <p>Лид дизайнер (команда 4 человека). Мобильное приложение соцсети с&nbsp;интегрированным крипто-кошельком: посты, лента, чат, кошелёк с&nbsp;поддержкой 28 сетей, токенизированное сообщество. Дизайн-система в&nbsp;Figma на&nbsp;320+ компонентов.</p>
-              <ul class="job__results">
-                <li><b>1-е место</b> на Product Hunt (неделя и месяц)</li>
-                <li>Токен на <b>16</b> крипто-биржах</li>
-              </ul>
-            </div>
-          </details>
-
-          <details class="job" data-reveal>
-            <summary>
-              <span class="job__years">2022 — 2024</span>
-              <span class="job__company">Framey</span>
-              <span class="job__role">Senior Product Designer</span>
-              <span class="job__toggle" aria-hidden="true"></span>
-            </summary>
-            <div class="job__body">
-              <p>Travel-приложение Framey: 980+ скрытых мест, интерактивная карта с&nbsp;кластеризацией, UGC и&nbsp;подборки. Приложение ICE, ставшее основой экосистемы из&nbsp;5 мобильных приложений.</p>
-              <ul class="job__results">
-                <li><b>9M+</b> активных пользователей за первую неделю</li>
-                <li><b>40M</b> пользователей всего</li>
-              </ul>
-            </div>
-          </details>
-
-          <details class="job" data-reveal>
-            <summary>
-              <span class="job__years">2021 — 2022</span>
-              <span class="job__company">ASBIS</span>
-              <span class="job__role">Senior Product Designer</span>
-              <span class="job__toggle" aria-hidden="true"></span>
-            </summary>
-            <div class="job__body">
-              <p>CMS-система для трёх типов пользователей: контент-менеджеров, маркетологов и&nbsp;разработчиков. С&nbsp;нуля: от&nbsp;сценариев до&nbsp;pixel-perfect макетов и&nbsp;тестов на&nbsp;прототипах.</p>
-              <ul class="job__results">
-                <li>Время на обновление контента <b>сократилось в 3 раза</b></li>
-                <li>Контент-менеджеры работают без разработчиков</li>
-              </ul>
-            </div>
-          </details>
-
-          <details class="job" data-reveal>
-            <summary>
-              <span class="job__years">2019 — 2021</span>
-              <span class="job__company">VebTech</span>
-              <span class="job__role">Senior / Middle UX/UI Designer</span>
-              <span class="job__toggle" aria-hidden="true"></span>
-            </summary>
-            <div class="job__body">
-              <p>UP Banking&nbsp;— мобильный банк: управление картами, P2P-переводы, кредитный калькулятор, аналитика расходов, онбординг.</p>
-              <ul class="job__results">
-                <li>Google Play: <b>4.6★</b> (было 3.9★), 3-е место</li>
-                <li>App Store: <b>4.7★</b> (было 4.2★), 2-е место</li>
-              </ul>
-            </div>
-          </details>
-
-          <details class="job" data-reveal>
-            <summary>
-              <span class="job__years">2018 — 2019</span>
-              <span class="job__company">Bankcorp</span>
-              <span class="job__role">UX/UI Designer</span>
-              <span class="job__toggle" aria-hidden="true"></span>
-            </summary>
-            <div class="job__body">
-              <p>Корпоративные сайты и&nbsp;продающие лендинги для банковского оборудования и&nbsp;ПО: адаптивный дизайн, пользовательские сценарии, визуальные концепции.</p>
-            </div>
-          </details>
-
-          <details class="job" data-reveal>
-            <summary>
-              <span class="job__years">2016 — 2018</span>
-              <span class="job__company">Vizani</span>
-              <span class="job__role">Graphic Designer</span>
-              <span class="job__toggle" aria-hidden="true"></span>
-            </summary>
-            <div class="job__body">
-              <p>Полиграфия, наружная реклама, презентации, оформление выставок, баннеры и&nbsp;шаблоны для соцсетей.</p>
-            </div>
-          </details>
-        </div>
+      <div class="footer__col">
+        <h2>Legal information</h2>
+        <a href="#contact">Privacy Policy</a>
+        <a href="#contact">Public Offer</a>
       </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section class="contact" id="contact">
-      <div class="contact__blob" aria-hidden="true"></div>
-      <div class="container contact__inner">
-        <h2 class="contact__title">
-          <span class="line"><span class="js-split-scroll">Давайте</span></span>
-          <span class="line"><span class="js-split-scroll">обсудим</span></span>
-          <span class="line"><span class="js-split-scroll">ваш проект</span></span>
-        </h2>
-
-        <div class="contact__links" data-reveal>
-          <a href="https://t.me/uxuiandrei" class="pill" target="_blank" rel="noopener" data-magnetic>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.8.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.4 13.1 1.7 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3Z"/></svg>
-            Telegram
-          </a>
-          <a href="https://www.linkedin.com/in/andreylykov" class="pill" target="_blank" rel="noopener" data-magnetic>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11H3v-11Zm6.5 0h3.8v1.5h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1v5.45h-4v-4.83c0-1.15-.02-2.63-1.6-2.63-1.6 0-1.85 1.25-1.85 2.55v4.91h-4v-11Z"/></svg>
-            LinkedIn
-          </a>
-          <button type="button" class="pill js-copy" data-copy="daveandreylykov@gmail.com" data-magnetic>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Почта
-          </button>
-          <button type="button" class="pill pill--accent js-cv" data-magnetic>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4v12m0 0 5-5m-5 5-5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Скачать CV
-          </button>
-        </div>
+      <div class="footer__social">
+        <a href="https://t.me" aria-label="Telegram"><img src="assets/shop/icon-telegram.svg" width="40" height="40" alt=""></a>
+        <a href="https://instagram.com" aria-label="Instagram"><img src="assets/shop/icon-instagram.svg" width="40" height="40" alt=""></a>
+        <a href="https://vk.com" aria-label="VK"><img src="assets/shop/icon-vk.svg" width="40" height="40" alt=""></a>
       </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer__big" aria-hidden="true">ANDY DESIGN</div>
-      <div class="footer__grid">
-        <div class="footer__col">
-          <h4>Проекты</h4>
-          <a href="/onlineplus">Online+</a>
-          <a href="/flowbot">Flow Bot</a>
-          <a href="/alike">Alike</a>
-        </div>
-        <div class="footer__col">
-          <h4>Обо мне</h4>
-          <a href="https://www.linkedin.com/in/andreylykov" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://www.behance.net/andreylykov" target="_blank" rel="noopener">Behance</a>
-          <a href="https://t.me/uxuiandrei" target="_blank" rel="noopener">Telegram</a>
-        </div>
-        <div class="footer__col">
-          <h4>Контакты</h4>
-          <a href="mailto:daveandreylykov@gmail.com">daveandreylykov@gmail.com</a>
-          <a href="tel:+375296031807">+375 29 603-18-07</a>
-        </div>
-        <div class="footer__col footer__col--end">
-          <a href="/" class="totop" data-magnetic aria-label="Наверх">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 19V5m0 0-6 6m6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
+      <p class="footer__copy">©  2026 Brightic. All rights reserved</p>
+      <div class="footer__pay">
+        <img src="assets/shop/pay-apple.svg" width="37" height="30" alt="Apple Pay">
+        <img src="assets/shop/pay-visa.svg" width="30" height="30" alt="Visa">
+        <img src="assets/shop/pay-mastercard.svg" width="30" height="30" alt="Mastercard">
+        <img src="assets/shop/pay-paypal.svg" width="24" height="24" alt="PayPal">
       </div>
-      <div class="footer__bottom">
-        <span>© <span class="js-year">2026</span> Андрей Лыков</span>
-        <nav class="footer__legal" aria-label="Правовая информация">
-          <a href="/privacy">Конфиденциальность</a>
-          <a href="/cookies">Cookies</a>
-          <button type="button" class="footer__cookie-btn js-cookie-settings">Настройки cookie</button>
-        </nav>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Lightbox -->
-  <div class="lightbox" aria-hidden="true" role="dialog">
-    <button class="lightbox__close" aria-label="Закрыть">×</button>
-    <button class="lightbox__nav lightbox__nav--prev" aria-label="Предыдущее">←</button>
-    <img class="lightbox__img" src="" alt="">
-    <button class="lightbox__nav lightbox__nav--next" aria-label="Следующее">→</button>
-    <div class="lightbox__caption"></div>
+    </footer>
   </div>
-
-  <div class="toast" role="status" aria-live="polite"></div>
-
-  <script src="js/transition.js"></script>
-  <script src="js/i18n-data.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/cookies.js"></script>
-  <script src="js/cv.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/shop.js"></script>
 </body>
 </html>
