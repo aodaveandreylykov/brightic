@@ -68,7 +68,7 @@ export const catalogCards: CatalogCard[] = [
   { bp: "d", kind: "mid", left: 1280, top: 465, width: 600, height: 700, name: "Steel Petal", blurb: "delicate curved elements", price: "$ 900", image: "steel.png", shot: mid(1.313, 1, -0.156, 0) },
   { bp: "d", kind: "sq", left: 40, top: 1185, width: 445, height: 445, name: "Glowform", blurb: "sleek soft illumination", price: "$ 700", image: "glowform.png", shot: sq(1, 0.964, 0, 0.018) },
   { bp: "d", kind: "sq", left: 505, top: 1185, width: 445, height: 445, name: "Echo Glow", blurb: "subtle\nreflective warmth", price: "$ 1200", image: "echo.png", shot: sq(1.907, 1, -0.454, 0) },
-  { bp: "d", kind: "sq", left: 970, top: 1185, width: 445, height: 445, name: "Momentum Beam", blurb: "calm even\nhorizon light", price: "$ 950", image: "horizon.png", shot: sq(1.513, 1, -0.257, 0) },
+  { bp: "d", kind: "sq", left: 970, top: 1185, width: 445, height: 445, name: "Horizon Glow", blurb: "calm even\nhorizon light", price: "$ 950", image: "horizon.png", shot: sq(1.513, 1, -0.257, 0) },
   { bp: "d", kind: "sq", left: 1435, top: 1185, width: 445, height: 445, name: "Crystal Veil", blurb: "elegant\nfaceted softness", price: "$ 800", image: "crystal.png", shot: sq(1.394, 1, -0.197, 0) },
   { bp: "d", kind: "wide", left: 40, top: 1650, width: 910, height: 700, name: "Lunar Dome", blurb: "soft diffused light", price: "$ 750", image: "lunar.png", shot: wide(0.642, 0.903, 0.173, 0.049) },
   { bp: "d", kind: "wide", left: 970, top: 1650, width: 910, height: 700, name: "Striking red shade", blurb: "Crimson Accent", price: "$ 1300", image: "red.png", shot: wide(0.93, 1, 0.035, 0) },
