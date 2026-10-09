@@ -76,9 +76,9 @@ export function CatalogPage({
   const section = (hash: string) => `${home}#${hash}`
   const desktop = catalogCards.filter((card) => card.bp === "d")
   const desktopRows: Array<{ variant: "mid" | "sq" | "wide"; cards: CatalogCard[] }> = [
-    { variant: "mid", cards: [desktop[4], desktop[5], desktop[6]] },
     { variant: "sq", cards: [desktop[0], desktop[1], desktop[2], desktop[3]] },
-    { variant: "sq", cards: [desktop[7], desktop[8], desktop[10]] },
+    { variant: "mid", cards: [desktop[4], desktop[5], desktop[6]] },
+    { variant: "sq", cards: [desktop[7], desktop[8], desktop[9], desktop[10]] },
     { variant: "wide", cards: [desktop[11], desktop[12]] },
   ]
 
