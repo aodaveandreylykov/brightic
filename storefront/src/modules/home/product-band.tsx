@@ -19,7 +19,7 @@ export function ProductBand({
       <div className="band__head">
         <h2>{title}</h2>
         {popular ? null : (
-          <a className="link-more" href="#catalog">
+          <a className="link-more" href="/catalog">
             View catalog
           </a>
         )}
