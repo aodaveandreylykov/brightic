@@ -84,15 +84,17 @@
 
   const form = document.querySelector('.form');
   const note = document.querySelector('.form__note');
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-    note.hidden = false;
-    form.reset();
-  });
+  if (form && note) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      note.hidden = false;
+      form.reset();
+    });
+  }
 
   document.querySelectorAll('.panel__form').forEach(function (searchForm) {
     searchForm.addEventListener('submit', function (event) {
