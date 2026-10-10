@@ -224,7 +224,11 @@
 .also__price,
 .also__heart { position: absolute; }
 
-.also__price { opacity: 0.65; text-transform: uppercase; }
+.also__name,
+.also__blurb,
+.also__price { color: #000; }
+
+.also__price { opacity: 1; text-transform: uppercase; }
 
 .also__blurb { text-transform: uppercase; }
 
