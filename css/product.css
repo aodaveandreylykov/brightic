@@ -421,7 +421,7 @@
   top: 90px;
   left: 242px;
   width: 718px;
-  height: calc(100vh * 1920px / 100cqw);
+  height: calc((100vh - 20px) * 1920px / 100cqw - 90px);
 }
 
 .pdp-frame--d .title {
@@ -608,7 +608,7 @@
 .pdp-frame--t .hd__logo img { width: 135px; height: 32px; }
 .pdp-frame--t .hd__tools { gap: 20px; }
 
-.pdp-frame--t .stage { top: 72px; left: 20px; width: 290px; height: calc(100vh * 640px / 100cqw); }
+.pdp-frame--t .stage { top: 72px; left: 20px; width: 290px; height: calc((100vh - 20px) * 640px / 100cqw - 72px); }
 
 .pdp-frame--t .thumbs {
   top: 309px;
@@ -748,7 +748,7 @@
 .pdp-frame--m .hd__tools { gap: 20px; }
 .pdp-frame--m .hd__tools img { width: 19px; height: 20px; }
 
-.pdp-frame--m .stage { top: 43px; left: 20px; width: 280px; height: calc(100vh * 320px / 100cqw); }
+.pdp-frame--m .stage { top: 43px; left: 20px; width: 280px; height: calc((100vh - 20px) * 320px / 100cqw - 43px); }
 .pdp-frame--m .peek { top: 43px; left: 305px; width: 280px; height: 345px; }
 
 .pdp-frame--m .title {
