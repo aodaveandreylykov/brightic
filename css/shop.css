@@ -202,6 +202,11 @@ a { color: inherit; }
   color: var(--white);
 }
 
+.hero__fit {
+  position: relative;
+  height: 100%;
+}
+
 .hero__media {
   position: absolute;
   inset: 0;
@@ -210,11 +215,15 @@ a { color: inherit; }
 
 .hero__media img {
   position: absolute;
-  width: 202.86%;
-  height: 122.45%;
-  left: -51.72%;
-  top: -22.45%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
+  object-fit: cover;
+  /* Frame 320 crop: bottom of the square photo, zoomed so the lamp fills the hero. */
+  object-position: center bottom;
+  transform: scale(1.2245);
+  transform-origin: center bottom;
 }
 
 .hero__media::after {
@@ -760,10 +769,8 @@ a { color: inherit; }
   .hero { height: 580px; }
 
   .hero__media img {
-    width: 129.84%;
-    height: 143.1%;
-    left: -9.54%;
-    top: -2.03%;
+    object-position: center 12%;
+    transform: none;
   }
 
   .hero__eyebrow {
@@ -1014,6 +1021,59 @@ a { color: inherit; }
   .footer__pay img { height: 24px; }
 }
 
+/* Desktop hero — frame 1920, fluid from 1024 so the photo is not stretched. */
+@media (min-width: 1024px) {
+  .hero {
+    container-type: inline-size;
+    height: auto;
+    aspect-ratio: 1920 / 1004;
+    overflow: hidden;
+  }
+
+  .hero__fit {
+    width: 1920px;
+    height: 1004px;
+    transform: scale(calc(100cqi / 1920px));
+    transform-origin: top left;
+  }
+
+  .hero__media img {
+    object-position: center 30.33%;
+    transform: none;
+  }
+
+  .hero__eyebrow {
+    left: 40px;
+    top: 120px;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .hero__lead {
+    left: 961px;
+    top: 120px;
+    width: 491px;
+    font-size: 20px;
+  }
+
+  .hero__cta { left: 961px; top: 260px; }
+
+  .hero__title { left: 40px; top: 648px; }
+
+  .hero__design {
+    font-size: 180px;
+    line-height: 1.2;
+    letter-spacing: -10.8px;
+  }
+
+  .hero__born {
+    margin: -62px 0 0 548px;
+    font-size: 180px;
+    line-height: 0.9;
+    letter-spacing: -10.8px;
+  }
+}
+
 /* Desktop — frame 1920 */
 @media (min-width: 1920px) {
   .page { width: 1920px; margin: 0 auto; }
@@ -1063,46 +1123,6 @@ a { color: inherit; }
 
   .header__icons--desk { display: flex; gap: 15px; }
   .header__icons--compact { display: none; }
-
-  .hero { height: 1004px; }
-
-  .hero__media img {
-    width: 100%;
-    height: 191.24%;
-    left: -0.02%;
-    top: -27.67%;
-  }
-
-  .hero__eyebrow {
-    left: 40px;
-    top: 120px;
-    font-size: 16px;
-    line-height: 1.2;
-  }
-
-  .hero__lead {
-    left: 961px;
-    top: 120px;
-    width: 491px;
-    font-size: 20px;
-  }
-
-  .hero__cta { left: 961px; top: 260px; }
-
-  .hero__title { left: 40px; top: 648px; }
-
-  .hero__design {
-    font-size: 180px;
-    line-height: 1.2;
-    letter-spacing: -10.8px;
-  }
-
-  .hero__born {
-    margin: -62px 0 0 548px;
-    font-size: 180px;
-    line-height: 0.9;
-    letter-spacing: -10.8px;
-  }
 
   .band { margin-top: 180px; }
 

@@ -130,22 +130,24 @@ export function HomePage({
 
       <main>
         <section className="hero" aria-label="Design born of light">
-          <div className="hero__media">
-            <img src="/assets/shop/hero.jpg" alt="" />
+          <div className="hero__fit">
+            <div className="hero__media">
+              <img src="/assets/shop/hero.jpg" alt="" />
+            </div>
+            <p className="hero__eyebrow">Create an atmosphere</p>
+            <p className="hero__lead">
+              Turn every room into a gallery: our designer table lamps are designed to be the main accent of the interior – with impeccable detail workmanship, noble materials and light that highlights textures and creates the atmosphere you need at any time of the day
+            </p>
+            <a className="btn hero__cta" href="#collections">
+              View collection
+            </a>
+            <h1 className="hero__title">
+              <span className="hero__design">Design</span>
+              <span className="hero__born">
+                born <em>of light</em>
+              </span>
+            </h1>
           </div>
-          <p className="hero__eyebrow">Create an atmosphere</p>
-          <p className="hero__lead">
-            Turn every room into a gallery: our designer table lamps are designed to be the main accent of the interior – with impeccable detail workmanship, noble materials and light that highlights textures and creates the atmosphere you need at any time of the day
-          </p>
-          <a className="btn hero__cta" href="#collections">
-            View collection
-          </a>
-          <h1 className="hero__title">
-            <span className="hero__design">Design</span>
-            <span className="hero__born">
-              born <em>of light</em>
-            </span>
-          </h1>
         </section>
 
         <ProductBand
