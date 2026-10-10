@@ -1072,11 +1072,6 @@ a { color: inherit; }
     line-height: 0.9;
     letter-spacing: -10.8px;
   }
-}
-
-/* Desktop — frame 1920 */
-@media (min-width: 1920px) {
-  .page { width: 1920px; margin: 0 auto; }
 
   .header {
     height: 50px;
@@ -1123,6 +1118,11 @@ a { color: inherit; }
 
   .header__icons--desk { display: flex; gap: 15px; }
   .header__icons--compact { display: none; }
+}
+
+/* Desktop — frame 1920 */
+@media (min-width: 1920px) {
+  .page { width: 1920px; margin: 0 auto; }
 
   .band { margin-top: 180px; }
 
