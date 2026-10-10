@@ -18,7 +18,7 @@ export function ProductCard({
 
   return (
     <article className={classes}>
-      <a href="#catalog">
+      <a href="/product">
         <div className="card__media">
           {tabletImage ? (
             <>

@@ -34,9 +34,10 @@ function shotBox(card: CatalogCard, flow: boolean): CSSProperties {
 
 function LampCard({ card, photos, flow = false }: { card: CatalogCard; photos: string; flow?: boolean }) {
   return (
-    <article
+    <a
       className={kindClass[card.kind]}
       data-bp={card.bp}
+      href="/product"
       style={flow ? undefined : { left: card.left, top: card.top, width: card.width, height: card.height }}
     >
       <div className="lamp__shot" style={shotBox(card, flow)}>
@@ -58,7 +59,7 @@ function LampCard({ card, photos, flow = false }: { card: CatalogCard; photos: s
           </p>
         </>
       )}
-    </article>
+    </a>
   )
 }
 

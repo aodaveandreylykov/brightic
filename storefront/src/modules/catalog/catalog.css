@@ -58,6 +58,11 @@
   color: #37291f;
 }
 
+a.lamp {
+  color: inherit;
+  text-decoration: none;
+}
+
 .lamp[data-bp="t"],
 .lamp[data-bp="d"] { display: none; }
 
