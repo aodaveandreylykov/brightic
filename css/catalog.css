@@ -111,7 +111,7 @@
 .lamp--m-tall .lamp__name {
   top: 10px;
   right: 10px;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 0.9;
 }
 
@@ -119,7 +119,7 @@
 .lamp--m-tall .lamp__blurb {
   left: 10px;
   bottom: 14px;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 0.9;
 }
 
@@ -127,7 +127,7 @@
 .lamp--m-tall .lamp__price {
   right: 10px;
   bottom: 11px;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 1.1;
 }
 
@@ -237,7 +237,7 @@
   .lamp--t-lg .lamp__name {
     top: 10px;
     right: 10px;
-    font-size: 14px;
+    font-size: 20px;
     line-height: 1.1;
     letter-spacing: -0.7px;
   }
@@ -245,7 +245,7 @@
   .lamp--t-sm .lamp__blurb {
     top: 144px;
     left: 10px;
-    font-size: 12px;
+    font-size: 20px;
     line-height: 1.1;
     letter-spacing: -0.6px;
   }
@@ -253,14 +253,14 @@
   .lamp--t-lg .lamp__blurb {
     top: 276px;
     left: 10px;
-    font-size: 14px;
+    font-size: 20px;
     line-height: normal;
   }
 
   .lamp--t-sm .lamp__price {
     top: 155px;
     right: 10px;
-    font-size: 14px;
+    font-size: 20px;
     line-height: 1.1;
     letter-spacing: -0.7px;
   }
@@ -268,7 +268,7 @@
   .lamp--t-lg .lamp__price {
     top: 295px;
     right: 10px;
-    font-size: 14px;
+    font-size: 20px;
     line-height: 1.1;
     letter-spacing: -0.7px;
   }

@@ -164,7 +164,8 @@ a { color: inherit; }
 .menu nav { display: flex; flex-direction: column; gap: 18px; }
 
 .menu a {
-  font-size: 32px;
+  font-size: 20px;
+  font-weight: 400;
   line-height: 0.9;
   text-transform: uppercase;
   text-decoration: none;
@@ -335,7 +336,7 @@ a { color: inherit; }
 
 .card h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 400;
   line-height: 1.2;
 }
@@ -343,7 +344,8 @@ a { color: inherit; }
 .price {
   margin: 0;
   color: rgba(255, 255, 255, 0.65);
-  font-size: 14px;
+  font-size: 20px;
+  font-weight: 400;
   line-height: 1.2;
 }
 
@@ -817,7 +819,7 @@ a { color: inherit; }
 
   .card h3 { font-size: 20px; }
 
-  .price { font-size: 16px; }
+  .price { font-size: 20px; }
 
   .p-m { display: none; }
   .p-t { display: inline; }
@@ -1152,7 +1154,7 @@ a { color: inherit; }
   .card__media img { width: 72%; height: 82%; }
 
   .scroller--best .card h3 {
-    font-size: 23px;
+    font-size: 20px;
     letter-spacing: -1.15px;
   }
 
