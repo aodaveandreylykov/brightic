@@ -166,7 +166,7 @@
   border: 0;
 }
 
-.buy {
+.pdp .buy {
   display: flex;
   align-items: center;
   justify-content: center;
