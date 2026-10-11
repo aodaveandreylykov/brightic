@@ -129,6 +129,29 @@ export function HomeBehavior() {
       cleanups.push(() => searchForm.removeEventListener("submit", onSearch))
     })
 
+    const storeList = document.querySelector<HTMLElement>(".store__list")
+    const storePhoto = document.querySelector<HTMLImageElement>(".store__photo")
+    if (storeList && storePhoto) {
+      const homeSrc = storePhoto.getAttribute("src") || ""
+      const homeAlt = storePhoto.getAttribute("alt") || ""
+      const showStorePhoto = (src: string, alt: string) => {
+        storePhoto.setAttribute("src", src)
+        storePhoto.setAttribute("alt", alt)
+      }
+      storeList.querySelectorAll("a").forEach((link) => {
+        const onEnter = () => {
+          const photo = link.getAttribute("data-photo")
+          if (photo) showStorePhoto(photo, (link.textContent || "").trim())
+          else showStorePhoto(homeSrc, homeAlt)
+        }
+        link.addEventListener("pointerenter", onEnter)
+        cleanups.push(() => link.removeEventListener("pointerenter", onEnter))
+      })
+      const onLeave = () => showStorePhoto(homeSrc, homeAlt)
+      storeList.addEventListener("pointerleave", onLeave)
+      cleanups.push(() => storeList.removeEventListener("pointerleave", onLeave))
+    }
+
     return () => {
       cleanups.forEach((cleanup) => cleanup())
     }

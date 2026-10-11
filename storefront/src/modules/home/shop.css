@@ -404,6 +404,12 @@ a { color: inherit; }
 .store__list a.is-active,
 .store__list a:hover { color: var(--white); }
 
+.store__list:hover a.is-active:not(:hover) {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.store__fit { display: contents; }
+
 .store__photo {
   width: 85px;
   height: 99px;
@@ -1180,6 +1186,62 @@ a { color: inherit; }
   #catalog .p-d { display: inline; }
 }
 
+/* Store sections — frame 1542×1089, fluid from a laptop width. */
+@media (min-width: 1024px) {
+  .store {
+    display: block;
+    width: min(1542px, calc(100% - 80px));
+    margin: 180px 0 0 40px;
+    padding: 0;
+    aspect-ratio: 1542 / 1089;
+    container-type: inline-size;
+    overflow: hidden;
+  }
+
+  .store__fit {
+    position: relative;
+    display: block;
+    width: 1542px;
+    height: 1089px;
+    transform: scale(calc(100cqi / 1542px));
+    transform-origin: top left;
+  }
+
+  .store h2 {
+    position: absolute;
+    left: 0;
+    top: 18px;
+    font-size: 48px;
+    line-height: 1.2;
+    letter-spacing: -2.4px;
+    white-space: nowrap;
+  }
+
+  .store h2 span { display: inline; }
+
+  .store__list {
+    position: absolute;
+    top: 0;
+    left: 920px;
+    width: 622px;
+    font-size: 64px;
+    line-height: 1.2;
+    gap: 15px;
+  }
+
+  .store__list a { white-space: nowrap; }
+
+  .store__photo {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 365px;
+    height: 425px;
+    margin: 0;
+    object-fit: cover;
+  }
+}
+
 /* Desktop — frame 1920 */
 @media (min-width: 1920px) {
   .page { width: 1920px; margin: 0 auto; }
@@ -1250,34 +1312,6 @@ a { color: inherit; }
   .img-d { display: block; }
 
   .band .band__btn--center { display: none; }
-
-  .store {
-    width: 1542px;
-    margin: 180px 0 0 40px;
-    padding: 0;
-    grid-template-columns: 365px 622px;
-    justify-content: space-between;
-  }
-
-  .store h2 {
-    font-size: 48px;
-    line-height: 1.2;
-    letter-spacing: -2.4px;
-  }
-
-  .store h2 span { display: inline; }
-
-  .store__list {
-    font-size: 64px;
-    line-height: 1.2;
-    gap: 15px;
-  }
-
-  .store__photo {
-    width: 365px;
-    height: 425px;
-    margin-top: 120px;
-  }
 
   .collections {
     height: 1080px;

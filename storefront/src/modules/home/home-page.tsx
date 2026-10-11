@@ -2,19 +2,19 @@ import type { Lamp } from "@/lib/catalog"
 import { ProductBand } from "@/modules/home/product-band"
 
 const storeSections = [
-  "Facets of light",
-  "Warm outline",
-  "Urban glow",
-  "Lunar path",
-  "Echo of materials",
-  "Momentum",
-  "Quiet light",
-  "Golden hour",
-  "Geometry of shadow",
-  "Flow of forms",
-  "Industrial pulse",
-  "Crystal haze",
-]
+  ["Facets of light", "/assets/shop/col-facets.jpg"],
+  ["Warm outline", "/assets/shop/col-warm.jpg"],
+  ["Urban glow", "/assets/shop/col-urban.jpg"],
+  ["Lunar path", "/assets/shop/store-lamp.png"],
+  ["Echo of materials", ""],
+  ["Momentum", "/assets/shop/col-momentum.jpg"],
+  ["Quiet light", "/assets/shop/col-quiet.jpg"],
+  ["Golden hour", "/assets/shop/col-golden.jpg"],
+  ["Geometry of shadow", "/assets/shop/col-geometry.jpg"],
+  ["Flow of forms", ""],
+  ["Industrial pulse", "/assets/shop/col-industrial.jpg"],
+  ["Crystal haze", "/assets/shop/col-crystal.jpg"],
+] as const
 
 const collectionTiles = [
   ["tile--crystal", "/assets/shop/col-crystal.jpg", "Crystal Haze"],
@@ -158,19 +158,25 @@ export function HomePage({
         />
 
         <section className="store" aria-labelledby="store-title">
-          <h2 id="store-title">
-            <span>Store</span> <span>sections</span>
-          </h2>
-          <ul className="store__list">
-            {storeSections.map((name) => (
-              <li key={name}>
-                <a href="#collections" className={name === "Lunar path" ? "is-active" : undefined}>
-                  {name}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <img className="store__photo" src="/assets/shop/store-lamp.png" alt="Table lamp from the Lunar Path collection" />
+          <div className="store__fit">
+            <h2 id="store-title">
+              <span>Store</span> <span>sections</span>
+            </h2>
+            <ul className="store__list">
+              {storeSections.map(([name, photo]) => (
+                <li key={name}>
+                  <a
+                    href="#collections"
+                    className={name === "Lunar path" ? "is-active" : undefined}
+                    data-photo={photo || undefined}
+                  >
+                    {name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <img className="store__photo" src="/assets/shop/store-lamp.png" alt="Table lamp from the Lunar Path collection" />
+          </div>
         </section>
 
         <section className="collections" id="collections">

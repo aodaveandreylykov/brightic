@@ -106,4 +106,28 @@
       }
     });
   });
+
+  const storeList = document.querySelector('.store__list');
+  const storePhoto = document.querySelector('.store__photo');
+  if (storeList && storePhoto) {
+    const homeSrc = storePhoto.getAttribute('src');
+    const homeAlt = storePhoto.getAttribute('alt');
+
+    function showStorePhoto(src, alt) {
+      storePhoto.setAttribute('src', src);
+      storePhoto.setAttribute('alt', alt);
+    }
+
+    storeList.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('pointerenter', function () {
+        const photo = link.getAttribute('data-photo');
+        if (photo) showStorePhoto(photo, link.textContent.trim());
+        else showStorePhoto(homeSrc, homeAlt);
+      });
+    });
+
+    storeList.addEventListener('pointerleave', function () {
+      showStorePhoto(homeSrc, homeAlt);
+    });
+  }
 })();
