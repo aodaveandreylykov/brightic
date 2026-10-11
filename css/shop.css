@@ -1188,6 +1188,73 @@ a { color: inherit; }
   #catalog .p-d { display: inline; }
 }
 
+/* Most popular lamps desktop row, from a laptop width. */
+@media (min-width: 1024px) {
+  #popular { margin-top: 180px; }
+
+  #popular .band__head {
+    position: relative;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 40px;
+    margin-bottom: 30px;
+  }
+
+  #popular .band__head h2 {
+    font-size: clamp(36px, calc((100vw - 600px) / 10.75), 48px);
+    line-height: 1.2;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+  }
+
+  #popular .band__head .band__btn {
+    display: inline-flex;
+    position: absolute;
+    right: 40px;
+    top: 0;
+  }
+
+  #popular .link-more--center,
+  #popular .band__btn--center { display: none; }
+
+  #popular .scroller--pop {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0 40px;
+    overflow: visible;
+  }
+
+  #popular .scroller--pop .card {
+    flex: none;
+    min-width: 0;
+  }
+
+  #popular .card a { gap: 15px; }
+
+  #popular .scroller--pop .card__media {
+    height: auto;
+    aspect-ratio: 600 / 436;
+  }
+
+  #popular .card__media img { width: 72%; height: 82%; }
+
+  #popular .img-s { display: none; }
+  #popular .img-d { display: block; }
+
+  #popular .card h3,
+  #popular .price {
+    font-size: 20px;
+    text-align: left;
+  }
+
+  #popular .price { letter-spacing: -1px; }
+
+  #popular .p-m,
+  #popular .p-t { display: none; }
+  #popular .p-d { display: inline; }
+}
+
 /* Store sections — frame 1542×1089, fluid from a laptop width. */
 @media (min-width: 1024px) {
   .store {
