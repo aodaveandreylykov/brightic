@@ -17,16 +17,16 @@ const storeSections = [
 ] as const
 
 const collectionTiles = [
-  ["tile--crystal", "/assets/shop/col-crystal.jpg", "Crystal Haze"],
-  ["tile--golden", "/assets/shop/col-golden.jpg", "Golden Hour"],
-  ["tile--warm", "/assets/shop/col-warm.jpg", "Warm Outline"],
-  ["tile--facets", "/assets/shop/col-facets.jpg", "Facets of Light"],
-  ["tile--geometry", "/assets/shop/col-geometry.jpg", "Geometry of Shadow"],
-  ["tile--lunar", "/assets/shop/col-lunar.jpg", "Lunar Path"],
-  ["tile--quiet", "/assets/shop/col-quiet.jpg", "Quiet Light"],
-  ["tile--industrial", "/assets/shop/col-industrial.jpg", "Industrial Pulse"],
-  ["tile--urban", "/assets/shop/col-urban.jpg", "Urban Glow"],
-  ["tile--momentum", "/assets/shop/col-momentum.jpg", "Momentum"],
+  ["tile--crystal", "/assets/shop/all-crystal.jpg", "Crystal Haze"],
+  ["tile--golden", "/assets/shop/all-golden.jpg", "Golden Hour"],
+  ["tile--warm", "/assets/shop/all-warm.jpg", "Warm Outline"],
+  ["tile--facets", "/assets/shop/all-facets.jpg", "Facets of Light"],
+  ["tile--geometry", "/assets/shop/all-geometry.jpg", "Geometry of Shadow"],
+  ["tile--lunar", "/assets/shop/all-lunar.jpg", "Lunar Path"],
+  ["tile--quiet", "/assets/shop/all-quiet.jpg", "Quiet Light"],
+  ["tile--industrial", "/assets/shop/all-industrial.jpg", "Industrial Pulse"],
+  ["tile--urban", "/assets/shop/all-urban.jpg", "Urban Glow"],
+  ["tile--momentum", "/assets/shop/all-momentum.jpg", "Momentum"],
 ] as const
 
 export function HomePage({
@@ -180,6 +180,7 @@ export function HomePage({
         </section>
 
         <section className="collections" id="collections">
+          <div className="collections__fit">
           <div className="collections__copy">
             <h2>All collections</h2>
             <p className="collections__lead collections__lead--full">
@@ -198,6 +199,7 @@ export function HomePage({
               <figcaption>{caption}</figcaption>
             </figure>
           ))}
+          </div>
         </section>
 
         <ProductBand

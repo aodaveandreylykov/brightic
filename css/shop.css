@@ -417,6 +417,8 @@ a { color: inherit; }
 }
 
 /* Collections */
+.collections__fit { display: contents; }
+
 .collections {
   position: relative;
   display: grid;
@@ -1242,6 +1244,94 @@ a { color: inherit; }
   }
 }
 
+/* All collections — frame 1920×1080, fluid from a laptop width. */
+@media (min-width: 1024px) {
+  .collections {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin-top: 180px;
+    padding: 0;
+    aspect-ratio: 1920 / 1080;
+    container-type: inline-size;
+    overflow: hidden;
+  }
+
+  .collections__fit {
+    display: block;
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    transform: scale(calc(100cqi / 1920px));
+    transform-origin: top left;
+  }
+
+  .collections__copy {
+    display: block;
+    position: absolute;
+    left: 689px;
+    top: 387px;
+    width: 543px;
+    z-index: 2;
+  }
+
+  .collections h2 {
+    margin: 0;
+    font-size: 64px;
+    line-height: 1.2;
+    letter-spacing: -3.2px;
+  }
+
+  .collections__lead {
+    max-width: none;
+    width: 543px;
+    margin: 30px 0 30px;
+    font-size: 20px;
+  }
+
+  .collections .btn {
+    position: static;
+    left: auto;
+    top: auto;
+    z-index: auto;
+    width: 245px;
+    margin: 0;
+    transform: none;
+  }
+
+  .collections .tile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    width: auto;
+    right: auto;
+  }
+
+  .collections .tile img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+  }
+
+  .collections figcaption { font-size: 20px; }
+
+  .tile--crystal { left: 1px; top: 30px; width: 220px; }
+  .tile--golden { left: 431px; top: 30px; width: 360px; }
+  .tile--warm { left: 1130px; top: 30px; width: 360px; }
+  .tile--facets { left: 1700px; top: 30px; width: 220px; }
+  .tile--geometry { left: 0; top: 414px; width: 315px; }
+  .tile--lunar { left: 1605px; top: 416px; width: 315px; }
+  .tile--quiet { left: 0; top: 778px; width: 221px; }
+  .tile--industrial { left: 431px; top: 778px; width: 360px; }
+  .tile--urban { left: 1130px; top: 778px; width: 360px; right: auto; }
+  .tile--momentum { left: 1700px; top: 778px; width: 220px; }
+
+  .collections .tile--geometry img,
+  .collections .tile--lunar img { height: 215px; }
+}
+
 /* Desktop — frame 1920 */
 @media (min-width: 1920px) {
   .page { width: 1920px; margin: 0 auto; }
@@ -1312,75 +1402,6 @@ a { color: inherit; }
   .img-d { display: block; }
 
   .band .band__btn--center { display: none; }
-
-  .collections {
-    height: 1080px;
-    margin-top: 180px;
-    padding: 0;
-  }
-
-  .collections__copy {
-    display: block;
-    position: absolute;
-    left: 689px;
-    top: 387px;
-    width: 543px;
-    z-index: 2;
-  }
-
-  .collections h2 {
-    margin: 0;
-    font-size: 64px;
-    line-height: 1.2;
-    letter-spacing: -3.2px;
-  }
-
-  .collections__lead {
-    max-width: none;
-    width: 543px;
-    margin: 30px 0 30px;
-    font-size: 20px;
-  }
-
-  .collections .btn {
-    position: static;
-    left: auto;
-    top: auto;
-    transform: none;
-  }
-
-  .collections .tile {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: absolute;
-    width: auto;
-  }
-
-  .collections .tile img { width: 100%; object-fit: cover; }
-
-  .collections figcaption { font-size: 20px; }
-
-  .tile--crystal { left: 1px; top: 30px; width: 220px; }
-  .tile--crystal img { height: 240px; }
-  .tile--golden { left: 431px; top: 30px; width: 360px; }
-  .tile--golden img { height: 240px; }
-  .tile--warm { left: 1130px; top: 30px; width: 360px; }
-  .tile--warm img { height: 240px; }
-  .tile--facets { left: 1700px; top: 30px; width: 220px; }
-  .tile--facets img { height: 240px; }
-  .tile--geometry { left: 0; top: 414px; width: 315px; }
-  .tile--geometry img { height: 215px; }
-  .tile--lunar { left: 1605px; top: 416px; width: 315px; }
-  .tile--lunar img { height: 215px; }
-  .tile--quiet { left: 0; top: 778px; width: 221px; }
-  .tile--quiet img { height: 240px; }
-  .tile--industrial { left: 431px; top: 778px; width: 360px; }
-  .tile--industrial img { height: 240px; }
-  .tile--urban { left: 1130px; top: 778px; width: 360px; right: auto; }
-  .tile--urban img { height: 240px; }
-  .tile--momentum { left: 1700px; top: 778px; width: 220px; }
-  .tile--momentum img { height: 240px; }
 
   .about {
     width: 910px;
