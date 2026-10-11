@@ -619,6 +619,9 @@ a { color: inherit; }
 .arrow--line:first-child img { transform: scaleX(-1); }
 
 /* Contact */
+.contact__scale,
+.contact__fit { display: contents; }
+
 .contact {
   margin-top: 40px;
   padding: 24px 20px 28px;
@@ -1396,6 +1399,85 @@ a { color: inherit; }
   }
 }
 
+/* Get in touch — frame 1840×673, fluid from a laptop width. */
+@media (min-width: 1024px) {
+  .contact {
+    width: min(1840px, calc(100% - 80px));
+    margin: 180px auto 0;
+    padding: 0;
+    container-type: inline-size;
+    background: var(--beige);
+    color: var(--brown);
+  }
+
+  .contact__scale {
+    display: block;
+    height: calc(673.1875px * 100cqi / 1840px);
+    overflow: hidden;
+  }
+
+  .contact__fit {
+    display: block;
+    width: 1840px;
+    padding: 100px 0 80px;
+    transform: scale(calc(100cqi / 1840px));
+    transform-origin: top left;
+  }
+
+  .contact h2 {
+    width: 835px;
+    margin: 0 auto 20px;
+    font-family: var(--font);
+    font-size: 125px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -6.25px;
+  }
+
+  .contact .form {
+    width: 910px;
+    margin: 0 auto;
+    gap: 10px;
+  }
+
+  .contact .form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .contact .field span {
+    font-family: var(--font);
+    font-size: 20px;
+    opacity: 0.8;
+  }
+
+  .contact .field input,
+  .contact .field textarea {
+    height: 66px;
+    font-family: var(--font);
+    font-size: 20px;
+  }
+
+  .contact .field--message textarea { height: 122px; }
+
+  .contact .check {
+    font-family: var(--font);
+    font-size: 20px;
+    line-height: 0.9;
+  }
+
+  .contact .check input { width: 24px; height: 24px; }
+
+  .contact .btn--submit {
+    height: 86px;
+    font-family: var(--font);
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 0.9;
+  }
+}
+
 /* Store sections — frame 1542×1089, fluid from a laptop width. */
 @media (min-width: 1024px) {
   .store {
@@ -1610,57 +1692,6 @@ a { color: inherit; }
   .img-d { display: block; }
 
   .band .band__btn--center { display: none; }
-
-  .contact {
-    width: 1840px;
-    margin: 180px auto 0;
-    padding: 100px 0 80px;
-  }
-
-  .contact h2 {
-    width: 835px;
-    margin: 0 auto 20px;
-    font-family: var(--font);
-    font-size: 125px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -6.25px;
-  }
-
-  .form { width: 910px; gap: 10px; }
-
-  .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-  .field span {
-    font-family: var(--font);
-    font-size: 20px;
-    opacity: 0.8;
-  }
-
-  .field input,
-  .field textarea {
-    height: 66px;
-    font-family: var(--font);
-    font-size: 20px;
-  }
-
-  .field--message textarea { height: 122px; }
-
-  .check {
-    font-family: var(--font);
-    font-size: 20px;
-    line-height: 0.9;
-  }
-
-  .check input { width: 24px; height: 24px; }
-
-  .btn--submit {
-    height: 86px;
-    font-family: var(--font);
-    font-size: 48px;
-    font-weight: 700;
-    line-height: 0.9;
-  }
 
   .footer {
     position: relative;

@@ -330,6 +330,8 @@ export function HomePage({
         </section>
 
         <section className="contact" id="contact">
+          <div className="contact__scale">
+          <div className="contact__fit">
           <h2>Get in touch</h2>
           <form className="form" action="#contact" method="post">
             <div className="form__row">
@@ -359,6 +361,8 @@ export function HomePage({
               Message sent. We will write back shortly.
             </p>
           </form>
+          </div>
+          </div>
         </section>
       </main>
 
