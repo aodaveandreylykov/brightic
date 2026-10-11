@@ -413,9 +413,16 @@
   flex-direction: column;
   gap: 17px;
   width: 162px;
+  height: calc((100vh - 20px) * 1920px / 100cqw - 90px);
 }
 
-.pdp-frame--d .thumb { width: 162px; height: 183px; }
+.pdp-frame--d .thumb {
+  width: 162px;
+  flex: 1 1 0;
+  height: auto;
+  max-height: 183px;
+  min-height: 0;
+}
 
 .pdp-frame--d .stage {
   top: 90px;
