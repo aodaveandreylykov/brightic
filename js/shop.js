@@ -68,7 +68,7 @@
       bar.style.width = Math.max(36.41, portion * 100) + '%';
     }
     cards.forEach(function (cardEl, i) {
-      cardEl.setAttribute('aria-hidden', String(i !== index && window.innerWidth < 1920));
+      cardEl.setAttribute('aria-hidden', String(i !== index && window.innerWidth < 1024));
     });
   }
 
