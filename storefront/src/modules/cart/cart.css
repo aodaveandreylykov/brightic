@@ -4,14 +4,15 @@
   position: fixed;
   inset: 0;
   z-index: 40;
+  display: none;
   background: rgba(0, 0, 0, 0.3);
   border: 0;
   padding: 0;
   cursor: pointer;
 }
 
-.cart-backdrop[hidden] {
-  display: none;
+.cart-backdrop.is-open {
+  display: block;
 }
 
 .panel.panel--cart {
@@ -21,6 +22,7 @@
   right: 0;
   left: auto;
   bottom: 0;
+  display: none;
   width: min(777px, 100vw);
   max-width: 100%;
   height: 100%;
@@ -33,8 +35,8 @@
   box-shadow: none;
 }
 
-.panel.panel--cart[hidden] {
-  display: none;
+.panel.panel--cart.is-open {
+  display: block;
 }
 
 .cart-drawer {
@@ -117,10 +119,11 @@
   opacity: 0.65;
 }
 
-.cart-drawer__empty[hidden],
-.cart-drawer__items[hidden],
-.cart-drawer__more[hidden] {
-  display: none;
+.cart-drawer__empty.is-hidden,
+.cart-drawer__items.is-hidden,
+.cart-drawer__more.is-hidden,
+.cart-drawer__foot.is-hidden {
+  display: none !important;
 }
 
 .cart-drawer__empty-link {

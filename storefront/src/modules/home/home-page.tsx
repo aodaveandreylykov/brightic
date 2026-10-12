@@ -1,5 +1,4 @@
 import type { Lamp } from "@/lib/catalog"
-import CartDrawer from "@/modules/cart/cart-drawer"
 import { ProductBand } from "@/modules/home/product-band"
 
 const storeSections = [
@@ -122,8 +121,6 @@ export function HomePage({
           View catalogue
         </a>
       </div>
-      <CartDrawer catalogHref="/catalog" />
-
       <main>
         <section className="hero" aria-label="Design born of light">
           <div className="hero__fit">

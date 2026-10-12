@@ -30,8 +30,22 @@ export const cartSuggestions: CartSuggest[] = [
 export default function CartDrawer({ catalogHref = "/catalog" }: { catalogHref?: string }) {
   return (
     <>
-      <button type="button" className="cart-backdrop" id="cart-backdrop" hidden aria-label="Close cart" />
-      <div className="panel panel--cart" id="panel-cart" hidden>
+      <button
+        type="button"
+        className="cart-backdrop"
+        id="cart-backdrop"
+        data-cart-backdrop
+        aria-label="Close cart"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      <aside
+        className="panel panel--cart"
+        id="panel-cart"
+        data-cart-panel
+        aria-hidden="true"
+        aria-label="Your cart"
+      >
         <div className="cart-drawer" data-cart-root>
           <div className="cart-drawer__head">
             <h2 className="cart-drawer__title" data-cart-title>
@@ -46,14 +60,19 @@ export default function CartDrawer({ catalogHref = "/catalog" }: { catalogHref?:
           <div className="cart-drawer__body">
             <div className="cart-drawer__empty" data-cart-empty>
               <p>Your basket is empty.</p>
-              <a className="cart-drawer__empty-link" href={catalogHref}>
+              <a className="cart-drawer__empty-link" href={catalogHref} data-cart-close-nav>
                 View catalogue
               </a>
             </div>
 
-            <div className="cart-drawer__items" data-cart-items hidden />
+            <div className="cart-drawer__items is-hidden" data-cart-items data-cart-section="items" />
 
-            <section className="cart-drawer__more" data-cart-more hidden aria-label="Add more light">
+            <section
+              className="cart-drawer__more is-hidden"
+              data-cart-more
+              data-cart-section="more"
+              aria-label="Add more light"
+            >
               <h3 className="cart-drawer__more-title">Add more light</h3>
               <div className="cart-suggest" data-cart-suggest>
                 {cartSuggestions.map((item) => (
@@ -83,14 +102,14 @@ export default function CartDrawer({ catalogHref = "/catalog" }: { catalogHref?:
             </section>
           </div>
 
-          <div className="cart-drawer__foot" data-cart-foot hidden>
+          <div className="cart-drawer__foot is-hidden" data-cart-foot data-cart-section="foot">
             <button type="button" className="cart-drawer__checkout" data-cart-checkout>
               Checkout - $ 0
             </button>
             <p className="cart-drawer__note">Shipping &amp; taxes calculated at checkout</p>
           </div>
         </div>
-      </div>
+      </aside>
     </>
   )
 }

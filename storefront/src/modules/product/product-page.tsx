@@ -1,9 +1,7 @@
-import CartDrawer from "@/modules/cart/cart-drawer"
 import "@/modules/product/product.css"
 
 export function ProductPage() {
   return (
-<>
 <div className="pdp">
     <div className="pdp-fit">
       <div className="pdp-frame pdp-frame--m">
@@ -377,7 +375,5 @@ export function ProductPage() {
       </div>
     </div>
   </div>
-  <CartDrawer catalogHref="/catalog" />
-</>
   )
 }

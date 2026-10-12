@@ -35,29 +35,26 @@ export function HomeBehavior() {
       })
     }
 
-    const backdrop = document.getElementById("cart-backdrop")
-    const syncCartChrome = (cartOpen: boolean) => {
-      if (backdrop) backdrop.hidden = !cartOpen
-      body.classList.toggle("cart-open", cartOpen)
-    }
-
     document.querySelectorAll<HTMLButtonElement>("[data-panel]").forEach((button) => {
       const onPanel = () => {
         const id = button.getAttribute("aria-controls")
         // Cart drawer is owned by BrighticCart (open/close + backdrop).
-        if (id === "panel-cart") return
+        if (id === "panel-cart" || button.getAttribute("data-panel") === "cart") return
         const panel = id ? document.getElementById(id) : null
         if (!panel) return
         const willOpen = panel.hidden
         document.querySelectorAll<HTMLElement>(".panel").forEach((other) => {
+          if (other.id === "panel-cart") return
           other.hidden = true
         })
         document.querySelectorAll<HTMLButtonElement>("[data-panel]").forEach((other) => {
+          if (other.getAttribute("aria-controls") === "panel-cart") return
           other.setAttribute("aria-expanded", "false")
         })
         panel.hidden = !willOpen
         button.setAttribute("aria-expanded", String(willOpen))
-        syncCartChrome(false)
+        const cart = (window as Window & { BrighticCart?: { close?: () => void } }).BrighticCart
+        cart?.close?.()
         closeMenu()
       }
       button.addEventListener("click", onPanel)

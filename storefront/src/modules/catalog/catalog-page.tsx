@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react"
-import CartDrawer from "@/modules/cart/cart-drawer"
 import { catalogCards, type CatalogCard, type Shot } from "@/modules/catalog/catalog-cards"
 import "./catalog.css"
 
@@ -169,8 +168,6 @@ export function CatalogPage({
           View catalogue
         </a>
       </div>
-      <CartDrawer catalogHref={catalog} />
-
       <main>
         <div className="catalog-bar">
           <div className="catalog-bar__side">
