@@ -74,7 +74,7 @@ export async function getHomepageLamps(): Promise<{
     const { products } = await sdk.store.product.list({
       limit: 50,
       region_id: region?.id,
-      fields: "id,title,handle,*images,+metadata,*variants.calculated_price",
+      fields: "id,title,handle,*images,+metadata,*variants,*variants.calculated_price",
     })
 
     const lamps = (products as StoreProduct[]).map(toLamp)

@@ -9,10 +9,17 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import {
+  addLineItem,
+  deleteLineItem,
+  ensureCart,
+  findVariantId,
+  updateLineItem,
+  type StoreCart,
+  type StoreCartItem,
+} from "@/lib/store-cart"
 import "@/modules/cart/cart.css"
 
-const STORAGE_KEY = "brightic-cart"
-const SEED_KEY = "brightic-cart-seeded"
 const ASSETS = "/assets/cart"
 
 export type CartItem = {
@@ -32,39 +39,30 @@ type CartSuggest = {
   image: string
 }
 
+type AddPayload = {
+  variantId?: string
+  productId?: string
+  title?: string
+  handle?: string
+  qty?: number
+}
+
 type CartContextValue = {
   items: CartItem[]
   open: boolean
   count: number
   total: number
+  pending: boolean
+  error: string
   openCart: () => void
   closeCart: () => void
   toggleCart: () => void
-  addItem: (item: Omit<CartItem, "qty"> & { qty?: number }) => void
-  removeItem: (id: string) => void
-  setQty: (id: string, qty: number) => void
+  addItem: (item: AddPayload) => Promise<void>
+  removeItem: (id: string) => Promise<void>
+  setQty: (id: string, qty: number) => Promise<void>
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
-
-const DEMO: CartItem[] = [
-  {
-    id: "flux-line",
-    title: "Flux line",
-    blurb: "Fluid modern light form",
-    price: 750,
-    qty: 1,
-    image: `${ASSETS}/item-flux.png`,
-  },
-  {
-    id: "steel-petal",
-    title: "Steel Petal",
-    blurb: "Subtle reflective warmth",
-    price: 1200,
-    qty: 1,
-    image: `${ASSETS}/item-steel.png`,
-  },
-]
 
 const SUGGESTIONS: CartSuggest[] = [
   {
@@ -83,52 +81,56 @@ const SUGGESTIONS: CartSuggest[] = [
   },
 ]
 
+const IMAGE_FALLBACK: Record<string, string> = {
+  "flux line": `${ASSETS}/item-flux.png`,
+  "steel petal": `${ASSETS}/item-steel.png`,
+  lumenweave: `${ASSETS}/suggest-lumen.png`,
+  "echo glow": `${ASSETS}/suggest-echo.png`,
+}
+
 function money(amount: number) {
   return `$ ${Math.round(amount || 0)}`
 }
 
-function normalize(raw: unknown): CartItem[] {
-  if (!Array.isArray(raw)) return []
-  return raw
-    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
-    .filter((item) => typeof item.id === "string" && item.id)
-    .map((item) => ({
-      id: String(item.id),
-      title: String(item.title || item.id),
-      blurb: String(item.blurb || ""),
-      price: Number(item.price) || 0,
-      qty: Math.max(1, Math.min(99, Number(item.qty) || 1)),
-      image: String(item.image || `${ASSETS}/item-flux.png`),
-    }))
+function titleOf(item: StoreCartItem) {
+  return item.product_title || item.product?.title || item.title || "Lamp"
 }
 
-function readStorage(): CartItem[] {
-  try {
-    return normalize(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"))
-  } catch {
-    return []
-  }
+function blurbOf(item: StoreCartItem) {
+  const raw = item.subtitle || item.product_description || item.product?.description || ""
+  return raw.replace(/\s+/g, " ").trim()
 }
 
-function writeStorage(items: CartItem[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+function imageOf(item: StoreCartItem) {
+  const title = titleOf(item).toLowerCase()
+  return (
+    item.thumbnail ||
+    item.product?.images?.[0]?.url ||
+    IMAGE_FALLBACK[title] ||
+    `${ASSETS}/item-flux.png`
+  )
 }
 
-function ensureSeed(): CartItem[] {
-  const existing = readStorage()
-  if (localStorage.getItem(SEED_KEY)) return existing
-  if (existing.length) {
-    localStorage.setItem(SEED_KEY, "1")
-    return existing
-  }
-  writeStorage(DEMO)
-  localStorage.setItem(SEED_KEY, "1")
-  return DEMO.map((item) => ({ ...item }))
+function mapItems(cart?: StoreCart | null): CartItem[] {
+  return (cart?.items ?? []).map((item) => ({
+    id: item.id,
+    title: titleOf(item),
+    blurb: blurbOf(item),
+    price: Number(item.unit_price) || 0,
+    qty: Math.max(1, Number(item.quantity) || 1),
+    image: imageOf(item),
+  }))
+}
+
+function cartTotal(cart?: StoreCart | null, items: CartItem[] = []) {
+  const fromCart = Number(cart?.item_total ?? cart?.total)
+  if (Number.isFinite(fromCart) && fromCart > 0) return fromCart
+  return items.reduce((sum, item) => sum + item.price * item.qty, 0)
 }
 
 export function useCart() {
   const ctx = useContext(CartContext)
-  if (!ctx) throw new Error("useCart must be used within CartProvider")
+  if (!ctx) throw new Error("useCart must be used within a CartProvider")
   return ctx
 }
 
@@ -139,70 +141,79 @@ export default function CartProvider({
   children: ReactNode
   catalogHref?: string
 }) {
-  const [items, setItems] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<StoreCart | null>(null)
   const [open, setOpen] = useState(false)
-  const [ready, setReady] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState("")
 
-  useEffect(() => {
-    setItems(ensureSeed())
-    setReady(true)
-  }, [])
-
-  useEffect(() => {
-    if (!ready) return
-    writeStorage(items)
-  }, [items, ready])
-
+  const items = useMemo(() => mapItems(cart), [cart])
   const count = useMemo(() => items.reduce((sum, item) => sum + item.qty, 0), [items])
-  const total = useMemo(() => items.reduce((sum, item) => sum + item.price * item.qty, 0), [items])
+  const total = useMemo(() => cartTotal(cart, items), [cart, items])
 
   const openCart = useCallback(() => setOpen(true), [])
   const closeCart = useCallback(() => setOpen(false), [])
   const toggleCart = useCallback(() => setOpen((value) => !value), [])
 
-  const addItem = useCallback((payload: Omit<CartItem, "qty"> & { qty?: number }) => {
-    setItems((prev) => {
-      const qty = Math.max(1, payload.qty || 1)
-      const found = prev.some((item) => item.id === payload.id)
-      if (!found) {
-        return [
-          ...prev,
-          {
-            id: payload.id,
-            title: payload.title,
-            blurb: payload.blurb,
-            price: payload.price,
-            qty,
-            image: payload.image,
-          },
-        ]
-      }
-      return prev.map((item) =>
-        item.id === payload.id
-          ? {
-              ...item,
-              qty: Math.min(99, item.qty + qty),
-              title: payload.title || item.title,
-              blurb: payload.blurb || item.blurb,
-              price: payload.price ?? item.price,
-              image: payload.image || item.image,
-            }
-          : item
-      )
-    })
+  const loadCart = useCallback(async () => {
+    try {
+      const next = await ensureCart()
+      setCart(next)
+      setError("")
+      return next
+    } catch {
+      setError("")
+      return null
+    }
   }, [])
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id))
+  useEffect(() => {
+    void loadCart()
+  }, [loadCart])
+
+  const run = useCallback(async (action: () => Promise<StoreCart | void>) => {
+    setPending(true)
+    setError("")
+    try {
+      const next = await action()
+      if (next) setCart(next)
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : "Could not update cart"
+      setError(message)
+      throw caught
+    } finally {
+      setPending(false)
+    }
   }, [])
 
-  const setQty = useCallback((id: string, qty: number) => {
-    setItems((prev) => {
+  const addItem = useCallback(
+    async (payload: AddPayload) => {
+      await run(async () => {
+        const variantId = await findVariantId({
+          variantId: payload.variantId,
+          productId: payload.productId,
+          title: payload.title,
+          handle: payload.handle,
+        })
+        return addLineItem(variantId, Math.max(1, payload.qty || 1))
+      })
+    },
+    [run]
+  )
+
+  const removeItem = useCallback(
+    async (id: string) => {
+      await run(() => deleteLineItem(id))
+    },
+    [run]
+  )
+
+  const setQty = useCallback(
+    async (id: string, qty: number) => {
       const next = Math.max(0, Math.min(99, qty))
-      if (next < 1) return prev.filter((item) => item.id !== id)
-      return prev.map((item) => (item.id === id ? { ...item, qty: next } : item))
-    })
-  }, [])
+      await run(() => (next < 1 ? deleteLineItem(id) : updateLineItem(id, next)))
+    },
+    [run]
+  )
 
   useEffect(() => {
     document.body.classList.toggle("cart-open", open)
@@ -212,28 +223,9 @@ export default function CartProvider({
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") closeCart()
     }
-
-    function onStorage(event: StorageEvent) {
-      if (event.key === STORAGE_KEY) setItems(readStorage())
-    }
-
     document.addEventListener("keydown", onKey)
-    window.addEventListener("storage", onStorage)
-    return () => {
-      document.removeEventListener("keydown", onKey)
-      window.removeEventListener("storage", onStorage)
-    }
+    return () => document.removeEventListener("keydown", onKey)
   }, [closeCart])
-
-  useEffect(() => {
-    ;(window as Window & { BrighticCart?: Record<string, unknown> }).BrighticCart = {
-      open: openCart,
-      close: closeCart,
-      toggle: toggleCart,
-      add: addItem,
-      isOpen: () => open,
-    }
-  }, [addItem, closeCart, open, openCart, toggleCart])
 
   const value = useMemo(
     () => ({
@@ -241,6 +233,8 @@ export default function CartProvider({
       open,
       count,
       total,
+      pending,
+      error,
       openCart,
       closeCart,
       toggleCart,
@@ -248,7 +242,7 @@ export default function CartProvider({
       removeItem,
       setQty,
     }),
-    [items, open, count, total, openCart, closeCart, toggleCart, addItem, removeItem, setQty]
+    [items, open, count, total, pending, error, openCart, closeCart, toggleCart, addItem, removeItem, setQty]
   )
 
   return (
@@ -281,6 +275,8 @@ export default function CartProvider({
           <hr className="cart-drawer__rule" />
 
           <div className="cart-drawer__body">
+            {error ? <p className="cart-drawer__error">{error}</p> : null}
+
             {items.length === 0 ? (
               <div className="cart-drawer__empty">
                 <p>Your basket is empty.</p>
@@ -311,7 +307,8 @@ export default function CartProvider({
                               type="button"
                               className="cart-qty__btn cart-qty__btn--minus"
                               aria-label="Decrease quantity"
-                              onClick={() => setQty(item.id, item.qty - 1)}
+                              disabled={pending}
+                              onClick={() => void setQty(item.id, item.qty - 1)}
                             >
                               <img src={`${ASSETS}/minus.svg`} width="16" height="1" alt="" />
                             </button>
@@ -320,7 +317,8 @@ export default function CartProvider({
                               type="button"
                               className="cart-qty__btn cart-qty__btn--plus"
                               aria-label="Increase quantity"
-                              onClick={() => setQty(item.id, item.qty + 1)}
+                              disabled={pending}
+                              onClick={() => void setQty(item.id, item.qty + 1)}
                             >
                               <img src={`${ASSETS}/plus.svg`} width="12" height="12" alt="" />
                             </button>
@@ -328,7 +326,8 @@ export default function CartProvider({
                           <button
                             type="button"
                             className="cart-item__remove"
-                            onClick={() => removeItem(item.id)}
+                            disabled={pending}
+                            onClick={() => void removeItem(item.id)}
                           >
                             Remove
                           </button>
@@ -347,16 +346,8 @@ export default function CartProvider({
                         key={item.id}
                         type="button"
                         className="cart-suggest__card"
-                        onClick={() =>
-                          addItem({
-                            id: item.id,
-                            title: item.title,
-                            blurb: item.blurb,
-                            price: item.price,
-                            image: item.image,
-                            qty: 1,
-                          })
-                        }
+                        disabled={pending}
+                        onClick={() => void addItem({ title: item.title, qty: 1 })}
                       >
                         <span className="cart-suggest__media">
                           <img src={item.image} alt="" />
@@ -380,6 +371,7 @@ export default function CartProvider({
               <button
                 type="button"
                 className="cart-drawer__checkout"
+                disabled={pending}
                 onClick={() => {
                   closeCart()
                   window.location.href = catalogHref
