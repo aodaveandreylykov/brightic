@@ -113,6 +113,11 @@
 .also__photo,
 .peek { overflow: hidden; }
 
+.also__photo img {
+  transform: scale(0.75);
+  transform-origin: center;
+}
+
 .stage__img,
 .thumb__crop img,
 .also__photo img,
