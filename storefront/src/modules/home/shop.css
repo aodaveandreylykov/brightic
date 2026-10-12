@@ -186,6 +186,57 @@ a { color: inherit; }
 
 .panel p { margin: 0 0 16px; }
 
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.saved-list:empty { display: none; }
+
+.saved-list button {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.wish-saved {
+  position: relative;
+  overflow: visible;
+}
+
+.wish-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: #e10600;
+  color: #fff;
+  font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  pointer-events: none;
+}
+
+.wish-badge[hidden] { display: none; }
+
 .panel__form { display: flex; flex-direction: column; gap: 10px; }
 
 .panel input {
@@ -318,12 +369,33 @@ a { color: inherit; }
 .scroller--best .card { flex: 0 0 163px; }
 .scroller--pop .card { flex: 0 0 188px; }
 
+.card { position: relative; }
+
 .card a {
   display: flex;
   flex-direction: column;
   gap: 5px;
   color: inherit;
   text-decoration: none;
+}
+
+.card__wish {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  padding: 0;
+  background: none;
+  border: 0;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.card__wish img {
+  display: block;
+  width: 22px;
+  height: 22px;
 }
 
 .card__media {

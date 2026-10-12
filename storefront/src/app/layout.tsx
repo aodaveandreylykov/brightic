@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+import Script from "next/script"
+import { WishlistBind } from "@/modules/wishlist/wishlist-bind"
 import "@/modules/home/shop.css"
 
 export const metadata: Metadata = {
@@ -20,7 +22,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <WishlistBind />
+        <Script src="/js/wishlist.js" strategy="afterInteractive" />
+      </body>
     </html>
   )
 }

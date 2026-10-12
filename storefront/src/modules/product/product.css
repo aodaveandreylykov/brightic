@@ -232,6 +232,38 @@
 .also__price,
 .also__heart { position: absolute; }
 
+span.also__heart { line-height: 0; cursor: pointer; }
+
+button.wish-saved {
+  position: relative;
+  overflow: visible;
+}
+
+.wish-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: #e10600;
+  color: #fff;
+  font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  pointer-events: none;
+}
+
+.wish-badge[hidden] { display: none; }
+
 .also__name,
 .also__blurb,
 .also__price { color: #000; }
