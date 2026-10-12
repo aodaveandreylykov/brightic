@@ -1,14 +1,16 @@
+import CartDrawer from "@/modules/cart/cart-drawer"
 import "@/modules/product/product.css"
 
 export function ProductPage() {
   return (
+<>
 <div className="pdp">
     <div className="pdp-fit">
       <div className="pdp-frame pdp-frame--m">
         <header className="hd">
           <a className="hd__logo" href="/" aria-label="Brightic"><img src="/assets/shop/logo.svg" width="87" height="20" alt="" /></a>
           <div className="hd__tools">
-            <button type="button" aria-label="Basket"><img src="/assets/shop/icon-union.svg" width="19" height="20" alt="" /></button>
+            <button type="button" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket"><img src="/assets/shop/icon-union.svg" width="19" height="20" alt="" /></button>
             <button type="button" className="pdp-burger" aria-expanded="false" aria-label="Open menu"><i></i><i></i><i></i></button>
           </div>
         </header>
@@ -120,7 +122,7 @@ export function ProductPage() {
           <a className="hd__logo" href="/" aria-label="Brightic"><img src="/assets/shop/logo.svg" width="135" height="32" alt="" /></a>
           <div className="hd__tools">
             <button type="button" aria-label="Account"><img src="/assets/shop/icon-profile.svg" width="24" height="24" alt="" /></button>
-            <button type="button" aria-label="Basket"><img src="/assets/shop/icon-union.svg" width="21" height="22" alt="" /></button>
+            <button type="button" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket"><img src="/assets/shop/icon-union.svg" width="21" height="22" alt="" /></button>
             <button type="button" className="pdp-burger" aria-expanded="false" aria-label="Open menu"><i></i><i></i><i></i></button>
           </div>
         </header>
@@ -250,7 +252,7 @@ export function ProductPage() {
               <button type="button" aria-label="Search"><img src="/assets/shop/icon-a.svg" width="30" height="30" alt="" /></button>
               <button type="button" aria-label="Account"><img src="/assets/shop/icon-b.svg" width="30" height="30" alt="" /></button>
               <button type="button" aria-label="Saved"><img src="/assets/shop/icon-c.svg" width="30" height="30" alt="" /></button>
-              <button type="button" aria-label="Basket"><img src="/assets/shop/icon-d.svg" width="30" height="30" alt="" /></button>
+              <button type="button" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket"><img src="/assets/shop/icon-d.svg" width="30" height="30" alt="" /></button>
             </div>
           </div>
         </header>
@@ -375,5 +377,7 @@ export function ProductPage() {
       </div>
     </div>
   </div>
+  <CartDrawer catalogHref="/catalog" />
+</>
   )
 }

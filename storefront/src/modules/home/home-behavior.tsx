@@ -35,9 +35,17 @@ export function HomeBehavior() {
       })
     }
 
+    const backdrop = document.getElementById("cart-backdrop")
+    const syncCartChrome = (cartOpen: boolean) => {
+      if (backdrop) backdrop.hidden = !cartOpen
+      body.classList.toggle("cart-open", cartOpen)
+    }
+
     document.querySelectorAll<HTMLButtonElement>("[data-panel]").forEach((button) => {
       const onPanel = () => {
         const id = button.getAttribute("aria-controls")
+        // Cart drawer is owned by BrighticCart (open/close + backdrop).
+        if (id === "panel-cart") return
         const panel = id ? document.getElementById(id) : null
         if (!panel) return
         const willOpen = panel.hidden
@@ -49,6 +57,7 @@ export function HomeBehavior() {
         })
         panel.hidden = !willOpen
         button.setAttribute("aria-expanded", String(willOpen))
+        syncCartChrome(false)
         closeMenu()
       }
       button.addEventListener("click", onPanel)

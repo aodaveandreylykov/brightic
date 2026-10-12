@@ -1,4 +1,5 @@
 import type { Lamp } from "@/lib/catalog"
+import CartDrawer from "@/modules/cart/cart-drawer"
 import { ProductBand } from "@/modules/home/product-band"
 
 const storeSections = [
@@ -121,12 +122,7 @@ export function HomePage({
           View catalogue
         </a>
       </div>
-      <div className="panel" id="panel-cart" hidden>
-        <p>Your basket is empty.</p>
-        <a className="btn" href="/catalog">
-          View catalogue
-        </a>
-      </div>
+      <CartDrawer catalogHref="/catalog" />
 
       <main>
         <section className="hero" aria-label="Design born of light">
