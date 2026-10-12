@@ -1,4 +1,5 @@
 import type { Lamp } from "@/lib/catalog"
+import CartTrigger from "@/modules/cart/cart-trigger"
 import { ProductBand } from "@/modules/home/product-band"
 
 const storeSections = [
@@ -68,17 +69,17 @@ export function HomePage({
             <button type="button" className="icon-btn" data-panel="saved" aria-expanded="false" aria-controls="panel-saved" aria-label="Saved">
               <img src="/assets/shop/icon-c.svg" width="30" height="30" alt="" />
             </button>
-            <button type="button" className="icon-btn" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket">
+            <CartTrigger className="icon-btn">
               <img src="/assets/shop/icon-d.svg" width="30" height="30" alt="" />
-            </button>
+            </CartTrigger>
           </div>
           <div className="header__icons header__icons--compact">
             <button type="button" className="icon-btn icon-btn--profile" data-panel="account" aria-expanded="false" aria-controls="panel-account" aria-label="Account">
               <img src="/assets/shop/icon-profile.svg" width="24" height="24" alt="" />
             </button>
-            <button type="button" className="icon-btn" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket">
+            <CartTrigger className="icon-btn">
               <img src="/assets/shop/icon-union.svg" width="21" height="22" alt="" />
-            </button>
+            </CartTrigger>
             <button type="button" className="burger" aria-expanded="false" aria-controls="menu">
               <span></span>
               <span></span>
@@ -373,9 +374,7 @@ export function HomePage({
           <a href="#collections">New collections</a>
           <a href="#popular">Popular products</a>
           <a href="#catalog">Selected</a>
-          <button type="button" data-panel="cart" aria-controls="panel-cart">
-            Basket
-          </button>
+          <CartTrigger>Basket</CartTrigger>
         </div>
         <div className="footer__col">
           <h2>Legal information</h2>

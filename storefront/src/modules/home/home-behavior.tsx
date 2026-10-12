@@ -54,7 +54,7 @@ export function HomeBehavior() {
         panel.hidden = !willOpen
         button.setAttribute("aria-expanded", String(willOpen))
         const cart = (window as Window & { BrighticCart?: { close?: () => void } }).BrighticCart
-        cart?.close?.()
+        if (typeof cart?.close === "function") cart.close()
         closeMenu()
       }
       button.addEventListener("click", onPanel)

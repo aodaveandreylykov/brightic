@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react"
+import CartTrigger from "@/modules/cart/cart-trigger"
 import { catalogCards, type CatalogCard, type Shot } from "@/modules/catalog/catalog-cards"
 import "./catalog.css"
 
@@ -115,17 +116,17 @@ export function CatalogPage({
             <button type="button" className="icon-btn" data-panel="saved" aria-expanded="false" aria-controls="panel-saved" aria-label="Saved">
               <img src={`${shop}/icon-c.svg`} width="30" height="30" alt="" />
             </button>
-            <button type="button" className="icon-btn" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket">
+            <CartTrigger className="icon-btn">
               <img src={`${shop}/icon-d.svg`} width="30" height="30" alt="" />
-            </button>
+            </CartTrigger>
           </div>
           <div className="header__icons header__icons--compact">
             <button type="button" className="icon-btn icon-btn--profile" data-panel="account" aria-expanded="false" aria-controls="panel-account" aria-label="Account">
               <img src={`${shop}/icon-profile.svg`} width="24" height="24" alt="" />
             </button>
-            <button type="button" className="icon-btn" data-panel="cart" aria-expanded="false" aria-controls="panel-cart" aria-label="Basket">
+            <CartTrigger className="icon-btn">
               <img src={`${shop}/icon-union.svg`} width="21" height="22" alt="" />
-            </button>
+            </CartTrigger>
             <button type="button" className="burger" aria-expanded="false" aria-controls="menu">
               <span></span>
               <span></span>
@@ -234,9 +235,7 @@ export function CatalogPage({
           <a href={section("collections")}>New collections</a>
           <a href={section("popular")}>Popular products</a>
           <a href={catalog}>Selected</a>
-          <button type="button" data-panel="cart" aria-controls="panel-cart">
-            Basket
-          </button>
+          <CartTrigger>Basket</CartTrigger>
         </div>
         <div className="footer__col">
           <h2>Legal information</h2>

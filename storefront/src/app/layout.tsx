@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import Script from "next/script"
-import CartDrawer from "@/modules/cart/cart-drawer"
-import { CartBind } from "@/modules/cart/cart-bind"
+import CartProvider from "@/modules/cart/cart-provider"
 import { WishlistBind } from "@/modules/wishlist/wishlist-bind"
 import "@/modules/home/shop.css"
 
@@ -25,12 +24,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
-        <CartDrawer catalogHref="/catalog" />
-        <WishlistBind />
-        <CartBind />
+        <CartProvider catalogHref="/catalog">
+          {children}
+          <WishlistBind />
+        </CartProvider>
         <Script src="/js/wishlist.js" strategy="afterInteractive" />
-        <Script src="/js/cart.js" strategy="afterInteractive" />
       </body>
     </html>
   )
