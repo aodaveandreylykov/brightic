@@ -113,7 +113,8 @@
 .also__photo,
 .peek { overflow: hidden; }
 
-.also__photo img {
+.pdp-frame--d .also__photo img,
+.pdp-frame--m .also__photo img {
   transform: scale(0.75);
   transform-origin: center;
 }
@@ -344,7 +345,8 @@
 .img-lumen { width: 123.64%; height: 116.85%; left: -11.63%; top: -7.33%; }
 .img-facet { width: 189.16%; height: 116.72%; left: -43.35%; top: -7.29%; }
 
-.stage .stage__img {
+.pdp-frame--d .stage .stage__img,
+.pdp-frame--m .stage .stage__img {
   width: 100%;
   height: 100%;
   left: 0;
@@ -620,7 +622,7 @@
 .pdp-frame--t .hd__logo img { width: 135px; height: 32px; }
 .pdp-frame--t .hd__tools { gap: 20px; }
 
-.pdp-frame--t .stage { top: 72px; left: 20px; width: 290px; height: calc((100vh - 20px) * 640px / 100cqw - 72px); }
+.pdp-frame--t .stage { top: 72px; left: 20px; width: 290px; height: 374px; }
 
 .pdp-frame--t .thumbs {
   top: 309px;
@@ -631,6 +633,11 @@
 }
 
 .pdp-frame--t .thumb { width: 45px; height: 55px; }
+
+.pdp-frame--t .thumb.is-on {
+  outline: none;
+  border: 1px solid #fff;
+}
 
 .pdp-frame--t .title {
   top: 72px;
@@ -707,22 +714,28 @@
 
 .pdp-frame--t .like {
   top: 953px;
-  left: 0;
-  width: 640px;
+  left: 144px;
+  width: auto;
   font-size: 36px;
   line-height: 1.2;
+  letter-spacing: 0;
+  text-align: left;
 }
 
 .pdp-frame--t .also { top: 1026px; width: 245px; height: 245px; }
 .pdp-frame--t .also-1 { left: 20px; }
 .pdp-frame--t .also-2 { left: 285px; }
 .pdp-frame--t .also-3 { left: 550px; }
-.pdp-frame--t .also__heart { top: 10px; left: 10px; }
+.pdp-frame--t .also__photo { position: absolute; }
+.pdp-frame--t .also__heart { top: 10px; left: 10px; width: 20px; height: 20px; }
+.pdp-frame--t .also__name,
+.pdp-frame--t .also__blurb,
+.pdp-frame--t .also__price { color: #37291f; }
 .pdp-frame--t .also__name { top: 10px; font-size: 14px; letter-spacing: -0.7px; white-space: nowrap; }
 .pdp-frame--t .also-1 .also__name { left: 172px; line-height: 0.9; }
 .pdp-frame--t .also-2 .also__name { left: 158px; line-height: 1.1; }
 .pdp-frame--t .also__blurb { top: 205px; left: 10px; font-size: 14px; line-height: 1.1; letter-spacing: -0.7px; }
-.pdp-frame--t .also__price { top: 220px; left: 202px; font-size: 14px; line-height: 1.1; letter-spacing: -0.7px; white-space: nowrap; }
+.pdp-frame--t .also__price { top: 220px; left: 202px; font-size: 14px; line-height: 1.1; letter-spacing: -0.7px; white-space: nowrap; opacity: 0.65; }
 .pdp-frame--t .also-1 .also__photo { top: 54px; left: 68px; width: 110px; height: 138px; }
 .pdp-frame--t .also-2 .also__photo { top: 51px; left: 55px; width: 136px; height: 144px; }
 .pdp-frame--t .also-3 .also__photo { top: 50px; left: 55px; width: 89px; height: 145px; }
