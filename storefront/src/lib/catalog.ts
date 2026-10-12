@@ -65,24 +65,29 @@ export async function getHomepageLamps(): Promise<{
   bestSellers: Lamp[]
   popular: Lamp[]
 }> {
-  const { regions } = await sdk.store.region.list({ limit: 50 })
-  const region =
-    regions.find((item: { currency_code?: string }) => item.currency_code === "usd") ??
-    regions[0]
+  try {
+    const { regions } = await sdk.store.region.list({ limit: 50 })
+    const region =
+      regions.find((item: { currency_code?: string }) => item.currency_code === "usd") ??
+      regions[0]
 
-  const { products } = await sdk.store.product.list({
-    limit: 50,
-    region_id: region?.id,
-    fields: "id,title,handle,*images,+metadata,*variants.calculated_price",
-  })
+    const { products } = await sdk.store.product.list({
+      limit: 50,
+      region_id: region?.id,
+      fields: "id,title,handle,*images,+metadata,*variants.calculated_price",
+    })
 
-  const lamps = (products as StoreProduct[]).map(toLamp)
-  const bySort = (left: Lamp, right: Lamp) => left.sort - right.sort
+    const lamps = (products as StoreProduct[]).map(toLamp)
+    const bySort = (left: Lamp, right: Lamp) => left.sort - right.sort
 
-  return {
-    bestSellers: lamps
-      .filter((lamp) => lamp.band === "best-sellers")
-      .sort(bySort),
-    popular: lamps.filter((lamp) => lamp.band === "most-popular").sort(bySort),
+    return {
+      bestSellers: lamps
+        .filter((lamp) => lamp.band === "best-sellers")
+        .sort(bySort),
+      popular: lamps.filter((lamp) => lamp.band === "most-popular").sort(bySort),
+    }
+  } catch {
+    // Medusa down / unreachable — keep homepage navigable with empty bands.
+    return { bestSellers: [], popular: [] }
   }
 }
