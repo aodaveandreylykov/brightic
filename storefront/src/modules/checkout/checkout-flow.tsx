@@ -30,7 +30,7 @@ function providerLabel(id: string) {
 
 export default function CheckoutFlow() {
   const router = useRouter()
-  const { cart, items, total, applyCart, refreshCart, closeCart } = useCart()
+  const { cart, items, total, applyCart, refreshCart, closeCart, ready } = useCart()
   const [step, setStep] = useState<Step>("contact")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
@@ -86,19 +86,17 @@ export default function CheckoutFlow() {
     }
   }
 
-  if (!cart) {
+  if (!ready) {
     return (
       <div className="checkout-empty">
-        <h1>Checkout</h1>
         <p className="checkout-lead">Loading your basket…</p>
       </div>
     )
   }
 
-  if (items.length === 0) {
+  if (!cart || items.length === 0) {
     return (
       <div className="checkout-empty">
-        <h1>Checkout</h1>
         <p className="checkout-lead">Your basket is empty.</p>
         <a className="checkout-btn checkout-btn--dark" href="/catalog">
           View catalogue

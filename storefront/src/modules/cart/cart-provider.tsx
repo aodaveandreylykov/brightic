@@ -52,6 +52,7 @@ type CartContextValue = {
   cart: StoreCart | null
   items: CartItem[]
   open: boolean
+  ready: boolean
   count: number
   total: number
   pending: boolean
@@ -149,6 +150,7 @@ export default function CartProvider({
 }) {
   const [cart, setCart] = useState<StoreCart | null>(null)
   const [open, setOpen] = useState(false)
+  const [ready, setReady] = useState(false)
   const [pending, setPending] = useState(false)
   const [error, setError] = useState("")
 
@@ -169,6 +171,8 @@ export default function CartProvider({
     } catch {
       setError("")
       return null
+    } finally {
+      setReady(true)
     }
   }, [])
 
@@ -248,6 +252,7 @@ export default function CartProvider({
       cart,
       items,
       open,
+      ready,
       count,
       total,
       pending,
@@ -265,6 +270,7 @@ export default function CartProvider({
       cart,
       items,
       open,
+      ready,
       count,
       total,
       pending,
