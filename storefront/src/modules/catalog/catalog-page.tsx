@@ -1,7 +1,20 @@
 import type { CSSProperties } from "react"
+import { lampHref, slugifyLamp } from "@/lib/admin-catalog"
+import { formatMoney } from "@/lib/money"
 import CartTrigger from "@/modules/cart/cart-trigger"
 import { catalogCards, type CatalogCard, type Shot } from "@/modules/catalog/catalog-cards"
 import "./catalog.css"
+
+export type CatalogLive = {
+  handle: string
+  title: string
+  price?: number | null
+}
+
+function liveFor(card: CatalogCard, products: CatalogLive[]) {
+  const key = slugifyLamp(card.name)
+  return products.find((product) => product.handle === key || slugifyLamp(product.title) === key)
+}
 
 const kindClass: Record<CatalogCard["kind"], string> = {
   sq: "lamp lamp--sq",
@@ -33,12 +46,25 @@ function shotBox(card: CatalogCard, flow: boolean): CSSProperties {
   }
 }
 
-function LampCard({ card, photos, flow = false }: { card: CatalogCard; photos: string; flow?: boolean }) {
+function LampCard({
+  card,
+  photos,
+  flow = false,
+  products = [],
+}: {
+  card: CatalogCard
+  photos: string
+  flow?: boolean
+  products?: CatalogLive[]
+}) {
+  const live = liveFor(card, products)
+  const href = live?.handle ? `/product/${live.handle}` : lampHref(card.name)
+  const price = live?.price != null ? formatMoney(live.price) || card.price : card.price
   return (
     <a
       className={kindClass[card.kind]}
       data-bp={card.bp}
-      href="/product"
+      href={href}
       style={flow ? undefined : { left: card.left, top: card.top, width: card.width, height: card.height }}
     >
       <div className="lamp__shot" style={shotBox(card, flow)}>
@@ -48,7 +74,7 @@ function LampCard({ card, photos, flow = false }: { card: CatalogCard; photos: s
       {card.bp === "d" ? (
         <div className="lamp__meta">
           <p className="lamp__blurb">{card.blurb}</p>
-          <p className="lamp__price">{card.price}</p>
+          <p className="lamp__price">{price}</p>
         </div>
       ) : (
         <>
@@ -56,7 +82,7 @@ function LampCard({ card, photos, flow = false }: { card: CatalogCard; photos: s
             {card.blurb}
           </p>
           <p className="lamp__price" style={{ top: card.priceTop, right: 10 }}>
-            {card.price}
+            {price}
           </p>
         </>
       )}
@@ -69,11 +95,13 @@ export function CatalogPage({
   catalog,
   shop,
   photos,
+  products = [],
 }: {
   home: string
   catalog: string
   shop: string
   photos: string
+  products?: CatalogLive[]
 }) {
   const section = (hash: string) => `${home}#${hash}`
   const desktop = catalogCards.filter((card) => card.bp === "d")
@@ -191,7 +219,7 @@ export function CatalogPage({
             {desktopRows.map((row) => (
               <div key={row.cards.map((card) => card.name).join("-")} className={`catalog-row catalog-row--${row.variant}`} data-cards={row.cards.length}>
                 {row.cards.map((card) => (
-                  <LampCard key={`${row.variant}-${card.name}-${card.price}`} card={card} photos={photos} flow />
+                  <LampCard key={`${row.variant}-${card.name}-${card.price}`} card={card} photos={photos} products={products} flow />
                 ))}
               </div>
             ))}
@@ -199,7 +227,7 @@ export function CatalogPage({
           {catalogCards
             .filter((card) => card.bp !== "d")
             .map((card, index) => (
-              <LampCard key={`${card.bp}-${index}`} card={card} photos={photos} />
+              <LampCard key={`${card.bp}-${index}`} card={card} photos={photos} products={products} />
             ))}
         </div>
 

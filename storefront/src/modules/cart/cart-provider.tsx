@@ -14,6 +14,7 @@ import {
   deleteLineItem,
   ensureCart,
   findVariantId,
+  forgetCart,
   updateLineItem,
   type StoreCart,
   type StoreCartItem,
@@ -48,6 +49,7 @@ type AddPayload = {
 }
 
 type CartContextValue = {
+  cart: StoreCart | null
   items: CartItem[]
   open: boolean
   count: number
@@ -60,6 +62,8 @@ type CartContextValue = {
   addItem: (item: AddPayload) => Promise<void>
   removeItem: (id: string) => Promise<void>
   setQty: (id: string, qty: number) => Promise<void>
+  applyCart: (next: StoreCart | null) => void
+  refreshCart: () => Promise<void>
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -76,7 +80,7 @@ const SUGGESTIONS: CartSuggest[] = [
     id: "echo-glow",
     title: "Echo Glow",
     blurb: "Subtle reflective warmth",
-    price: 120,
+    price: 1200,
     image: `${ASSETS}/suggest-echo.png`,
   },
 ]
@@ -137,9 +141,11 @@ export function useCart() {
 export default function CartProvider({
   children,
   catalogHref = "/catalog",
+  checkoutHref = "/checkout",
 }: {
   children: ReactNode
   catalogHref?: string
+  checkoutHref?: string
 }) {
   const [cart, setCart] = useState<StoreCart | null>(null)
   const [open, setOpen] = useState(false)
@@ -185,6 +191,16 @@ export default function CartProvider({
     }
   }, [])
 
+  const applyCart = useCallback((next: StoreCart | null) => {
+    setCart(next)
+  }, [])
+
+  const refreshCart = useCallback(async () => {
+    forgetCart()
+    setCart(null)
+    await loadCart()
+  }, [loadCart])
+
   const addItem = useCallback(
     async (payload: AddPayload) => {
       await run(async () => {
@@ -229,6 +245,7 @@ export default function CartProvider({
 
   const value = useMemo(
     () => ({
+      cart,
       items,
       open,
       count,
@@ -241,8 +258,26 @@ export default function CartProvider({
       addItem,
       removeItem,
       setQty,
+      applyCart,
+      refreshCart,
     }),
-    [items, open, count, total, pending, error, openCart, closeCart, toggleCart, addItem, removeItem, setQty]
+    [
+      cart,
+      items,
+      open,
+      count,
+      total,
+      pending,
+      error,
+      openCart,
+      closeCart,
+      toggleCart,
+      addItem,
+      removeItem,
+      setQty,
+      applyCart,
+      refreshCart,
+    ]
   )
 
   return (
@@ -347,7 +382,7 @@ export default function CartProvider({
                         type="button"
                         className="cart-suggest__card"
                         disabled={pending}
-                        onClick={() => void addItem({ title: item.title, qty: 1 })}
+                        onClick={() => void addItem({ handle: item.id, title: item.title, qty: 1 })}
                       >
                         <span className="cart-suggest__media">
                           <img src={item.image} alt="" />
@@ -374,7 +409,7 @@ export default function CartProvider({
                 disabled={pending}
                 onClick={() => {
                   closeCart()
-                  window.location.href = catalogHref
+                  window.location.href = checkoutHref
                 }}
               >
                 Checkout - {money(total)}

@@ -1,0 +1,232 @@
+.checkout-page {
+  min-height: 100vh;
+  background: var(--beige, #e0d2cb);
+  color: var(--brown, #37291f);
+  font-family: var(--font, "Helvetica Neue", Helvetica, Arial, sans-serif);
+}
+
+.checkout-page .header,
+.order-page .header {
+  color: var(--brown, #37291f);
+}
+
+.checkout-page .page {
+  background: var(--beige, #e0d2cb);
+  color: var(--brown, #37291f);
+}
+
+.checkout-shell {
+  width: min(920px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 28px 0 80px;
+}
+
+.checkout-shell h1 {
+  margin: 0 0 8px;
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 400;
+  letter-spacing: -2px;
+  line-height: 1.05;
+}
+
+.checkout-lead {
+  margin: 0 0 28px;
+  opacity: 0.7;
+  font-size: 16px;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.8fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.checkout-step {
+  margin: 0 0 18px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.checkout-step h2 {
+  margin: 0 0 14px;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+}
+
+.checkout-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.checkout-fields .field-wide {
+  grid-column: 1 / -1;
+}
+
+.checkout-step label,
+.checkout-step .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.checkout-step input,
+.checkout-step select {
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid rgba(55, 41, 31, 0.25);
+  background: #fff;
+  color: var(--brown, #37291f);
+}
+
+.checkout-step input:focus,
+.checkout-step select:focus {
+  outline: 1px solid var(--brown, #37291f);
+}
+
+.checkout-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkout-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px solid rgba(55, 41, 31, 0.2);
+  background: #fff;
+  cursor: pointer;
+}
+
+.checkout-option.is-on,
+.checkout-option:has(input:checked) {
+  outline: 1px solid var(--brown, #37291f);
+}
+
+.checkout-option input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brown, #37291f);
+}
+
+.checkout-option span {
+  flex: 1;
+}
+
+.checkout-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.checkout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+  height: 48px;
+  padding: 0 20px;
+  border: 0;
+  background: #fff;
+  color: var(--brown, #37291f);
+  font-size: 16px;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.checkout-btn--dark {
+  background: var(--brown, #37291f);
+  color: var(--beige, #e0d2cb);
+}
+
+.checkout-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.checkout-error,
+.checkout-note {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.checkout-error {
+  color: #8a2b1c;
+}
+
+.checkout-summary {
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.checkout-summary h2 {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.checkout-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.checkout-line--total {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(55, 41, 31, 0.2);
+  font-size: 18px;
+}
+
+.checkout-empty {
+  padding: 48px 0 80px;
+}
+
+.checkout-stripe {
+  margin-top: 14px;
+  padding: 12px;
+  background: #fff;
+}
+
+.order-page {
+  min-height: 100vh;
+  background: var(--beige, #e0d2cb);
+  color: var(--brown, #37291f);
+}
+
+.order-shell {
+  width: min(720px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0 80px;
+}
+
+.order-shell h1 {
+  margin: 0 0 12px;
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 400;
+  letter-spacing: -2px;
+}
+
+.order-id {
+  margin: 0 0 24px;
+  opacity: 0.7;
+  word-break: break-all;
+}
+
+@media (max-width: 839px) {
+  .checkout-grid,
+  .checkout-fields {
+    grid-template-columns: 1fr;
+  }
+}

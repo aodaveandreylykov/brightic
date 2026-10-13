@@ -18,7 +18,7 @@ export function ProductCard({
 
   return (
     <article className={classes}>
-      <a href="/product">
+      <a href={`/product/${lamp.handle}`}>
         <div className="card__media">
           {tabletImage ? (
             <>

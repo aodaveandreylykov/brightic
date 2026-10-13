@@ -1,7 +1,10 @@
-import { sdk } from "@/lib/medusa"
+import { findAdminLamp, slugifyLamp } from "@/lib/admin-catalog"
+import { formatMoney } from "@/lib/money"
+import { listStoreProducts, type StoreProduct } from "@/lib/products"
 
 export type Lamp = {
   id: string
+  handle: string
   title: string
   images: string[]
   hideOnMobile: boolean
@@ -11,23 +14,6 @@ export type Lamp = {
     desktop: string
   }
   sort: number
-}
-
-type StoreProduct = {
-  id: string
-  title: string
-  images?: { url?: string | null }[] | null
-  metadata?: Record<string, unknown> | null
-  variants?: {
-    calculated_price?: { calculated_amount?: number | null } | null
-  }[] | null
-}
-
-function money(value: unknown, fallback: unknown): string {
-  const raw = value ?? fallback
-  const amount = typeof raw === "number" ? raw : Number(raw)
-  if (!Number.isFinite(amount)) return ""
-  return `$ ${Math.round(amount)}`
 }
 
 function asBool(value: unknown): boolean {
@@ -41,23 +27,26 @@ function asNumber(value: unknown, fallback: number): number {
 
 function toLamp(product: StoreProduct): Lamp & { band: string } {
   const metadata = product.metadata ?? {}
+  const lamp = findAdminLamp(product.handle || product.title || "")
   const calculated = product.variants?.[0]?.calculated_price?.calculated_amount
   const images = (product.images ?? [])
     .map((image) => image.url)
     .filter((url): url is string => Boolean(url))
+  const price = formatMoney(metadata.price_mobile ?? calculated ?? lamp?.price)
 
   return {
     id: product.id,
-    title: product.title,
-    images,
-    hideOnMobile: asBool(metadata.hide_on_mobile),
+    handle: product.handle || lamp?.handle || slugifyLamp(product.title || "lamp"),
+    title: product.title || lamp?.title || "Lamp",
+    images: images.length ? images : lamp?.catalogImage ? [lamp.catalogImage] : [],
+    hideOnMobile: asBool(metadata.hide_on_mobile) || Boolean(lamp?.hideOnMobile),
     prices: {
-      mobile: money(metadata.price_mobile, calculated),
-      tablet: money(metadata.price_tablet, calculated),
-      desktop: money(metadata.price_desktop, calculated),
+      mobile: formatMoney(metadata.price_mobile) || price,
+      tablet: formatMoney(metadata.price_tablet) || price,
+      desktop: formatMoney(metadata.price_desktop) || price,
     },
-    sort: asNumber(metadata.sort, 0),
-    band: String(metadata.band ?? ""),
+    sort: asNumber(metadata.sort, lamp?.sort ?? 0),
+    band: String(metadata.band ?? lamp?.band ?? ""),
   }
 }
 
@@ -66,28 +55,15 @@ export async function getHomepageLamps(): Promise<{
   popular: Lamp[]
 }> {
   try {
-    const { regions } = await sdk.store.region.list({ limit: 50 })
-    const region =
-      regions.find((item: { currency_code?: string }) => item.currency_code === "usd") ??
-      regions[0]
-
-    const { products } = await sdk.store.product.list({
-      limit: 50,
-      region_id: region?.id,
-      fields: "id,title,handle,*images,+metadata,*variants,*variants.calculated_price",
-    })
-
-    const lamps = (products as StoreProduct[]).map(toLamp)
+    const products = await listStoreProducts()
+    const lamps = products.map(toLamp)
     const bySort = (left: Lamp, right: Lamp) => left.sort - right.sort
 
     return {
-      bestSellers: lamps
-        .filter((lamp) => lamp.band === "best-sellers")
-        .sort(bySort),
+      bestSellers: lamps.filter((lamp) => lamp.band === "best-sellers").sort(bySort),
       popular: lamps.filter((lamp) => lamp.band === "most-popular").sort(bySort),
     }
   } catch {
-    // Medusa down / unreachable — keep homepage navigable with empty bands.
     return { bestSellers: [], popular: [] }
   }
 }

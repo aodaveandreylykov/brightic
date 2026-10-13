@@ -716,6 +716,16 @@ button.wish-saved {
   text-transform: uppercase;
 }
 
+.pdp-frame--t .buy {
+  top: 411px;
+  left: 330px;
+  width: 290px;
+  height: 42px;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+}
+
 .pdp-frame--t .lead {
   top: 466px;
   left: 20px;

@@ -24,7 +24,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <CartProvider catalogHref="/catalog">
+        <CartProvider catalogHref="/catalog" checkoutHref="/checkout">
           {children}
           <WishlistBind />
         </CartProvider>

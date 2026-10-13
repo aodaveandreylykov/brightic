@@ -1,9 +1,24 @@
 import { sdk } from "@/lib/medusa"
+import { slugifyLamp } from "@/lib/admin-catalog"
 
 export const CART_ID_KEY = "cart_id"
+export const LAST_ORDER_KEY = "brightic_last_order"
 
 const CART_FIELDS =
-  "*items,*items.variant,*items.product,*items.product.images,+items.total,+items.subtotal,+item_total,+total,+subtotal"
+  "*items,*items.variant,*items.product,*items.product.images,+items.total,+items.subtotal,+item_total,+total,+subtotal,*shipping_address,*billing_address,*shipping_methods,*payment_collection,*payment_collection.payment_sessions,*region,*region.countries,+shipping_total,+email"
+
+export type CartAddress = {
+  first_name?: string | null
+  last_name?: string | null
+  address_1?: string | null
+  address_2?: string | null
+  company?: string | null
+  postal_code?: string | null
+  city?: string | null
+  country_code?: string | null
+  province?: string | null
+  phone?: string | null
+}
 
 export type StoreCartItem = {
   id: string
@@ -25,9 +40,47 @@ export type StoreCartItem = {
 
 export type StoreCart = {
   id: string
+  email?: string | null
   currency_code?: string
+  region_id?: string | null
   item_total?: number | null
+  shipping_total?: number | null
   total?: number | null
+  items?: StoreCartItem[] | null
+  shipping_address?: CartAddress | null
+  billing_address?: CartAddress | null
+  shipping_methods?: { id?: string; name?: string; amount?: number }[] | null
+  payment_collection?: {
+    payment_sessions?: {
+      id?: string
+      provider_id?: string
+      data?: { client_secret?: string | null } | null
+    }[] | null
+  } | null
+  region?: {
+    id?: string
+    currency_code?: string
+    countries?: { iso_2?: string | null; display_name?: string | null }[] | null
+  } | null
+}
+
+export type ShippingOption = {
+  id: string
+  name?: string | null
+  amount?: number | null
+  price_type?: string | null
+}
+
+export type PaymentProvider = {
+  id: string
+  is_enabled?: boolean
+}
+
+export type StoreOrder = {
+  id: string
+  email?: string | null
+  total?: number | null
+  currency_code?: string | null
   items?: StoreCartItem[] | null
 }
 
@@ -49,6 +102,28 @@ function storedCartId() {
 
 function persistCartId(id: string) {
   localStorage.setItem(CART_ID_KEY, id)
+}
+
+export function forgetCart() {
+  if (typeof window === "undefined") return
+  localStorage.removeItem(CART_ID_KEY)
+}
+
+export function rememberOrder(order: StoreOrder) {
+  if (typeof window === "undefined") return
+  sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order))
+}
+
+export function readRememberedOrder(id: string): StoreOrder | null {
+  if (typeof window === "undefined") return null
+  try {
+    const raw = sessionStorage.getItem(LAST_ORDER_KEY)
+    if (!raw) return null
+    const order = JSON.parse(raw) as StoreOrder
+    return order?.id === id ? order : null
+  } catch {
+    return null
+  }
 }
 
 export async function getRegionId() {
@@ -120,8 +195,59 @@ export async function deleteLineItem(lineItemId: string) {
   return (parent as StoreCart) ?? retrieveCart(cart.id)
 }
 
-function norm(value: string) {
-  return value.replace(/\s+/g, " ").trim().toLowerCase()
+export async function updateCart(data: {
+  email?: string
+  shipping_address?: CartAddress
+  billing_address?: CartAddress
+}) {
+  const cart = await ensureCart()
+  const { cart: next } = await sdk.store.cart.update(cart.id, data, { fields: CART_FIELDS })
+  persistCartId(next.id)
+  return next as StoreCart
+}
+
+export async function listShippingOptions() {
+  const cart = await ensureCart()
+  const { shipping_options } = await sdk.store.fulfillment.listCartOptions({
+    cart_id: cart.id,
+  })
+  return (shipping_options || []) as ShippingOption[]
+}
+
+export async function addShippingMethod(optionId: string) {
+  const cart = await ensureCart()
+  const { cart: next } = await sdk.store.cart.addShippingMethod(cart.id, {
+    option_id: optionId,
+  })
+  persistCartId(next.id)
+  return retrieveCart(next.id)
+}
+
+export async function listPaymentProviders(regionId: string) {
+  const { payment_providers } = await sdk.store.payment.listPaymentProviders({
+    region_id: regionId,
+  })
+  return (payment_providers || []) as PaymentProvider[]
+}
+
+export async function initiatePaymentSession(providerId: string) {
+  const cart = await ensureCart()
+  await sdk.store.payment.initiatePaymentSession(cart, {
+    provider_id: providerId,
+  })
+  return retrieveCart(cart.id)
+}
+
+export async function completeCart() {
+  const cart = await ensureCart()
+  return sdk.store.cart.complete(cart.id)
+}
+
+export function completeCartError(result: Awaited<ReturnType<typeof completeCart>>) {
+  if (result.type === "cart" && result.error && typeof result.error === "object" && "message" in result.error) {
+    return String(result.error.message || "Could not complete the order")
+  }
+  return "Could not complete the order"
 }
 
 export async function findVariantId(input: {
@@ -132,6 +258,16 @@ export async function findVariantId(input: {
 }) {
   if (input.variantId) return input.variantId
   if (input.productId?.startsWith("variant_")) return input.productId
+
+  if (input.handle) {
+    const { products } = await sdk.store.product.list({
+      handle: slugifyLamp(input.handle),
+      limit: 1,
+      fields: "id,title,handle,*variants",
+    })
+    const variantId = (products?.[0] as StoreProduct | undefined)?.variants?.[0]?.id
+    if (variantId) return variantId
+  }
 
   if (input.productId?.startsWith("prod_")) {
     const { product } = (await sdk.store.product.retrieve(input.productId, {
@@ -150,12 +286,12 @@ export async function findVariantId(input: {
   })
 
   const list = (products || []) as StoreProduct[]
-  const title = input.title ? norm(input.title) : ""
-  const handle = input.handle ? norm(input.handle) : ""
+  const title = slugifyLamp(input.title || "")
+  const handle = slugifyLamp(input.handle || "")
   const match =
-    list.find((product) => (product.title ? norm(product.title) === title : false)) ||
-    list.find((product) => (product.handle ? norm(product.handle) === handle : false)) ||
-    list.find((product) => (product.title ? norm(product.title).includes(title) : false)) ||
+    list.find((product) => slugifyLamp(product.handle || "") === handle) ||
+    list.find((product) => slugifyLamp(product.title || "") === title) ||
+    list.find((product) => slugifyLamp(product.title || "").includes(title)) ||
     list[0]
 
   const variantId = match?.variants?.[0]?.id

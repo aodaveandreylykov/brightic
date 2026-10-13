@@ -54,8 +54,8 @@ export default function AddToCartButton({
           await addItem({
             variantId,
             productId,
-            title: title || fromPage.title,
             handle,
+            title: title || fromPage.title,
             qty: fromPage.qty,
           })
           openCart()
