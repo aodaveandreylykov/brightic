@@ -100,20 +100,30 @@ export function pickRubRegion<T extends { id?: string; currency_code?: string }>
   return regions.find((item) => item.currency_code === STORE_CURRENCY) ?? regions[0]
 }
 
+/**
+ * Normalize to 7XXXXXXXXXX. Strips repeated +7/8 prefixes so paste and
+ * re-typing the country code into the formatted field stay correct.
+ */
 export function ruPhoneDigits(raw: string) {
-  const digits = raw.replace(/\D/g, "")
-  // Prefer a trailing Russian mobile national number (9XXXXXXXXX), even if the
-  // user re-typed +7/8 into a field that already shows the country code.
-  const mobile = digits.match(/9\d{9}$/)
-  if (mobile) return `7${mobile[0]}`
-  if (digits.length === 10) return `7${digits}`
-  if (digits.startsWith("8") && digits.length >= 11) return `7${digits.slice(1, 11)}`
-  if (digits.startsWith("7")) return digits.slice(0, 11)
+  let digits = raw.replace(/\D/g, "")
+  if (!digits) return ""
+
+  // Completed mobile number somewhere in the stream (handles paste / +77…).
+  const completed = digits.match(/(?:8|7)*?(9\d{9})/)
+  if (completed) return `7${completed[1]}`
+
+  // Still typing: drop leading country digits, keep partial national number.
+  while (digits.startsWith("7") || digits.startsWith("8")) {
+    if (digits.length === 1) return "7"
+    digits = digits.slice(1)
+    if (digits.startsWith("9") || digits.length === 0) break
+  }
   return `7${digits}`.slice(0, 11)
 }
 
 export function formatRuPhone(raw: string) {
   const digits = ruPhoneDigits(raw)
+  if (!digits) return ""
   const rest = digits.slice(1)
   let out = "+7"
   if (!rest) return out
@@ -127,7 +137,7 @@ export function formatRuPhone(raw: string) {
 }
 
 export function isRuPhone(raw: string) {
-  return ruPhoneDigits(raw).length === 11
+  return /^7\d{10}$/.test(ruPhoneDigits(raw)) && ruPhoneDigits(raw)[1] === "9"
 }
 
 export function isRuPostal(raw: string) {
