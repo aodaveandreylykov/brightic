@@ -101,10 +101,15 @@ export function pickRubRegion<T extends { id?: string; currency_code?: string }>
 }
 
 export function ruPhoneDigits(raw: string) {
-  let digits = raw.replace(/\D/g, "")
-  if (digits.startsWith("8")) digits = `7${digits.slice(1)}`
-  if (!digits.startsWith("7")) digits = `7${digits}`
-  return digits.slice(0, 11)
+  const digits = raw.replace(/\D/g, "")
+  // Prefer a trailing Russian mobile national number (9XXXXXXXXX), even if the
+  // user re-typed +7/8 into a field that already shows the country code.
+  const mobile = digits.match(/9\d{9}$/)
+  if (mobile) return `7${mobile[0]}`
+  if (digits.length === 10) return `7${digits}`
+  if (digits.startsWith("8") && digits.length >= 11) return `7${digits.slice(1, 11)}`
+  if (digits.startsWith("7")) return digits.slice(0, 11)
+  return `7${digits}`.slice(0, 11)
 }
 
 export function formatRuPhone(raw: string) {
