@@ -1,9 +1,12 @@
-import { redirect } from "next/navigation"
-import { getDefaultProductHandle } from "@/lib/products"
+"use client"
 
-export const dynamic = "force-dynamic"
+import { useEffect } from "react"
+import { withBase } from "@/lib/base-path"
 
-export default async function Page() {
-  const handle = await getDefaultProductHandle()
-  redirect(`/product/${handle}`)
+export default function Page() {
+  useEffect(() => {
+    window.location.replace(withBase("/product/flux-line/"))
+  }, [])
+
+  return null
 }

@@ -300,7 +300,7 @@ export default function CheckoutFlow() {
                       rememberOrder(result.order)
                       forgetCart()
                       await refreshCart()
-                      router.push(`/order/${result.order.id}`)
+                      router.push(`/order?id=${result.order.id}`)
                       return
                     }
                     throw new Error(completeCartError(result))
@@ -316,7 +316,7 @@ export default function CheckoutFlow() {
               cart={cart}
               onSuccess={async (orderId) => {
                 await refreshCart()
-                router.push(`/order/${orderId}`)
+                router.push(`/order?id=${orderId}`)
               }}
               onError={setError}
             />

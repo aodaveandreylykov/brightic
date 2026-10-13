@@ -1,15 +1,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { formatMoney } from "@/lib/money"
 import { readRememberedOrder, type StoreOrder } from "@/lib/store-cart"
 import "@/modules/checkout/checkout.css"
 
-export default function OrderConfirmation({ id }: { id: string }) {
+export default function OrderConfirmation() {
+  const search = useSearchParams()
+  const id = search.get("id") || ""
   const [order, setOrder] = useState<StoreOrder | null>(null)
 
   useEffect(() => {
-    setOrder(readRememberedOrder(id))
+    if (id) setOrder(readRememberedOrder(id))
   }, [id])
 
   return (
@@ -25,7 +28,7 @@ export default function OrderConfirmation({ id }: { id: string }) {
       </header>
       <main className="order-shell">
         <h1>Thank you</h1>
-        <p className="order-id">Order {order?.id || id}</p>
+        <p className="order-id">Order {order?.id || id || "placed"}</p>
         <p className="checkout-lead">
           {order?.email
             ? `A confirmation will go to ${order.email}.`

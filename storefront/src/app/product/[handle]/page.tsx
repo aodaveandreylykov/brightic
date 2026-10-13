@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation"
+import { ADMIN_LAMPS } from "@/lib/admin-catalog"
 import { getProductView } from "@/lib/products"
 import { ProductBehavior } from "@/modules/product/product-behavior"
 import { ProductPage } from "@/modules/product/product-page"
 
-export const dynamic = "force-dynamic"
+export function generateStaticParams() {
+  return ADMIN_LAMPS.map((lamp) => ({ handle: lamp.handle }))
+}
 
 export async function generateMetadata({
   params,

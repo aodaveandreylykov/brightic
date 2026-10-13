@@ -2,8 +2,6 @@ import CartTrigger from "@/modules/cart/cart-trigger"
 import CheckoutFlow from "@/modules/checkout/checkout-flow"
 import "@/modules/checkout/checkout.css"
 
-export const dynamic = "force-dynamic"
-
 export const metadata = {
   title: "Checkout — Brightic",
   description: "Complete your Brightic lamp order.",

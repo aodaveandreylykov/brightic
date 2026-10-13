@@ -1,4 +1,4 @@
-import { findAdminLamp, slugifyLamp } from "@/lib/admin-catalog"
+import { ADMIN_LAMPS, findAdminLamp, slugifyLamp, type AdminLamp } from "@/lib/admin-catalog"
 import { formatMoney } from "@/lib/money"
 import { listStoreProducts, type StoreProduct } from "@/lib/products"
 
@@ -50,20 +50,44 @@ function toLamp(product: StoreProduct): Lamp & { band: string } {
   }
 }
 
+function fromAdmin(lamp: AdminLamp): Lamp {
+  const price = formatMoney(lamp.price)
+  return {
+    id: lamp.handle,
+    handle: lamp.handle,
+    title: lamp.title,
+    images: [lamp.catalogImage],
+    hideOnMobile: Boolean(lamp.hideOnMobile),
+    prices: { mobile: price, tablet: price, desktop: price },
+    sort: lamp.sort ?? 0,
+  }
+}
+
+function fromAdminBand(band: AdminLamp["band"]) {
+  return ADMIN_LAMPS.filter((lamp) => lamp.band === band)
+    .sort((left, right) => (left.sort ?? 0) - (right.sort ?? 0))
+    .map(fromAdmin)
+}
+
 export async function getHomepageLamps(): Promise<{
   bestSellers: Lamp[]
   popular: Lamp[]
 }> {
+  const fallback = {
+    bestSellers: fromAdminBand("best-sellers"),
+    popular: fromAdminBand("most-popular"),
+  }
   try {
     const products = await listStoreProducts()
     const lamps = products.map(toLamp)
     const bySort = (left: Lamp, right: Lamp) => left.sort - right.sort
-
+    const bestSellers = lamps.filter((lamp) => lamp.band === "best-sellers").sort(bySort)
+    const popular = lamps.filter((lamp) => lamp.band === "most-popular").sort(bySort)
     return {
-      bestSellers: lamps.filter((lamp) => lamp.band === "best-sellers").sort(bySort),
-      popular: lamps.filter((lamp) => lamp.band === "most-popular").sort(bySort),
+      bestSellers: bestSellers.length ? bestSellers : fallback.bestSellers,
+      popular: popular.length ? popular : fallback.popular,
     }
   } catch {
-    return { bestSellers: [], popular: [] }
+    return fallback
   }
 }

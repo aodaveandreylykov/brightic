@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "next dev -p 8000",
     "build": "next build",
+    "build:pages": "NEXT_PUBLIC_BASE_PATH=/brightic/shop next build",
     "start": "next start -p 8000"
   },
   "dependencies": {

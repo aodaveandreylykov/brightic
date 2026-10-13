@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import Script from "next/script"
+import { BASE_PATH } from "@/lib/base-path"
+import { BasePathFix } from "@/modules/app/base-path-fix"
 import CartProvider from "@/modules/cart/cart-provider"
 import { WishlistBind } from "@/modules/wishlist/wishlist-bind"
 import "@/modules/home/shop.css"
@@ -25,10 +27,11 @@ export default function RootLayout({
       </head>
       <body>
         <CartProvider catalogHref="/catalog" checkoutHref="/checkout">
+          <BasePathFix />
           {children}
           <WishlistBind />
         </CartProvider>
-        <Script src="/js/wishlist.js" strategy="afterInteractive" />
+        <Script src={`${BASE_PATH}/js/wishlist.js`} strategy="afterInteractive" />
       </body>
     </html>
   )

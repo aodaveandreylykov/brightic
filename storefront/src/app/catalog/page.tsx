@@ -2,8 +2,6 @@ import { CatalogPage } from "@/modules/catalog/catalog-page"
 import { HomeBehavior } from "@/modules/home/home-behavior"
 import { listStoreProducts } from "@/lib/products"
 
-export const dynamic = "force-dynamic"
-
 export const metadata = {
   title: "Catalog — Brightic",
   description: "Brightic lamp catalog.",

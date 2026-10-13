@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import { withBase } from "@/lib/base-path"
 import {
   addItemToCart,
   deleteLineItem,
@@ -418,7 +419,7 @@ export default function CartProvider({
                 disabled={pending}
                 onClick={() => {
                   closeCart()
-                  window.location.href = checkoutHref
+                  window.location.href = withBase(checkoutHref)
                 }}
               >
                 Checkout - {money(total)}
