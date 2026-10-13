@@ -10,6 +10,9 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   handle?: string
   variantId?: string
   productId?: string
+  price?: number
+  image?: string
+  blurb?: string
 }
 
 function readFromPage(qtyFallback = 1) {
@@ -32,6 +35,9 @@ export default function AddToCartButton({
   handle,
   variantId,
   productId,
+  price,
+  image,
+  blurb,
   onClick,
   ...rest
 }: Props) {
@@ -57,6 +63,9 @@ export default function AddToCartButton({
             handle,
             title: title || fromPage.title,
             qty: fromPage.qty,
+            price,
+            image,
+            blurb,
           })
           openCart()
         } catch {

@@ -10,10 +10,9 @@ import {
   type ReactNode,
 } from "react"
 import {
-  addLineItem,
+  addItemToCart,
   deleteLineItem,
   ensureCart,
-  findVariantId,
   forgetCart,
   updateLineItem,
   type StoreCart,
@@ -46,6 +45,9 @@ type AddPayload = {
   title?: string
   handle?: string
   qty?: number
+  price?: number
+  image?: string
+  blurb?: string
 }
 
 type CartContextValue = {
@@ -207,15 +209,7 @@ export default function CartProvider({
 
   const addItem = useCallback(
     async (payload: AddPayload) => {
-      await run(async () => {
-        const variantId = await findVariantId({
-          variantId: payload.variantId,
-          productId: payload.productId,
-          title: payload.title,
-          handle: payload.handle,
-        })
-        return addLineItem(variantId, Math.max(1, payload.qty || 1))
-      })
+      await run(() => addItemToCart(payload))
     },
     [run]
   )
@@ -388,7 +382,16 @@ export default function CartProvider({
                         type="button"
                         className="cart-suggest__card"
                         disabled={pending}
-                        onClick={() => void addItem({ handle: item.id, title: item.title, qty: 1 })}
+                        onClick={() =>
+                          void addItem({
+                            handle: item.id,
+                            title: item.title,
+                            qty: 1,
+                            price: item.price,
+                            image: item.image,
+                            blurb: item.blurb,
+                          })
+                        }
                       >
                         <span className="cart-suggest__media">
                           <img src={item.image} alt="" />

@@ -53,12 +53,16 @@ export function Accordion({
 }
 
 export function BuyButton({ product }: { product: ProductView }) {
+  const price = Number(product.priceLabel.replace(/[^\d.-]/g, ""))
   return (
     <AddToCartButton
       variantId={product.variantId || undefined}
       handle={product.handle}
       title={product.title}
       productId={product.id.startsWith("prod_") ? product.id : undefined}
+      price={Number.isFinite(price) ? price : undefined}
+      image={product.images[0]}
+      blurb={product.description}
     />
   )
 }

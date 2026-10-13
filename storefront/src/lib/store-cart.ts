@@ -1,7 +1,8 @@
+import { findAdminLamp, slugifyLamp } from "@/lib/admin-catalog"
 import { sdk } from "@/lib/medusa"
-import { slugifyLamp } from "@/lib/admin-catalog"
 
 export const CART_ID_KEY = "cart_id"
+export const LOCAL_CART_KEY = "brightic_local_cart"
 export const LAST_ORDER_KEY = "brightic_last_order"
 
 const CART_FIELDS =
@@ -107,6 +108,123 @@ function persistCartId(id: string) {
 export function forgetCart() {
   if (typeof window === "undefined") return
   localStorage.removeItem(CART_ID_KEY)
+  localStorage.removeItem(LOCAL_CART_KEY)
+}
+
+function emptyLocalCart(): StoreCart {
+  return {
+    id: "local_cart",
+    currency_code: "usd",
+    items: [],
+    item_total: 0,
+    total: 0,
+  }
+}
+
+function readLocalCart(): StoreCart {
+  if (typeof window === "undefined") return emptyLocalCart()
+  try {
+    const raw = localStorage.getItem(LOCAL_CART_KEY)
+    if (!raw) return emptyLocalCart()
+    const parsed = JSON.parse(raw) as StoreCart
+    return parsed?.id ? parsed : emptyLocalCart()
+  } catch {
+    return emptyLocalCart()
+  }
+}
+
+function writeLocalCart(cart: StoreCart): StoreCart {
+  const items = cart.items ?? []
+  const item_total = items.reduce(
+    (sum, item) => sum + (Number(item.unit_price) || 0) * Math.max(1, Number(item.quantity) || 1),
+    0
+  )
+  const next: StoreCart = {
+    ...cart,
+    id: "local_cart",
+    currency_code: cart.currency_code || "usd",
+    items,
+    item_total,
+    total: item_total,
+  }
+  if (typeof window !== "undefined") {
+    localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(next))
+  }
+  return next
+}
+
+export function isLocalCart(cart?: StoreCart | null) {
+  return !cart?.id || cart.id === "local_cart"
+}
+
+export type AddToCartPayload = {
+  variantId?: string
+  productId?: string
+  title?: string
+  handle?: string
+  qty?: number
+  price?: number
+  image?: string
+  blurb?: string
+}
+
+export function addLocalLine(payload: AddToCartPayload): StoreCart {
+  const cart = readLocalCart()
+  const handle = slugifyLamp(payload.handle || payload.title || "lamp")
+  const lamp = findAdminLamp(handle)
+  const lineId = `local_${handle}`
+  const qty = Math.max(1, payload.qty || 1)
+  const items = [...(cart.items ?? [])]
+  const existing = items.find((item) => item.id === lineId)
+  if (existing) {
+    existing.quantity = Math.max(1, Number(existing.quantity) || 1) + qty
+  } else {
+    items.push({
+      id: lineId,
+      title: payload.title || lamp?.title || "Lamp",
+      subtitle: payload.blurb || lamp?.blurb || "",
+      thumbnail: payload.image || lamp?.catalogImage || "/assets/cart/item-flux.png",
+      quantity: qty,
+      unit_price: payload.price ?? lamp?.price ?? 0,
+      product_title: payload.title || lamp?.title || "Lamp",
+    })
+  }
+  return writeLocalCart({ ...cart, items })
+}
+
+function updateLocalLine(lineItemId: string, quantity: number): StoreCart {
+  const cart = readLocalCart()
+  const items = (cart.items ?? [])
+    .map((item) => (item.id === lineItemId ? { ...item, quantity } : item))
+    .filter((item) => (item.quantity || 0) > 0)
+  return writeLocalCart({ ...cart, items })
+}
+
+function deleteLocalLine(lineItemId: string): StoreCart {
+  const cart = readLocalCart()
+  return writeLocalCart({
+    ...cart,
+    items: (cart.items ?? []).filter((item) => item.id !== lineItemId),
+  })
+}
+
+function mergeLocalItems(cart: StoreCart): StoreCart {
+  const localItems = readLocalCart().items ?? []
+  if (!localItems.length) return cart
+  const existing = new Set((cart.items ?? []).map((item) => item.id))
+  const extra = localItems.filter((item) => !existing.has(item.id))
+  if (!extra.length) return cart
+  const items = [...(cart.items ?? []), ...extra]
+  const extraTotal = extra.reduce(
+    (sum, item) => sum + (Number(item.unit_price) || 0) * Math.max(1, Number(item.quantity) || 1),
+    0
+  )
+  return {
+    ...cart,
+    items,
+    item_total: (Number(cart.item_total) || 0) + extraTotal,
+    total: (Number(cart.total) || 0) + extraTotal,
+  }
 }
 
 export function rememberOrder(order: StoreOrder) {
@@ -143,19 +261,26 @@ export async function ensureCart() {
   if (inflightCart) return inflightCart
 
   inflightCart = (async () => {
-    const existingId = storedCartId()
-    if (existingId) {
-      try {
-        return await retrieveCart(existingId)
-      } catch {
-        localStorage.removeItem(CART_ID_KEY)
+    try {
+      const existingId = storedCartId()
+      let cart: StoreCart | null = null
+      if (existingId && existingId !== "local_cart") {
+        try {
+          cart = await retrieveCart(existingId)
+        } catch {
+          localStorage.removeItem(CART_ID_KEY)
+        }
       }
+      if (!cart) {
+        const region_id = await getRegionId()
+        const created = await sdk.store.cart.create({ region_id })
+        persistCartId(created.cart.id)
+        cart = await retrieveCart(created.cart.id)
+      }
+      return mergeLocalItems(cart)
+    } catch {
+      return readLocalCart()
     }
-
-    const region_id = await getRegionId()
-    const { cart } = await sdk.store.cart.create({ region_id })
-    persistCartId(cart.id)
-    return retrieveCart(cart.id)
   })()
 
   try {
@@ -167,6 +292,7 @@ export async function ensureCart() {
 
 export async function addLineItem(variantId: string, quantity = 1) {
   const cart = await ensureCart()
+  if (isLocalCart(cart)) throw new Error("Medusa cart is unavailable")
   const { cart: next } = await sdk.store.cart.createLineItem(
     cart.id,
     { variant_id: variantId, quantity },
@@ -176,23 +302,52 @@ export async function addLineItem(variantId: string, quantity = 1) {
   return next as StoreCart
 }
 
+export async function addItemToCart(payload: AddToCartPayload) {
+  const qty = Math.max(1, payload.qty || 1)
+  try {
+    const variantId = await findVariantId({
+      variantId: payload.variantId,
+      productId: payload.productId,
+      title: payload.title,
+      handle: payload.handle,
+    })
+    const next = await addLineItem(variantId, qty)
+    if (typeof window !== "undefined") localStorage.removeItem(LOCAL_CART_KEY)
+    return next
+  } catch {
+    return addLocalLine({ ...payload, qty })
+  }
+}
+
 export async function updateLineItem(lineItemId: string, quantity: number) {
-  const cart = await ensureCart()
-  const { cart: next } = await sdk.store.cart.updateLineItem(
-    cart.id,
-    lineItemId,
-    { quantity },
-    { fields: CART_FIELDS }
-  )
-  return next as StoreCart
+  if (lineItemId.startsWith("local_")) return updateLocalLine(lineItemId, quantity)
+  try {
+    const cart = await ensureCart()
+    if (isLocalCart(cart)) return updateLocalLine(lineItemId, quantity)
+    const { cart: next } = await sdk.store.cart.updateLineItem(
+      cart.id,
+      lineItemId,
+      { quantity },
+      { fields: CART_FIELDS }
+    )
+    return next as StoreCart
+  } catch {
+    return updateLocalLine(lineItemId, quantity)
+  }
 }
 
 export async function deleteLineItem(lineItemId: string) {
-  const cart = await ensureCart()
-  const { parent } = await sdk.store.cart.deleteLineItem(cart.id, lineItemId, {
-    fields: CART_FIELDS,
-  })
-  return (parent as StoreCart) ?? retrieveCart(cart.id)
+  if (lineItemId.startsWith("local_")) return deleteLocalLine(lineItemId)
+  try {
+    const cart = await ensureCart()
+    if (isLocalCart(cart)) return deleteLocalLine(lineItemId)
+    const { parent } = await sdk.store.cart.deleteLineItem(cart.id, lineItemId, {
+      fields: CART_FIELDS,
+    })
+    return (parent as StoreCart) ?? retrieveCart(cart.id)
+  } catch {
+    return deleteLocalLine(lineItemId)
+  }
 }
 
 export async function updateCart(data: {
@@ -256,7 +411,7 @@ export async function findVariantId(input: {
   title?: string
   handle?: string
 }) {
-  if (input.variantId) return input.variantId
+  if (input.variantId && input.variantId.trim()) return input.variantId
   if (input.productId?.startsWith("variant_")) return input.productId
 
   if (input.handle) {
@@ -291,8 +446,7 @@ export async function findVariantId(input: {
   const match =
     list.find((product) => slugifyLamp(product.handle || "") === handle) ||
     list.find((product) => slugifyLamp(product.title || "") === title) ||
-    list.find((product) => slugifyLamp(product.title || "").includes(title)) ||
-    list[0]
+    list.find((product) => (title ? slugifyLamp(product.title || "").includes(title) : false))
 
   const variantId = match?.variants?.[0]?.id
   if (!variantId) throw new Error("Could not find this lamp in Medusa")
