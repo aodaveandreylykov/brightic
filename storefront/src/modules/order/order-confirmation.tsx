@@ -27,12 +27,12 @@ export default function OrderConfirmation() {
         </nav>
       </header>
       <main className="order-shell">
-        <h1>Thank you</h1>
-        <p className="order-id">Order {order?.id || id || "placed"}</p>
+        <h1>Спасибо за заказ</h1>
+        <p className="order-id">Заказ {order?.id || id || "оформлен"}</p>
         <p className="checkout-lead">
           {order?.email
-            ? `A confirmation will go to ${order.email}.`
-            : "Your order is placed. Open it in Medusa Admin at /app/orders."}
+            ? `Подтверждение отправим на ${order.email}.`
+            : "Заказ оформлен. Он появится в Medusa Admin: /app/orders."}
         </p>
         {order?.items?.length ? (
           <aside className="checkout-summary">
@@ -45,14 +45,14 @@ export default function OrderConfirmation() {
               </p>
             ))}
             <p className="checkout-line checkout-line--total">
-              <span>Total</span>
+              <span>Итого</span>
               <span>{formatMoney(order.total)}</span>
             </p>
           </aside>
         ) : null}
         <div className="checkout-actions">
           <a className="checkout-btn checkout-btn--dark" href="/catalog">
-            Continue shopping
+            Продолжить покупки
           </a>
         </div>
       </main>

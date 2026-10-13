@@ -1,10 +1,11 @@
+import { Suspense } from "react"
 import CartTrigger from "@/modules/cart/cart-trigger"
 import CheckoutFlow from "@/modules/checkout/checkout-flow"
 import "@/modules/checkout/checkout.css"
 
 export const metadata = {
-  title: "Checkout — Brightic",
-  description: "Complete your Brightic lamp order.",
+  title: "Оформление заказа — Brightic",
+  description: "Доставка по России и оплата картой, СБП или при получении.",
 }
 
 export default function Page() {
@@ -27,9 +28,13 @@ export default function Page() {
         </div>
       </header>
       <main className="checkout-shell">
-        <h1>Checkout</h1>
-        <p className="checkout-lead">Email, address, delivery, and payment — then the order lands in Admin.</p>
-        <CheckoutFlow />
+        <h1>Оформление заказа</h1>
+        <p className="checkout-lead">
+          Контакты, адрес в России, доставка и оплата — заказ появится в Medusa Admin.
+        </p>
+        <Suspense fallback={<p className="checkout-lead">Загружаем корзину…</p>}>
+          <CheckoutFlow />
+        </Suspense>
       </main>
     </div>
   )

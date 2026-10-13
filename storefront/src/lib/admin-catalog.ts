@@ -2,8 +2,10 @@
  * Contract between Medusa Admin and the Brightic storefront.
  *
  * Create these products in Admin (http://localhost:9000/app) with matching
- * handles, a published variant, a USD price, inventory, and the Default
+ * handles, a published variant, a RUB price, inventory, and the Default
  * Sales Channel tied to the storefront publishable key.
+ *
+ * Region: Russia, currency RUB, country `ru`.
  *
  * Product metadata:
  *   band            "best-sellers" | "most-popular"  — homepage rails
@@ -13,12 +15,19 @@
  *   color           PDP spec
  *   hide_on_mobile  "true" to hide a homepage card on small screens
  *   sort            number, lower first
+ *   weight_g        grams, needed later for CDEK calculated rates
  *
- * Shipping: Settings → Locations → fulfillment set → service zone covering
- * the region countries → shipping options (flat Standard / Express).
+ * Shipping: Settings → Locations (warehouse in Russia) → fulfillment set →
+ * service zone covering only `ru` → flat shipping options:
+ *   Курьер по городу
+ *   СДЭК до пункта выдачи
+ *   Почта России
+ * Calculated CDEK rates use the backend CDEK fulfillment module.
  *
- * Payments: enable Manual (`pp_system_default`) on the USD region first,
- * then Stripe (`pp_stripe_stripe`) once STRIPE_API_KEY is set on the backend.
+ * Payments: enable Manual (`pp_system_default`) on the RUB region first
+ * («оплата при получении»), then YooKassa (`pp_yookassa_yookassa`) once
+ * YOOKASSA_SHOP_ID / YOOKASSA_SECRET_KEY are set on the backend.
+ * Do not enable Stripe on the Russia region.
  */
 
 export type AdminLamp = {
