@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { withBase } from "@/lib/base-path"
 import { formatMoney } from "@/lib/money"
@@ -34,81 +34,128 @@ import {
   type ShippingOption,
 } from "@/lib/store-cart"
 import { useCart } from "@/modules/cart/cart-provider"
-import { YookassaPayment } from "@/modules/checkout/yookassa-payment"
 import "@/modules/checkout/checkout.css"
-
-type Step = "contact" | "address" | "shipping" | "payment"
 
 const FALLBACK_COUNTRIES = [{ iso_2: STORE_COUNTRY, display_name: "Россия" }]
 
 function preferredProvider(providers: PaymentProvider[]) {
-  const enabled = providers.filter((item) => item.is_enabled !== false && !isStripeProvider(item.id))
+  const enabled = providers.filter((p) => p.is_enabled !== false && !isStripeProvider(p.id))
   return (
-    enabled.find((item) => isYookassaProvider(item.id))?.id ||
-    enabled.find((item) => isManualProvider(item.id))?.id ||
+    enabled.find((p) => isYookassaProvider(p.id))?.id ||
+    enabled.find((p) => isManualProvider(p.id))?.id ||
     enabled[0]?.id ||
     ""
   )
+}
+
+function shippingDesc(name?: string | null) {
+  const kind = shippingKind(name)
+  if (kind === "cdek") return "Доставка до пункта выдачи СДЭК"
+  if (kind === "courier") return "Курьерская доставка до двери"
+  if (kind === "post") return "Доставка Почтой России"
+  return "Доставка"
 }
 
 export default function CheckoutFlow() {
   const router = useRouter()
   const search = useSearchParams()
   const { cart, items, total, applyCart, refreshCart, closeCart, ready } = useCart()
-  const [step, setStep] = useState<Step>("contact")
+
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
+  const [agreed, setAgreed] = useState(false)
+
+  // Contact
   const [email, setEmail] = useState("")
+
+  // Personal
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
+  const [phone, setPhone] = useState("")
+
+  // Shipping address
   const [address1, setAddress1] = useState("")
   const [city, setCity] = useState("")
   const [province, setProvince] = useState("")
   const [postalCode, setPostalCode] = useState("")
   const [countryCode, setCountryCode] = useState("")
-  const [phone, setPhone] = useState("")
+
+  // CDEK
   const [pvz, setPvz] = useState("")
   const [cdekPoints, setCdekPoints] = useState<CdekPoint[]>([])
+
+  // Shipping options
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([])
   const [shippingId, setShippingId] = useState("")
+
+  // Payment
   const [providers, setProviders] = useState<PaymentProvider[]>([])
   const [providerId, setProviderId] = useState("")
+
   const yookassaReturn = useRef(false)
 
+  // Restore from cart
   useEffect(() => {
     closeCart()
   }, [closeCart])
 
   useEffect(() => {
-    if (cart?.email && !email) setEmail(cart.email)
-    const address = cart?.shipping_address
-    if (address?.first_name && !firstName) setFirstName(address.first_name)
-    if (address?.last_name && !lastName) setLastName(address.last_name)
-    if (address?.address_1 && !address1) setAddress1(address.address_1)
-    if (address?.city && !city) setCity(address.city)
-    if (address?.province && !province) setProvince(address.province)
-    if (address?.postal_code && !postalCode) setPostalCode(address.postal_code)
-    if (address?.phone && !phone) setPhone(formatRuPhone(address.phone))
-    if (address?.address_2?.startsWith("ПВЗ:") && !pvz) {
-      setPvz(address.address_2.replace(/^ПВЗ:\s*/, ""))
+    if (!cart) return
+    if (cart.email && !email) setEmail(cart.email)
+    const a = cart.shipping_address
+    if (a?.first_name && !firstName) setFirstName(a.first_name)
+    if (a?.last_name && !lastName) setLastName(a.last_name)
+    if (a?.address_1 && !address1) setAddress1(a.address_1)
+    if (a?.city && !city) setCity(a.city)
+    if (a?.province && !province) setProvince(a.province)
+    if (a?.postal_code && !postalCode) setPostalCode(a.postal_code)
+    if (a?.phone && !phone) setPhone(formatRuPhone(a.phone))
+    if (a?.address_2?.startsWith("ПВЗ:") && !pvz) {
+      setPvz(a.address_2.replace(/^ПВЗ:\s*/, ""))
     }
-    const nextCountry =
-      address?.country_code || cart?.region?.countries?.[0]?.iso_2 || STORE_COUNTRY
-    if (nextCountry && !countryCode) setCountryCode(nextCountry)
-  }, [
-    cart,
-    email,
-    firstName,
-    lastName,
-    address1,
-    city,
-    province,
-    postalCode,
-    phone,
-    pvz,
-    countryCode,
-  ])
+    const country = a?.country_code || cart.region?.countries?.[0]?.iso_2 || STORE_COUNTRY
+    if (country && !countryCode) setCountryCode(country)
+  }, [cart, email, firstName, lastName, address1, city, province, postalCode, phone, pvz, countryCode])
 
+  // Load shipping options once cart is ready
+  useEffect(() => {
+    if (!ready || isLocalCart(cart)) return
+    void listShippingOptions()
+      .then((opts) => {
+        setShippingOptions(opts)
+        if (opts[0] && !shippingId) setShippingId(opts[0].id)
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, cart?.id])
+
+  // Load payment providers once cart is ready
+  useEffect(() => {
+    if (!ready || !cart || isLocalCart(cart)) return
+    const regionId = cart.region_id || cart.region?.id || ""
+    if (!regionId || providers.length) return
+    void listPaymentProviders(regionId)
+      .then((list) => {
+        setProviders(list)
+        if (!providerId) setProviderId(preferredProvider(list))
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, cart?.id, providers.length])
+
+  // CDEK points
+  useEffect(() => {
+    if (!needsPvz || !city.trim() || isLocalCart(cart)) {
+      setCdekPoints([])
+      return
+    }
+    let cancelled = false
+    void listCdekPoints(city).then((pts) => { if (!cancelled) setCdekPoints(pts) })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city, cart?.id])
+
+  // YooKassa return
   useEffect(() => {
     if (search.get("pay") !== "yookassa" || !ready || !cart || isLocalCart(cart)) return
     if (yookassaReturn.current) return
@@ -124,45 +171,28 @@ export default function CheckoutFlow() {
       }
       throw new Error(completeCartError(result))
     })
-  }, [search, ready, cart, refreshCart, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, ready, cart?.id])
 
-  const countries = cart?.region?.countries?.filter((item) => item.iso_2) ?? []
+  const countries = cart?.region?.countries?.filter((c) => c.iso_2) ?? []
   const countryOptions = countries.length ? countries : FALLBACK_COUNTRIES
   const activeSession = cart?.payment_collection?.payment_sessions?.[0]
   const shippingTotal = Number(cart?.shipping_total) || 0
   const grandTotal = Number(cart?.total) || total + shippingTotal
-  const selectedShipping = shippingOptions.find((option) => option.id === shippingId)
-  const selectedKind = shippingKind(selectedShipping?.name)
-  const needsPvz = selectedKind === "cdek"
+  const selectedShipping = shippingOptions.find((o) => o.id === shippingId)
+  const needsPvz = shippingKind(selectedShipping?.name) === "cdek"
+  const visibleProviders = providers.filter((p) => !isStripeProvider(p.id))
 
-  const visibleProviders = providers.filter((item) => !isStripeProvider(item.id))
-
-  const canPay = useMemo(() => {
-    return Boolean(
-      cart?.email &&
-        cart?.shipping_address?.address_1 &&
-        (cart?.shipping_methods?.length || !shippingOptions.length)
-    )
-  }, [cart, shippingOptions.length])
-
-  const addressReady =
-    Boolean(firstName.trim() && lastName.trim() && address1.trim() && city.trim() && province) &&
+  const formValid =
+    Boolean(email.trim()) &&
+    Boolean(firstName.trim()) &&
+    Boolean(lastName.trim()) &&
+    Boolean(address1.trim()) &&
+    Boolean(city.trim()) &&
+    Boolean(province) &&
     isRuPostal(postalCode) &&
-    isRuPhone(phone)
-
-  useEffect(() => {
-    if (!needsPvz || !city.trim() || isLocalCart(cart)) {
-      setCdekPoints([])
-      return
-    }
-    let cancelled = false
-    void listCdekPoints(city).then((points) => {
-      if (!cancelled) setCdekPoints(points)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [needsPvz, city, cart])
+    isRuPhone(phone) &&
+    agreed
 
   async function run(action: () => Promise<void>) {
     setBusy(true)
@@ -179,15 +209,98 @@ export default function CheckoutFlow() {
   function requireLiveCart() {
     if (isLocalCart(cart)) {
       throw new Error(
-        "Заказ с GitHub Pages недоступен: нужен опубликованный Medusa Backend с регионом RUB."
+        "Для оформления заказа нужен подключённый Medusa Backend с регионом RUB."
       )
     }
   }
 
+  async function handlePay() {
+    if (!formValid) {
+      setError("Заполните все обязательные поля")
+      return
+    }
+    void run(async () => {
+      requireLiveCart()
+
+      const address = {
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        address_1: address1.trim(),
+        address_2: needsPvz && pvz.trim() ? `ПВЗ: ${pvz.trim()}` : undefined,
+        city: city.trim(),
+        province,
+        postal_code: postalCode,
+        country_code: countryCode || STORE_COUNTRY,
+        phone: formatRuPhone(phone),
+      }
+
+      applyCart(
+        await updateCart({
+          email,
+          shipping_address: address,
+          billing_address: address,
+          metadata: needsPvz ? { cdek_pvz: pvz.trim() } : { cdek_pvz: null },
+        })
+      )
+
+      // Reload shipping options after address is saved (for accurate CDEK prices)
+      let opts = shippingOptions
+      if (!opts.length) {
+        opts = await listShippingOptions()
+        setShippingOptions(opts)
+        if (opts[0] && !shippingId) setShippingId(opts[0].id)
+      }
+
+      const sid = shippingId || opts[0]?.id || ""
+      if (sid) applyCart(await addShippingMethod(sid))
+
+      // Ensure payment providers
+      let provList = providers
+      if (!provList.length) {
+        const regionId = cart?.region_id || cart?.region?.id || ""
+        if (regionId) {
+          provList = await listPaymentProviders(regionId)
+          setProviders(provList)
+        }
+      }
+
+      const pid = providerId || preferredProvider(provList)
+      if (!pid) throw new Error("Нет доступных способов оплаты. Настройте провайдер в Medusa Admin.")
+
+      const origin = window.location.origin
+      const returnUrl = `${origin}${withBase("/checkout")}?pay=yookassa`
+      const updatedCart = await initiatePaymentSession(pid, { return_url: returnUrl })
+      applyCart(updatedCart)
+
+      if (isManualProvider(pid)) {
+        const result = await completeCart()
+        if (result.type === "order" && result.order) {
+          rememberOrder(result.order)
+          forgetCart()
+          await refreshCart()
+          router.push(`/order?id=${result.order.id}`)
+          return
+        }
+        throw new Error(completeCartError(result))
+      }
+
+      if (isYookassaProvider(pid)) {
+        const confirmUrl =
+          updatedCart.payment_collection?.payment_sessions?.[0]?.data?.confirmation_url
+        if (confirmUrl) {
+          window.location.assign(confirmUrl)
+          return
+        }
+        // confirmation_url not yet ready — user will see it rendered below
+      }
+    })
+  }
+
+  // ── States ───────────────────────────────────────────────────
   if (!ready) {
     return (
       <div className="checkout-empty">
-        <p className="checkout-lead">Загружаем корзину…</p>
+        <p>Загружаем корзину…</p>
       </div>
     )
   }
@@ -195,344 +308,294 @@ export default function CheckoutFlow() {
   if (!cart || items.length === 0) {
     return (
       <div className="checkout-empty">
-        <p className="checkout-lead">Корзина пуста.</p>
-        <a className="checkout-btn checkout-btn--dark" href="/catalog">
-          В каталог
-        </a>
+        <p>Корзина пуста.</p>
+        <a href="/catalog">В каталог</a>
       </div>
     )
   }
 
+  // ── YooKassa session active — show redirect button
+  const yookassaConfirmUrl =
+    isYookassaProvider(activeSession?.provider_id)
+      ? activeSession?.data?.confirmation_url
+      : null
+
   return (
-    <div className="checkout-grid">
-      <div>
-        <section className="checkout-step" aria-labelledby="checkout-contact">
-          <h2 id="checkout-contact">1. Контакты</h2>
-          <div className="checkout-fields">
-            <label className="field-wide">
-              Email
-              <input
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-            </label>
-          </div>
-          <div className="checkout-actions">
-            <button
-              type="button"
-              className="checkout-btn checkout-btn--dark"
-              disabled={busy || !email}
-              onClick={() =>
-                void run(async () => {
-                  requireLiveCart()
-                  applyCart(await updateCart({ email }))
-                  setStep("address")
-                })
-              }
-            >
-              Далее
-            </button>
-          </div>
-        </section>
+    <div className="checkout-wrap">
+      <h1>Checkout</h1>
 
-        <section className="checkout-step" aria-labelledby="checkout-address">
-          <h2 id="checkout-address">2. Адрес доставки</h2>
-          <div className="checkout-fields">
-            <label>
-              Имя
-              <input
-                value={firstName}
-                onChange={(event) => setFirstName(event.target.value)}
-                autoComplete="given-name"
-              />
-            </label>
-            <label>
-              Фамилия
-              <input
-                value={lastName}
-                onChange={(event) => setLastName(event.target.value)}
-                autoComplete="family-name"
-              />
-            </label>
-            <label>
-              Регион / область
-              <select value={province} onChange={(event) => setProvince(event.target.value)}>
-                <option value="">Выберите регион</option>
-                {RU_PROVINCES.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Город
-              <input
-                value={city}
-                onChange={(event) => setCity(event.target.value)}
-                autoComplete="address-level2"
-              />
-            </label>
-            <label className="field-wide">
-              Улица, дом, квартира
-              <input
-                value={address1}
-                onChange={(event) => setAddress1(event.target.value)}
-                autoComplete="address-line1"
-              />
-            </label>
-            <label>
-              Индекс
-              <input
-                value={postalCode}
-                onChange={(event) => setPostalCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
-                inputMode="numeric"
-                autoComplete="postal-code"
-                placeholder="123456"
-              />
-            </label>
-            <label>
-              Страна
-              <select value={countryCode} onChange={(event) => setCountryCode(event.target.value)}>
-                {countryOptions.map((country) => (
-                  <option key={country.iso_2 || STORE_COUNTRY} value={country.iso_2 || STORE_COUNTRY}>
-                    {country.display_name || country.iso_2}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="field-wide">
-              Телефон
-              <input
-                value={phone}
-                onChange={(event) => setPhone(formatRuPhone(event.target.value))}
-                autoComplete="tel"
-                inputMode="tel"
-                placeholder={RU_PHONE_PLACEHOLDER}
-              />
-            </label>
-          </div>
-          <div className="checkout-actions">
-            <button
-              type="button"
-              className="checkout-btn checkout-btn--dark"
-              disabled={busy || step === "contact" || !addressReady}
-              onClick={() =>
-                void run(async () => {
-                  requireLiveCart()
-                  const address = {
-                    first_name: firstName.trim(),
-                    last_name: lastName.trim(),
-                    address_1: address1.trim(),
-                    city: city.trim(),
-                    province,
-                    postal_code: postalCode,
-                    country_code: countryCode || STORE_COUNTRY,
-                    phone: formatRuPhone(phone),
-                  }
-                  applyCart(await updateCart({ shipping_address: address, billing_address: address }))
-                  const options = await listShippingOptions()
-                  setShippingOptions(options)
-                  setShippingId(options[0]?.id || "")
-                  setStep("shipping")
-                })
-              }
-            >
-              Сохранить адрес
-            </button>
-          </div>
-        </section>
+      <div className="checkout-grid">
+        {/* ── LEFT: form ────────────────────────────────────── */}
+        <div className="co-form">
 
-        <section className="checkout-step" aria-labelledby="checkout-shipping">
-          <h2 id="checkout-shipping">3. Доставка</h2>
-          {shippingOptions.length === 0 ? (
-            <p className="checkout-note">
-              Нет способов доставки. В Admin добавьте склад в РФ, fulfillment set, зону `ru` и
-              опции: курьер, СДЭК до ПВЗ, Почта России.
-            </p>
-          ) : (
-            <div className="checkout-options">
-              {shippingOptions.map((option) => (
-                <label key={option.id} className="checkout-option">
-                  <input
-                    type="radio"
-                    name="shipping"
-                    checked={shippingId === option.id}
-                    onChange={() => setShippingId(option.id)}
-                  />
-                  <span>{option.name || "Доставка"}</span>
-                  <strong>{formatMoney(option.amount)}</strong>
-                </label>
-              ))}
+          {/* 1. Information */}
+          <section className="co-section">
+            <div className="co-section-head">
+              <span>Information</span>
             </div>
-          )}
-          {needsPvz ? (
-            <label className="field-wide checkout-pvz">
-              Пункт выдачи СДЭК
-              {cdekPoints.length ? (
-                <select value={pvz} onChange={(event) => setPvz(event.target.value)}>
-                  <option value="">Выберите ПВЗ</option>
-                  {cdekPoints.map((point) => (
-                    <option key={point.code || point.address} value={`${point.code} ${point.address}`.trim()}>
-                      {point.name}
-                      {point.address ? ` — ${point.address}` : ""}
-                    </option>
+
+            <p className="co-sub">Personal information</p>
+            <div className="co-fields">
+              <label className="co-field">
+                <span>First name</span>
+                <input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  autoComplete="given-name"
+                />
+              </label>
+              <label className="co-field">
+                <span>Last name</span>
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  autoComplete="family-name"
+                />
+              </label>
+              <label className="co-field">
+                <span>Phone number</span>
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(formatRuPhone(e.target.value))}
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder={RU_PHONE_PLACEHOLDER}
+                />
+              </label>
+              <label className="co-field">
+                <span>E-mail</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                />
+              </label>
+            </div>
+
+            <p className="co-sub">Shipping information</p>
+            <div className="co-fields">
+              <label className="co-field">
+                <span>Country / Region</span>
+                <select value={province} onChange={(e) => setProvince(e.target.value)}>
+                  <option value="">Select region</option>
+                  {RU_PROVINCES.map((name) => (
+                    <option key={name} value={name}>{name}</option>
                   ))}
                 </select>
-              ) : (
+              </label>
+              <label className="co-field">
+                <span>City</span>
                 <input
-                  value={pvz}
-                  onChange={(event) => setPvz(event.target.value)}
-                  placeholder="Код или адрес ПВЗ, например MOS76"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  autoComplete="address-level2"
                 />
-              )}
-              <span className="checkout-hint">
-                {cdekPoints.length
-                  ? "Список пунктов выдачи из СДЭК по городу доставки."
-                  : "Живой список ПВЗ появится, когда на бэкенде включён модуль СДЭК. Пока укажите код или адрес вручную."}
-              </span>
-            </label>
-          ) : null}
-          <div className="checkout-actions">
-            <button
-              type="button"
-              className="checkout-btn checkout-btn--dark"
-              disabled={busy || step === "contact" || step === "address" || !shippingId || (needsPvz && !pvz.trim())}
-              onClick={() =>
-                void run(async () => {
-                  requireLiveCart()
-                  const address = {
-                    first_name: firstName.trim(),
-                    last_name: lastName.trim(),
-                    address_1: address1.trim(),
-                    address_2: needsPvz && pvz.trim() ? `ПВЗ: ${pvz.trim()}` : undefined,
-                    city: city.trim(),
-                    province,
-                    postal_code: postalCode,
-                    country_code: countryCode || STORE_COUNTRY,
-                    phone: formatRuPhone(phone),
-                  }
-                  applyCart(
-                    await updateCart({
-                      shipping_address: address,
-                      billing_address: address,
-                      metadata: needsPvz ? { cdek_pvz: pvz.trim() } : { cdek_pvz: null },
-                    })
-                  )
-                  applyCart(await addShippingMethod(shippingId))
-                  const regionId = cart.region_id || cart.region?.id || ""
-                  const nextProviders = regionId ? await listPaymentProviders(regionId) : []
-                  setProviders(nextProviders)
-                  setProviderId(preferredProvider(nextProviders))
-                  setStep("payment")
-                })
-              }
-            >
-              Выбрать доставку
-            </button>
-          </div>
-        </section>
-
-        <section className="checkout-step" aria-labelledby="checkout-payment">
-          <h2 id="checkout-payment">4. Оплата</h2>
-          {visibleProviders.length === 0 ? (
-            <p className="checkout-note">
-              Нет способов оплаты. В Admin на регионе RUB включите Manual, затем ЮKassa.
-            </p>
-          ) : (
-            <div className="checkout-options">
-              {visibleProviders.map((provider) => (
-                <label key={provider.id} className="checkout-option">
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={providerId === provider.id}
-                    onChange={() => setProviderId(provider.id)}
-                  />
-                  <span>{paymentProviderLabel(provider.id)}</span>
+              </label>
+              <label className="co-field co-field--full">
+                <span>Address</span>
+                <input
+                  value={address1}
+                  onChange={(e) => setAddress1(e.target.value)}
+                  autoComplete="address-line1"
+                />
+              </label>
+              <label className="co-field">
+                <span>Zip / Postal code</span>
+                <input
+                  value={postalCode}
+                  onChange={(e) => setPostalCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  inputMode="numeric"
+                  autoComplete="postal-code"
+                  placeholder="123456"
+                />
+              </label>
+              {countryOptions.length > 1 ? (
+                <label className="co-field">
+                  <span>Country</span>
+                  <select value={countryCode} onChange={(e) => setCountryCode(e.target.value)}>
+                    {countryOptions.map((c) => (
+                      <option key={c.iso_2 || STORE_COUNTRY} value={c.iso_2 || STORE_COUNTRY}>
+                        {c.display_name || c.iso_2}
+                      </option>
+                    ))}
+                  </select>
                 </label>
-              ))}
+              ) : null}
             </div>
-          )}
-          <div className="checkout-actions">
-            <button
-              type="button"
-              className="checkout-btn"
-              disabled={busy || !providerId || !canPay}
-              onClick={() =>
-                void run(async () => {
-                  requireLiveCart()
-                  const origin = window.location.origin
-                  const returnUrl = `${origin}${withBase("/checkout")}?pay=yookassa`
-                  applyCart(
-                    await initiatePaymentSession(providerId, {
-                      return_url: returnUrl,
-                    })
-                  )
-                })
-              }
-            >
-              Выбрать оплату
-            </button>
-            {isManualProvider(activeSession?.provider_id) ? (
-              <button
-                type="button"
-                className="checkout-btn checkout-btn--dark"
-                disabled={busy}
-                onClick={() =>
-                  void run(async () => {
-                    const result = await completeCart()
-                    if (result.type === "order" && result.order) {
-                      rememberOrder(result.order)
-                      forgetCart()
-                      await refreshCart()
-                      router.push(`/order?id=${result.order.id}`)
-                      return
-                    }
-                    throw new Error(completeCartError(result))
-                  })
-                }
-              >
-                Оформить заказ
-              </button>
-            ) : null}
-          </div>
-          {isYookassaProvider(activeSession?.provider_id) ? (
-            <YookassaPayment
-              cart={cart}
-              onSuccess={async (orderId) => {
-                await refreshCart()
-                router.push(`/order?id=${orderId}`)
-              }}
-              onError={setError}
-            />
-          ) : null}
-          {error ? <p className="checkout-error">{error}</p> : null}
-        </section>
-      </div>
+          </section>
 
-      <aside className="checkout-summary">
-        <h2>Заказ</h2>
-        {items.map((item) => (
-          <p key={item.id} className="checkout-line">
-            <span>
-              {item.title} × {item.qty}
-            </span>
-            <span>{formatMoney(item.price * item.qty)}</span>
-          </p>
-        ))}
-        <p className="checkout-line">
-          <span>Доставка</span>
-          <span>{shippingTotal ? formatMoney(shippingTotal) : "—"}</span>
-        </p>
-        <p className="checkout-line checkout-line--total">
-          <span>Итого</span>
-          <span>{formatMoney(grandTotal)}</span>
-        </p>
-      </aside>
+          {/* 2. Delivery */}
+          <section className="co-section">
+            <div className="co-section-head"><span>Delivery</span></div>
+
+            {shippingOptions.length === 0 ? (
+              <p className="co-note">
+                Варианты доставки появятся после подключения Medusa Backend (регион RUB, fulfillment set, зона ru).
+              </p>
+            ) : (
+              <div className="co-options">
+                {shippingOptions.map((opt) => (
+                  <label key={opt.id} className="co-option">
+                    <input
+                      type="radio"
+                      name="shipping"
+                      checked={shippingId === opt.id}
+                      onChange={() => setShippingId(opt.id)}
+                    />
+                    <span className="co-option__body">
+                      <span className="co-option__name">{opt.name || "Доставка"}</span>
+                      <span className="co-option__desc">{shippingDesc(opt.name)}</span>
+                    </span>
+                    <span className="co-option__price">
+                      {opt.amount ? formatMoney(opt.amount) : "Free"}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {needsPvz ? (
+              <div className="co-pvz">
+                <p className="co-sub">Пункт выдачи СДЭК</p>
+                {cdekPoints.length ? (
+                  <select value={pvz} onChange={(e) => setPvz(e.target.value)}>
+                    <option value="">Выберите ПВЗ</option>
+                    {cdekPoints.map((pt) => (
+                      <option
+                        key={pt.code || pt.address}
+                        value={`${pt.code} ${pt.address}`.trim()}
+                      >
+                        {pt.name}{pt.address ? ` — ${pt.address}` : ""}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    value={pvz}
+                    onChange={(e) => setPvz(e.target.value)}
+                    placeholder="Код или адрес ПВЗ, например MOS76"
+                  />
+                )}
+                <span className="co-hint">
+                  {cdekPoints.length
+                    ? "Список пунктов выдачи из СДЭК по городу доставки."
+                    : "Живой список ПВЗ появится, когда на бэкенде включён модуль СДЭК."}
+                </span>
+              </div>
+            ) : null}
+          </section>
+
+          {/* 3. Payment */}
+          <section className="co-section">
+            <div className="co-section-head"><span>Payment</span></div>
+
+            {visibleProviders.length === 0 ? (
+              <p className="co-note">
+                Нет способов оплаты. В Medusa Admin на регионе RUB включите Manual, затем YooKassa.
+              </p>
+            ) : (
+              <div className="co-options">
+                {visibleProviders.map((prov) => (
+                  <label key={prov.id} className="co-option">
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={providerId === prov.id}
+                      onChange={() => setProviderId(prov.id)}
+                    />
+                    <span className="co-option__body">
+                      <span className="co-option__name">{paymentProviderLabel(prov.id)}</span>
+                    </span>
+                    {isYookassaProvider(prov.id) ? (
+                      <span className="co-option__icons">
+                        <span style={{ fontSize: 12, opacity: 0.7 }}>МИР · СБП</span>
+                      </span>
+                    ) : null}
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {/* YooKassa: confirmation_url ready — show redirect button */}
+            {yookassaConfirmUrl ? (
+              <div className="co-yookassa">
+                <p className="co-yookassa-note">
+                  Оплата картой МИР, Visa, Mastercard или через СБП. После оплаты вернёмся на страницу заказа.
+                </p>
+                <button
+                  type="button"
+                  className="co-pay-btn"
+                  style={{ width: "auto", padding: "0 32px" }}
+                  onClick={() => window.location.assign(yookassaConfirmUrl)}
+                >
+                  Оплатить картой / СБП
+                </button>
+              </div>
+            ) : null}
+          </section>
+        </div>
+
+        {/* ── RIGHT: shopping bag ───────────────────────────── */}
+        <aside className="checkout-bag">
+          <h2>Shopping Bag ({items.reduce((s, i) => s + i.qty, 0)})</h2>
+
+          {items.map((item) => (
+            <div key={item.id} className="co-item">
+              <img className="co-item__img" src={item.image} alt="" />
+              <div>
+                <p className="co-item__name">{item.title}</p>
+                <p className="co-item__blurb">{item.blurb}</p>
+                <p className="co-item__qty">Quantity: {item.qty}</p>
+              </div>
+              <span className="co-item__price">{formatMoney(item.price)}</span>
+            </div>
+          ))}
+
+          {/* Promo code — UI placeholder */}
+          <div className="co-promo">
+            <input className="co-promo__input" placeholder="Promocode" />
+            <button type="button" className="co-promo__btn">Apply</button>
+          </div>
+
+          <div className="co-totals">
+            <div className="co-total-row">
+              <span>Shipping</span>
+              <span>{shippingTotal ? formatMoney(shippingTotal) : "Free"}</span>
+            </div>
+            <div className="co-total-row">
+              <span>Discount</span>
+              <span>—</span>
+            </div>
+          </div>
+
+          <div className="co-total-final">
+            <strong>Total:</strong>
+            <strong>{formatMoney(grandTotal)}</strong>
+          </div>
+
+          <label className="co-agree">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+            />
+            I agree to{" "}
+            <a href="/#contact">data processing</a>
+          </label>
+
+          {error ? <p className="co-error">{error}</p> : null}
+
+          <button
+            type="button"
+            className="co-pay-btn"
+            disabled={busy || !agreed}
+            onClick={() => void handlePay()}
+          >
+            {busy ? "Processing…" : "Pay and place order"}
+          </button>
+        </aside>
+      </div>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import CheckoutFlow from "@/modules/checkout/checkout-flow"
 import "@/modules/checkout/checkout.css"
 
 export const metadata = {
-  title: "Оформление заказа — Brightic",
+  title: "Checkout — Brightic",
   description: "Доставка по России и оплата картой, СБП или при получении.",
 }
 
@@ -27,15 +27,13 @@ export default function Page() {
           </CartTrigger>
         </div>
       </header>
-      <main className="checkout-shell">
-        <h1>Оформление заказа</h1>
-        <p className="checkout-lead">
-          Контакты, адрес в России, доставка и оплата — заказ появится в Medusa Admin.
-        </p>
-        <Suspense fallback={<p className="checkout-lead">Загружаем корзину…</p>}>
-          <CheckoutFlow />
-        </Suspense>
-      </main>
+      <Suspense fallback={
+        <div className="checkout-empty" style={{ padding: "60px" }}>
+          <p>Загружаем корзину…</p>
+        </div>
+      }>
+        <CheckoutFlow />
+      </Suspense>
     </div>
   )
 }
