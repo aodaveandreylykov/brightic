@@ -8,6 +8,7 @@ import {
 } from "@/lib/admin-catalog"
 import { formatMoney } from "@/lib/money"
 import { sdk } from "@/lib/medusa"
+import { pickRubRegion } from "@/lib/ru"
 
 export const PRODUCT_FIELDS =
   "id,title,handle,description,subtitle,thumbnail,*images,+metadata,*variants,*variants.calculated_price"
@@ -85,8 +86,7 @@ function productImages(product: Pick<StoreProduct, "images" | "thumbnail">, lamp
 export async function getRegionIdSafe() {
   try {
     const { regions } = await sdk.store.region.list({ limit: 50 })
-    const region =
-      regions.find((item: { currency_code?: string }) => item.currency_code === "usd") ?? regions[0]
+    const region = pickRubRegion(regions)
     return (region?.id as string | undefined) || null
   } catch {
     return null

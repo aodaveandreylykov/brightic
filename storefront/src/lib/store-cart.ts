@@ -1,5 +1,6 @@
 import { findAdminLamp, slugifyLamp } from "@/lib/admin-catalog"
 import { sdk } from "@/lib/medusa"
+import { pickRubRegion, STORE_CURRENCY } from "@/lib/ru"
 
 export const CART_ID_KEY = "cart_id"
 export const LOCAL_CART_KEY = "brightic_local_cart"
@@ -55,7 +56,12 @@ export type StoreCart = {
     payment_sessions?: {
       id?: string
       provider_id?: string
-      data?: { client_secret?: string | null } | null
+      data?: {
+        client_secret?: string | null
+        confirmation_url?: string | null
+        confirmation_token?: string | null
+        payment_id?: string | null
+      } | null
     }[] | null
   } | null
   region?: {
@@ -70,6 +76,13 @@ export type ShippingOption = {
   name?: string | null
   amount?: number | null
   price_type?: string | null
+}
+
+export type CdekPoint = {
+  code: string
+  name: string
+  address: string
+  city?: string
 }
 
 export type PaymentProvider = {
@@ -114,7 +127,7 @@ export function forgetCart() {
 function emptyLocalCart(): StoreCart {
   return {
     id: "local_cart",
-    currency_code: "usd",
+    currency_code: STORE_CURRENCY,
     items: [],
     item_total: 0,
     total: 0,
@@ -142,7 +155,7 @@ function writeLocalCart(cart: StoreCart): StoreCart {
   const next: StoreCart = {
     ...cart,
     id: "local_cart",
-    currency_code: cart.currency_code || "usd",
+    currency_code: STORE_CURRENCY,
     items,
     item_total,
     total: item_total,
@@ -246,9 +259,8 @@ export function readRememberedOrder(id: string): StoreOrder | null {
 
 export async function getRegionId() {
   const { regions } = await sdk.store.region.list({ limit: 50 })
-  const region =
-    regions.find((item: { currency_code?: string }) => item.currency_code === "usd") ?? regions[0]
-  if (!region?.id) throw new Error("No Medusa region is available")
+  const region = pickRubRegion(regions)
+  if (!region?.id) throw new Error("Нет региона RUB в Medusa")
   return region.id as string
 }
 
@@ -276,6 +288,20 @@ export async function ensureCart() {
         const created = await sdk.store.cart.create({ region_id })
         persistCartId(created.cart.id)
         cart = await retrieveCart(created.cart.id)
+      } else if (cart.currency_code && cart.currency_code !== STORE_CURRENCY) {
+        try {
+          const region_id = await getRegionId()
+          if (region_id && region_id !== cart.region_id) {
+            const { cart: next } = await sdk.store.cart.update(
+              cart.id,
+              { region_id },
+              { fields: CART_FIELDS }
+            )
+            cart = next as StoreCart
+          }
+        } catch {
+          /* keep the retrieved cart if the RUB region is not ready yet */
+        }
       }
       return mergeLocalItems(cart)
     } catch {
@@ -354,6 +380,7 @@ export async function updateCart(data: {
   email?: string
   shipping_address?: CartAddress
   billing_address?: CartAddress
+  metadata?: Record<string, unknown>
 }) {
   const cart = await ensureCart()
   const { cart: next } = await sdk.store.cart.update(cart.id, data, { fields: CART_FIELDS })
@@ -367,6 +394,20 @@ export async function listShippingOptions() {
     cart_id: cart.id,
   })
   return (shipping_options || []) as ShippingOption[]
+}
+
+export async function listCdekPoints(city: string): Promise<CdekPoint[]> {
+  const query = city.trim()
+  if (!query) return []
+  try {
+    const result = await sdk.client.fetch<{ points?: CdekPoint[] }>("/store/cdek/delivery-points", {
+      method: "GET",
+      query: { city: query },
+    })
+    return result.points || []
+  } catch {
+    return []
+  }
 }
 
 export async function addShippingMethod(optionId: string) {
@@ -385,10 +426,14 @@ export async function listPaymentProviders(regionId: string) {
   return (payment_providers || []) as PaymentProvider[]
 }
 
-export async function initiatePaymentSession(providerId: string) {
+export async function initiatePaymentSession(
+  providerId: string,
+  data?: Record<string, unknown>
+) {
   const cart = await ensureCart()
   await sdk.store.payment.initiatePaymentSession(cart, {
     provider_id: providerId,
+    data,
   })
   return retrieveCart(cart.id)
 }
@@ -400,9 +445,9 @@ export async function completeCart() {
 
 export function completeCartError(result: Awaited<ReturnType<typeof completeCart>>) {
   if (result.type === "cart" && result.error && typeof result.error === "object" && "message" in result.error) {
-    return String(result.error.message || "Could not complete the order")
+    return String(result.error.message || "Не удалось оформить заказ")
   }
-  return "Could not complete the order"
+  return "Не удалось оформить заказ"
 }
 
 export async function findVariantId(input: {
