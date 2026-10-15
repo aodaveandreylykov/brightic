@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import OrderConfirmation from "@/modules/order/order-confirmation"
 
 export const metadata = {
-  title: "Order — Brightic",
+  title: "Заказ — Brightic",
 }
 
 export default function Page() {

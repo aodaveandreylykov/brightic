@@ -58,7 +58,7 @@
     return (cart.items || []).reduce(function (s, it) { return s + (it.quantity || 1); }, 0);
   }
 
-  function fmt(n) { return '$ ' + Math.round(n || 0); }
+  function fmt(n) { return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
 
   function parsePrice(text) {
     var m = String(text || '').replace(/\s/g, '').match(/\d+/);
@@ -133,6 +133,9 @@
     '.cd-checkout:hover{background:#f5ede7;}',
     '.cd-shipping{font-size:12px;opacity:.55;margin:10px 0 0;text-align:center;}',
     '.cd-empty{padding:40px 28px;font-size:15px;opacity:.6;}',
+    '.lamp{position:relative;}',
+    '.lamp__add{position:absolute;bottom:10px;right:10px;z-index:2;width:32px;height:32px;border-radius:50%;background:#37291f;color:#e0d2cb;border:0;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;}',
+    '.lamp:hover .lamp__add,.lamp:focus-within .lamp__add{display:flex;}',
     '.cart-badge{position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:999px;background:#e10600;color:#fff;font-size:10px;font-weight:700;line-height:16px;pointer-events:none;display:inline-flex;align-items:center;justify-content:center;}',
     '.cart-badge[hidden]{display:none;}',
   ].join('');
@@ -307,6 +310,36 @@
       openDrawer();
     });
   });
+
+  /* ── catalog lamp cards — inject add-to-cart button ── */
+  document.querySelectorAll('.lamp').forEach(function (card) {
+    if (card.querySelector('.lamp__add')) return;
+    var nameEl = card.querySelector('.lamp__name');
+    var priceEl = card.querySelector('.lamp__price');
+    var imgEl = card.querySelector('.lamp__shot img');
+    if (!nameEl || !priceEl) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lamp__add';
+    btn.setAttribute('aria-label', 'Add to cart');
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var title = nameEl.textContent.replace(/\s+/g, ' ').trim();
+      var price = parsePrice(priceEl.textContent);
+      var image = imgEl ? imgEl.getAttribute('src') : '';
+      var blurbEl = card.querySelector('.lamp__blurb');
+      var blurb = blurbEl ? blurbEl.textContent.replace(/\s+/g, ' ').trim() : '';
+      addItem(title, price, 1, image, blurb);
+      updateBadges();
+      openDrawer();
+    });
+    card.appendChild(btn);
+  });
+
+  /* ── public API ── */
+  window.BrighticCart = { addItem: addItem, openDrawer: openDrawer, closeDrawer: closeDrawer, updateBadges: updateBadges };
 
   ensureStyles();
   updateBadges();

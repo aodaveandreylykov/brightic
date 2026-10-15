@@ -1,10 +1,11 @@
+import { Suspense } from "react"
 import CartTrigger from "@/modules/cart/cart-trigger"
 import CheckoutFlow from "@/modules/checkout/checkout-flow"
 import "@/modules/checkout/checkout.css"
 
 export const metadata = {
   title: "Checkout — Brightic",
-  description: "Complete your Brightic lamp order.",
+  description: "Доставка по России и оплата картой, СБП или при получении.",
 }
 
 export default function Page() {
@@ -26,11 +27,13 @@ export default function Page() {
           </CartTrigger>
         </div>
       </header>
-      <main className="checkout-shell">
-        <h1>Checkout</h1>
-        <p className="checkout-lead">Email, address, delivery, and payment — then the order lands in Admin.</p>
+      <Suspense fallback={
+        <div className="checkout-empty" style={{ padding: "60px" }}>
+          <p>Загружаем корзину…</p>
+        </div>
+      }>
         <CheckoutFlow />
-      </main>
+      </Suspense>
     </div>
   )
 }

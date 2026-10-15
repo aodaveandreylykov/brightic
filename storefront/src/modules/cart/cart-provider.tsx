@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react"
 import { withBase } from "@/lib/base-path"
+import { formatMoney } from "@/lib/money"
 import {
   addItemToCart,
   deleteLineItem,
@@ -97,7 +98,7 @@ const IMAGE_FALLBACK: Record<string, string> = {
 }
 
 function money(amount: number) {
-  return `$ ${Math.round(amount || 0)}`
+  return formatMoney(amount)
 }
 
 function titleOf(item: StoreCartItem) {
@@ -422,9 +423,9 @@ export default function CartProvider({
                   window.location.href = withBase(checkoutHref)
                 }}
               >
-                Checkout - {money(total)}
+                Оформить — {money(total)}
               </button>
-              <p className="cart-drawer__note">Shipping &amp; taxes calculated at checkout</p>
+              <p className="cart-drawer__note">Доставка рассчитывается на оформлении заказа</p>
             </div>
           ) : null}
         </div>
