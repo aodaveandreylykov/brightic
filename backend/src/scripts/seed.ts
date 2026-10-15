@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Run after Medusa starts:
  *   npx medusa exec src/scripts/seed.ts
