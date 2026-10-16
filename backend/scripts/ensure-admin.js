@@ -1,10 +1,7 @@
 #!/usr/bin/env node
-/**
- * Creates admin user directly in Postgres.
- * Runs via: node scripts/ensure-admin.js
- */
 const { Client } = require("pg")
 const { randomUUID } = require("crypto")
+const scrypt = require("scrypt-kdf")
 
 async function main() {
   const email = process.env.MEDUSA_ADMIN_EMAIL
@@ -21,43 +18,69 @@ async function main() {
   await client.connect()
 
   try {
-    // Check if Medusa user already exists
+    const now = new Date().toISOString()
+
+    // 1. Ensure user exists
+    let userId
     const userRes = await client.query('SELECT id FROM "user" WHERE email = $1', [email])
     if (userRes.rows.length > 0) {
-      console.log(`[admin] User ${email} already exists (${userRes.rows[0].id})`)
-      return
+      userId = userRes.rows[0].id
+      console.log(`[admin] User exists: ${userId}`)
+    } else {
+      userId = `user_${randomUUID().replace(/-/g, "").slice(0, 26)}`
+      await client.query(
+        `INSERT INTO "user" (id, email, first_name, last_name, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [userId, email, "Admin", "Brightic", now, now]
+      )
+      console.log(`[admin] Created user ${userId}`)
     }
 
-    const now = new Date().toISOString()
-    const userId = `user_${randomUUID().replace(/-/g, "").slice(0, 26)}`
+    // 2. Hash password using same algorithm as Medusa emailpass provider
+    const hashConfig = { logN: 15, r: 8, p: 1 }
+    const passwordHash = (await scrypt.kdf(password, hashConfig)).toString("base64")
 
-    // Create user
-    await client.query(
-      `INSERT INTO "user" (id, email, first_name, last_name, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [userId, email, "Admin", "Brightic", now, now]
-    )
-    console.log(`[admin] Created user ${userId}`)
-
-    // Link auth identity to user (update app_metadata)
-    const authRes = await client.query(
-      `SELECT id FROM auth_identity WHERE id IN (
-         SELECT auth_identity_id FROM auth_identity_provider
-         WHERE entity_id = $1 AND provider = 'emailpass'
-       )`,
+    // 3. Find existing auth_identity_provider
+    const providerRes = await client.query(
+      `SELECT aip.id as provider_id, aip.auth_identity_id
+         FROM auth_identity_provider aip
+        WHERE aip.entity_id = $1 AND aip.provider = 'emailpass'`,
       [email]
     )
 
-    if (authRes.rows.length > 0) {
-      const authId = authRes.rows[0].id
-      // Update app_metadata with user_id
+    if (providerRes.rows.length > 0) {
+      const { provider_id, auth_identity_id } = providerRes.rows[0]
+
+      // Update password hash and ensure app_metadata has user_id
       await client.query(
-        `UPDATE auth_identity SET app_metadata = $1 WHERE id = $2`,
-        [JSON.stringify({ user_id: userId }), authId]
+        `UPDATE auth_identity_provider
+            SET provider_metadata = $1, updated_at = $2
+          WHERE id = $3`,
+        [JSON.stringify({ password: passwordHash }), now, provider_id]
       )
-      console.log(`[admin] Linked auth identity ${authId} → user ${userId}`)
+      await client.query(
+        `UPDATE auth_identity
+            SET app_metadata = $1, updated_at = $2
+          WHERE id = $3`,
+        [JSON.stringify({ user_id: userId }), now, auth_identity_id]
+      )
+      console.log(`[admin] Updated auth identity ${auth_identity_id} → user_id=${userId}`)
     } else {
-      console.log(`[admin] No auth identity found for ${email} — run /auth/user/emailpass/register first`)
+      // Create full auth identity from scratch
+      const authId = `authusr_${randomUUID().replace(/-/g, "").slice(0, 24)}`
+      await client.query(
+        `INSERT INTO auth_identity (id, app_metadata, created_at, updated_at)
+         VALUES ($1, $2, $3, $4)`,
+        [authId, JSON.stringify({ user_id: userId }), now, now]
+      )
+      const providerId = `authusr_${randomUUID().replace(/-/g, "").slice(0, 24)}`
+      await client.query(
+        `INSERT INTO auth_identity_provider
+           (id, entity_id, provider, provider_metadata, auth_identity_id, created_at, updated_at)
+         VALUES ($1, $2, 'emailpass', $3, $4, $5, $6)`,
+        [providerId, email, JSON.stringify({ password: passwordHash }), authId, now, now]
+      )
+      console.log(`[admin] Created auth identity ${authId} for ${email}`)
     }
 
     console.log(`[admin] ✅ Admin ${email} ready`)
@@ -68,5 +91,5 @@ async function main() {
 
 main().catch((e) => {
   console.error("[admin] Error:", e.message)
-  process.exit(0) // Don't block startup
+  process.exit(0) // Don't block startup on admin setup failure
 })
