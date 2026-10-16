@@ -15,6 +15,7 @@ WORKDIR /app
 
 COPY --from=builder /app/.medusa/server ./
 COPY start.sh ./
+COPY scripts/ ./scripts/
 RUN chmod +x start.sh && npm install --omit=dev --legacy-peer-deps
 
 ENV NODE_ENV=production
