@@ -291,7 +291,7 @@ export async function ensureCart() {
       }
       if (!cart) {
         const region_id = await getRegionId()
-        const created = await sdk.store.cart.create({ region_id })
+        const created = await sdk.store.cart.create({ region_id, country_code: "ru" })
         persistCartId(created.cart.id)
         cart = await retrieveCart(created.cart.id)
       } else if (cart.currency_code && cart.currency_code !== STORE_CURRENCY) {
