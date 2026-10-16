@@ -43,10 +43,15 @@ jobs:
           MEDUSA_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY }}
         run: npm run build:pages
 
+      - name: Wrap output under /shop/ subfolder
+        run: |
+          mkdir -p storefront/pages_root/shop
+          cp -r storefront/out/. storefront/pages_root/shop/
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: storefront/out
+          path: storefront/pages_root
 
   deploy:
     environment:
