@@ -269,7 +269,10 @@ export default function CheckoutFlow() {
 
       const origin = window.location.origin
       const returnUrl = `${origin}${withBase("/checkout")}?pay=yookassa`
-      const updatedCart = await initiatePaymentSession(pid, { return_url: returnUrl })
+      const sessionData = isYookassaProvider(pid)
+        ? { confirmation: { type: "redirect", return_url: returnUrl } }
+        : { return_url: returnUrl }
+      const updatedCart = await initiatePaymentSession(pid, sessionData)
       applyCart(updatedCart)
 
       if (isManualProvider(pid)) {
@@ -285,8 +288,9 @@ export default function CheckoutFlow() {
       }
 
       if (isYookassaProvider(pid)) {
+        const sess = updatedCart.payment_collection?.payment_sessions?.[0]
         const confirmUrl =
-          updatedCart.payment_collection?.payment_sessions?.[0]?.data?.confirmation_url
+          sess?.data?.confirmation?.confirmation_url ?? sess?.data?.confirmation_url
         if (confirmUrl) {
           window.location.assign(confirmUrl)
           return
@@ -315,10 +319,9 @@ export default function CheckoutFlow() {
   }
 
   // ── YooKassa session active — show redirect button
-  const yookassaConfirmUrl =
-    isYookassaProvider(activeSession?.provider_id)
-      ? activeSession?.data?.confirmation_url
-      : null
+  const yookassaConfirmUrl = isYookassaProvider(activeSession?.provider_id)
+    ? (activeSession?.data?.confirmation?.confirmation_url ?? activeSession?.data?.confirmation_url ?? null)
+    : null
 
   return (
     <div className="checkout-wrap">

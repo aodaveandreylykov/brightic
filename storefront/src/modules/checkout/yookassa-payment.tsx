@@ -14,7 +14,8 @@ export function YookassaPayment({
   const session = cart.payment_collection?.payment_sessions?.find((item) =>
     isYookassaProvider(item.provider_id)
   )
-  const confirmationUrl = session?.data?.confirmation_url
+  const confirmationUrl =
+    session?.data?.confirmation?.confirmation_url ?? session?.data?.confirmation_url
   const [pending, setPending] = useState(false)
 
   if (!confirmationUrl) {

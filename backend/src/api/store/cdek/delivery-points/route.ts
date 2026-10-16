@@ -1,7 +1,10 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 
-const CDEK_API = "https://api.cdek.ru/v2"
-const CDEK_TOKEN_URL = "https://api.cdek.ru/v2/oauth/token"
+// Use sandbox when CDEK test credentials detected (client id starts with EMscd)
+const IS_CDEK_TEST = (process.env.CDEK_CLIENT_ID || "").startsWith("EMscd")
+const CDEK_BASE = IS_CDEK_TEST ? "https://api.edu.cdek.ru/v2" : "https://api.cdek.ru/v2"
+const CDEK_API = CDEK_BASE
+const CDEK_TOKEN_URL = `${CDEK_BASE}/oauth/token`
 
 let cachedToken: { value: string; expiresAt: number } | null = null
 

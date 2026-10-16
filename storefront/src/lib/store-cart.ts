@@ -58,9 +58,15 @@ export type StoreCart = {
       provider_id?: string
       data?: {
         client_secret?: string | null
+        // Flat (legacy) — some providers return confirmation_url directly
         confirmation_url?: string | null
         confirmation_token?: string | null
         payment_id?: string | null
+        // YooKassa returns { confirmation: { confirmation_url, type } }
+        confirmation?: {
+          type?: string | null
+          confirmation_url?: string | null
+        } | null
       } | null
     }[] | null
   } | null
