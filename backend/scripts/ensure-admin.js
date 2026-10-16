@@ -40,11 +40,11 @@ async function main() {
     const hashConfig = { logN: 15, r: 8, p: 1 }
     const passwordHash = (await scrypt.kdf(password, hashConfig)).toString("base64")
 
-    // 3. Find existing auth_identity_provider
+    // 3. Find existing provider_identity (table name in Medusa v2)
     const providerRes = await client.query(
-      `SELECT aip.id as provider_id, aip.auth_identity_id
-         FROM auth_identity_provider aip
-        WHERE aip.entity_id = $1 AND aip.provider = 'emailpass'`,
+      `SELECT pi.id as provider_id, pi.auth_identity_id
+         FROM provider_identity pi
+        WHERE pi.entity_id = $1 AND pi.provider = 'emailpass'`,
       [email]
     )
 
@@ -53,7 +53,7 @@ async function main() {
 
       // Update password hash and ensure app_metadata has user_id
       await client.query(
-        `UPDATE auth_identity_provider
+        `UPDATE provider_identity
             SET provider_metadata = $1, updated_at = $2
           WHERE id = $3`,
         [JSON.stringify({ password: passwordHash }), now, provider_id]
@@ -67,15 +67,15 @@ async function main() {
       console.log(`[admin] Updated auth identity ${auth_identity_id} → user_id=${userId}`)
     } else {
       // Create full auth identity from scratch
-      const authId = `authusr_${randomUUID().replace(/-/g, "").slice(0, 24)}`
+      const authId = `authid_${randomUUID().replace(/-/g, "").slice(0, 26)}`
       await client.query(
         `INSERT INTO auth_identity (id, app_metadata, created_at, updated_at)
          VALUES ($1, $2, $3, $4)`,
         [authId, JSON.stringify({ user_id: userId }), now, now]
       )
-      const providerId = `authusr_${randomUUID().replace(/-/g, "").slice(0, 24)}`
+      const providerId = `provid_${randomUUID().replace(/-/g, "").slice(0, 26)}`
       await client.query(
-        `INSERT INTO auth_identity_provider
+        `INSERT INTO provider_identity
            (id, entity_id, provider, provider_metadata, auth_identity_id, created_at, updated_at)
          VALUES ($1, $2, 'emailpass', $3, $4, $5, $6)`,
         [providerId, email, JSON.stringify({ password: passwordHash }), authId, now, now]
