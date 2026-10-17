@@ -123,7 +123,7 @@ export class YookassaProviderService extends AbstractPaymentProvider<YookassaPro
     const id = (data.id ?? data.session_id) as string | undefined
 
     if (this.options_.simulationMode) {
-      return { status: PaymentSessionStatus.PENDING, data }
+      return { status: PaymentSessionStatus.AUTHORIZED, data }
     }
     if (!id) return { status: PaymentSessionStatus.ERROR, data }
 
@@ -182,7 +182,7 @@ export class YookassaProviderService extends AbstractPaymentProvider<YookassaPro
     const data = (input.data ?? {}) as Record<string, unknown>
     const id = (data.id ?? data.session_id) as string | undefined
 
-    if (this.options_.simulationMode) return { status: PaymentSessionStatus.PENDING }
+    if (this.options_.simulationMode) return { status: PaymentSessionStatus.AUTHORIZED }
     if (!id) return { status: PaymentSessionStatus.ERROR }
 
     const payment = await this.client!.getPayment(id)
