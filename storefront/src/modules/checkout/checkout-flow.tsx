@@ -119,13 +119,27 @@ export default function CheckoutFlow() {
 
   // Load shipping options once cart is ready
   useEffect(() => {
-    if (!ready || isLocalCart(cart)) return
-    void listShippingOptions()
-      .then((opts) => {
-        setShippingOptions(opts)
-        if (opts[0] && !shippingId) setShippingId(opts[0].id)
-      })
-      .catch(() => {})
+    if (!ready || !cart || isLocalCart(cart)) return
+    let cancelled = false
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const load = (attempt = 0) => {
+      void listShippingOptions()
+        .then((opts) => {
+          if (cancelled) return
+          setShippingOptions(opts)
+          if (opts[0] && !shippingId) setShippingId(opts[0].id)
+          if (opts.length === 0 && attempt < 2) {
+            timer = setTimeout(() => load(attempt + 1), 3000)
+          }
+        })
+        .catch(() => {
+          if (!cancelled && attempt < 2) {
+            timer = setTimeout(() => load(attempt + 1), 3000)
+          }
+        })
+    }
+    load()
+    return () => { cancelled = true; if (timer) clearTimeout(timer) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, cart?.id])
 
@@ -134,14 +148,28 @@ export default function CheckoutFlow() {
     if (!ready || !cart || isLocalCart(cart)) return
     const regionId = cart.region_id || cart.region?.id || ""
     if (!regionId || providers.length) return
-    void listPaymentProviders(regionId)
-      .then((list) => {
-        setProviders(list)
-        if (!providerId) setProviderId(preferredProvider(list))
-      })
-      .catch(() => {})
+    let cancelled = false
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const load = (attempt = 0) => {
+      void listPaymentProviders(regionId)
+        .then((list) => {
+          if (cancelled) return
+          setProviders(list)
+          if (!providerId) setProviderId(preferredProvider(list))
+          if (list.length === 0 && attempt < 2) {
+            timer = setTimeout(() => load(attempt + 1), 3000)
+          }
+        })
+        .catch(() => {
+          if (!cancelled && attempt < 2) {
+            timer = setTimeout(() => load(attempt + 1), 3000)
+          }
+        })
+    }
+    load()
+    return () => { cancelled = true; if (timer) clearTimeout(timer) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, cart?.id, providers.length])
+  }, [ready, cart?.id, cart?.region_id, cart?.region?.id, providers.length])
 
   // CDEK points
   useEffect(() => {
