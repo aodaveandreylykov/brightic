@@ -39,7 +39,10 @@ module.exports = defineConfig({
                   id: "yookassa",
                   options: {
                     simulationMode: YK_SIMULATION || false,
-                    simulationBaseUrl: process.env.YOOKASSA_SIMULATION_BASE_URL || "http://localhost:9000/sim/yookassa/pay",
+                    simulationBaseUrl: process.env.YOOKASSA_SIMULATION_BASE_URL ||
+                      (process.env.MEDUSA_BACKEND_URL
+                        ? `${process.env.MEDUSA_BACKEND_URL.replace(/\/$/, "")}/sim/yookassa/pay`
+                        : "http://localhost:9000/sim/yookassa/pay"),
                     oauthToken: YK_OAUTH || undefined,
                     shopId: YK_SHOP_ID || undefined,
                     secretKey: YK_SECRET || undefined,

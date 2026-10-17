@@ -78,9 +78,12 @@ export class YookassaProviderService extends AbstractPaymentProvider<YookassaPro
 
     if (this.options_.simulationMode) {
       const fakeId = `sim_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
-      // simulationBaseUrl already includes the full path to the sim handler
       const base = (this.options_.simulationBaseUrl || "http://localhost:9000/sim/yookassa/pay").replace(/\/$/, "")
-      const retUrl = encodeURIComponent(this.returnUrl)
+      // Use return_url from input data (sent by storefront with correct origin), fall back to config
+      const inputData = (data ?? {}) as Record<string, unknown>
+      const inputConfirmation = inputData.confirmation as Record<string, unknown> | undefined
+      const dynamicReturnUrl = (inputConfirmation?.return_url as string) ?? this.returnUrl
+      const retUrl = encodeURIComponent(dynamicReturnUrl)
       const confirmUrl = `${base}?id=${fakeId}&return_url=${retUrl}`
       return {
         id: fakeId,
