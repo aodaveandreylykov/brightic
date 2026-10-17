@@ -8,17 +8,21 @@ node_modules/.bin/medusa start --port ${PORT:-9000} &
 MEDUSA_PID=$!
 
 # Wait for Medusa to be ready
-echo "[start] Waiting for Medusa to start..."
-for i in $(seq 1 60); do
-  if wget -q -O /dev/null "http://localhost:${PORT:-9000}/health" 2>/dev/null; then
-    echo "[start] Medusa is ready"
+ACTUAL_PORT=${PORT:-9000}
+echo "[start] Waiting for Medusa on port $ACTUAL_PORT..."
+for i in $(seq 1 90); do
+  if wget -q -O /dev/null "http://localhost:$ACTUAL_PORT/health" 2>/dev/null; then
+    echo "[start] Medusa is ready (iteration $i)"
     break
   fi
-  sleep 2
+  echo "[start] Not ready yet ($i/90)..."
+  sleep 3
 done
 
 # Seed products (idempotent)
-node scripts/seed-products.js || echo "[start] seed-products skipped or failed (non-fatal)"
+echo "[start] Running seed-products..."
+node scripts/seed-products.js
+echo "[start] seed-products done"
 
 # Wait for Medusa process
 wait $MEDUSA_PID

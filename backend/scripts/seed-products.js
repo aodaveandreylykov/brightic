@@ -8,7 +8,8 @@
 const https = require("https")
 const http = require("http")
 
-const BASE_URL = (process.env.MEDUSA_BACKEND_URL || "http://localhost:9000").replace(/\/$/, "")
+const PORT = process.env.PORT || "9000"
+const BASE_URL = (process.env.MEDUSA_BACKEND_URL || `http://localhost:${PORT}`).replace(/\/$/, "")
 const EMAIL = process.env.MEDUSA_ADMIN_EMAIL
 const PASSWORD = process.env.MEDUSA_ADMIN_PASSWORD
 
