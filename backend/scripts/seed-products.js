@@ -104,11 +104,13 @@ async function main() {
       title: lamp.title,
       handle: lamp.handle,
       status: "published",
+      options: [{ title: "Title", values: ["Default"] }],
       sales_channels: [{ id: salesChannelId }],
       metadata: meta,
       variants: [{
         title: "Default",
         manage_inventory: false,
+        options: { Title: "Default" },
         prices: [{ currency_code: "rub", amount: lamp.price }],
       }],
     }
