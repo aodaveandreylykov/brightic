@@ -37,10 +37,10 @@ jobs:
         working-directory: storefront
         env:
           NEXT_PUBLIC_BASE_PATH: /brightic/shop
-          NEXT_PUBLIC_MEDUSA_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_MEDUSA_BACKEND_URL }}
-          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY }}
-          MEDUSA_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_MEDUSA_BACKEND_URL }}
-          MEDUSA_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_MEDUSA_BACKEND_URL: https://brightic-production.up.railway.app
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_878aa8a31afb55251df3c644d0f226934ae4ecd4f4a41f54219560622a09f96a
+          MEDUSA_BACKEND_URL: https://brightic-production.up.railway.app
+          MEDUSA_PUBLISHABLE_KEY: pk_878aa8a31afb55251df3c644d0f226934ae4ecd4f4a41f54219560622a09f96a
         run: npm run build:pages
 
       - name: Wrap output under /shop/ subfolder
