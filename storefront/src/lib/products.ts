@@ -68,11 +68,11 @@ function productImages(product: Pick<StoreProduct, "images" | "thumbnail">, lamp
   const unique = [...new Set(remote)]
   const local = lamp?.catalogImage ? [lamp.catalogImage] : []
   const flux = [
-    "/assets/product/shot-1.png",
-    "/assets/product/shot-2.png",
-    "/assets/product/shot-3.png",
-    "/assets/product/shot-4.png",
-    "/assets/product/shot-5.png",
+    "/assets/product/shot-1.jpg",
+    "/assets/product/shot-2.jpg",
+    "/assets/product/shot-3.jpg",
+    "/assets/product/shot-4.jpg",
+    "/assets/product/shot-5.jpg",
   ]
   const pool = unique.length
     ? unique
