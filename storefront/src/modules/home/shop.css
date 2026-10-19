@@ -943,9 +943,11 @@ button.wish-saved {
   .store__list { font-size: 28px; }
 
   .store__photo {
+    position: sticky;
+    bottom: 20px;
     width: 158px;
     height: 184px;
-    margin-top: 48px;
+    margin-top: 0;
   }
 
   .collections {
@@ -1553,28 +1555,25 @@ button.wish-saved {
 /* Store sections — frame 1542×1089, fluid from a laptop width. */
 @media (min-width: 1024px) {
   .store {
-    display: block;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: auto 1fr;
+    min-height: 100svh;
     width: min(1542px, calc(100% - 80px));
     margin: 180px 0 0 40px;
     padding: 0;
-    aspect-ratio: 1542 / 1089;
-    container-type: inline-size;
-    overflow: hidden;
+    align-items: start;
+    overflow: visible;
+    container-type: normal;
   }
 
-  .store__fit {
-    position: relative;
-    display: block;
-    width: 1542px;
-    height: 1089px;
-    transform: scale(calc(100cqi / 1542px));
-    transform-origin: top left;
-  }
+  .store__fit { display: contents; }
 
   .store h2 {
-    position: absolute;
-    left: 0;
-    top: 18px;
+    position: static;
+    grid-column: 1;
+    grid-row: 1;
+    padding-top: 18px;
     font-size: 48px;
     line-height: 1.2;
     letter-spacing: -2.4px;
@@ -1584,10 +1583,10 @@ button.wish-saved {
   .store h2 span { display: inline; }
 
   .store__list {
-    position: absolute;
-    top: 0;
-    left: 920px;
-    width: 622px;
+    position: static;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: auto;
     font-size: 64px;
     line-height: 1.2;
     gap: 15px;
@@ -1596,9 +1595,11 @@ button.wish-saved {
   .store__list a { white-space: nowrap; }
 
   .store__photo {
-    position: absolute;
-    left: 0;
-    bottom: 0;
+    position: sticky;
+    bottom: 20px;
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
     width: 365px;
     height: 425px;
     margin: 0;
