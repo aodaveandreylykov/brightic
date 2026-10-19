@@ -158,6 +158,53 @@ export function HomeBehavior() {
       cleanups.push(() => storeList.removeEventListener("pointerleave", onLeave))
     }
 
+    // ── Scroll reveal ─────────────────────────────────────────
+    const revealEls: Element[] = []
+
+    // Whole-section reveals
+    const sectionSelectors = [
+      "section.band",
+      ".store",
+      ".collections__copy",
+      ".about__intro",
+      "section.reviews",
+      "section.contact",
+    ]
+    sectionSelectors.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el) => {
+        el.classList.add("reveal")
+        revealEls.push(el)
+      })
+    })
+
+    // Staggered reveals: tiles and stats
+    const staggerSelectors = [".tile", ".stat"]
+    staggerSelectors.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el) => {
+        const siblings = Array.from(el.parentElement?.querySelectorAll(sel) ?? [])
+        const i = siblings.indexOf(el)
+        ;(el as HTMLElement).style.transitionDelay = `${i * 90}ms`
+        el.classList.add("reveal")
+        revealEls.push(el)
+      })
+    })
+
+    if (revealEls.length) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible")
+              observer.unobserve(entry.target)
+            }
+          })
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -60px 0px" }
+      )
+      revealEls.forEach((el) => observer.observe(el))
+      cleanups.push(() => observer.disconnect())
+    }
+
     return () => {
       cleanups.forEach((cleanup) => cleanup())
     }
