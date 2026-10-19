@@ -51,14 +51,6 @@ export function ProductBehavior() {
         return
       }
 
-      const alsoHeart = target.closest(".also__heart")
-      if (alsoHeart instanceof HTMLElement && alsoHeart.tagName === "SPAN") {
-        event.preventDefault()
-        const pressed = alsoHeart.getAttribute("aria-pressed") === "true"
-        alsoHeart.setAttribute("aria-pressed", String(!pressed))
-        return
-      }
-
       const burger = target.closest(".pdp-burger")
       if (burger) {
         const menu = burger.closest(".pdp-frame")?.querySelector<HTMLElement>(".pdp-menu")

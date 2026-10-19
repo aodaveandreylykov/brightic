@@ -87,10 +87,7 @@ export function RelatedCard({
       <span className="also__photo">
         <img className={photoClass} src={item.image} alt="" />
       </span>
-      <span className="also__heart" role="button" aria-label="Save" aria-pressed="false">
-        <img className="also__heart-off" src={heart} alt="" />
-        <img className="also__heart-on" src={heart.replace(".svg", "-on.svg")} alt="" />
-      </span>
+      <img className="also__heart" src={heart} alt="" />
       {named ? <p className="also__name">{item.title}</p> : null}
       {stacked ? (
         <div className="also__meta">
