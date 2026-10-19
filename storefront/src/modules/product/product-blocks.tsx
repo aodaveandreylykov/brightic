@@ -1,5 +1,6 @@
 import AddToCartButton from "@/modules/cart/add-to-cart-button"
 import type { ProductView, RelatedLamp } from "@/lib/products"
+import { withBase } from "@/lib/base-path"
 
 export function Specs({ product }: { product: ProductView }) {
   return (
@@ -87,7 +88,7 @@ export function RelatedCard({
       <span className="also__photo">
         <img className={photoClass} src={item.image} alt="" />
       </span>
-      <img className="also__heart" src={heart} alt="" />
+      <img className="also__heart" src={withBase(heart)} alt="" />
       {named ? <p className="also__name">{item.title}</p> : null}
       {stacked ? (
         <div className="also__meta">

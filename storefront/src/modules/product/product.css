@@ -385,7 +385,7 @@ button.wish-saved {
   height: 100%;
   left: 0;
   top: 0;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .care,

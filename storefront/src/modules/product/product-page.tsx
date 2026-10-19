@@ -1,5 +1,6 @@
 import CartTrigger from "@/modules/cart/cart-trigger"
 import type { ProductView } from "@/lib/products"
+import { withBase } from "@/lib/base-path"
 import {
   Accordion,
   BuyButton,
@@ -273,7 +274,7 @@ export function ProductPage({ product }: { product: ProductView }) {
           <Qty minus="/assets/product/qty-minus.svg" plus="/assets/product/qty-plus.svg" />
           <BuyButton product={product} />
           <button type="button" className="fav" aria-label="Save" aria-pressed="false">
-            <img src="/assets/product/heart.svg" alt="" />
+            <img src={withBase("/assets/product/heart.svg")} alt="" />
           </button>
           <div className="rule rule-a"></div>
           <div className="rule rule-b"></div>
