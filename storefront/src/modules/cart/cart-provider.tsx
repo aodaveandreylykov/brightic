@@ -423,9 +423,9 @@ export default function CartProvider({
                   window.location.href = withBase(checkoutHref)
                 }}
               >
-                Оформить — {money(total)}
+                Checkout — {money(total)}
               </button>
-              <p className="cart-drawer__note">Доставка рассчитывается на оформлении заказа</p>
+              <p className="cart-drawer__note">Shipping calculated at checkout</p>
             </div>
           ) : null}
         </div>
