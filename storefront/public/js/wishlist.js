@@ -34,10 +34,8 @@
   }
 
   function asset(file) {
-    var known = document.querySelector("img[src*='assets/product/'], img[src*='assets/shop/']");
-    var src = known ? known.getAttribute("src") || "" : "";
-    if (src.indexOf("/assets/") !== -1) return "/assets/product/" + file;
-    return "assets/product/" + file;
+    var base = (typeof window !== "undefined" && window.__bp) || "";
+    return base + "/assets/product/" + file;
   }
 
   function ensureHearts() {

@@ -31,6 +31,7 @@ export default function RootLayout({
           {children}
           <WishlistBind />
         </CartProvider>
+        <script dangerouslySetInnerHTML={{ __html: `window.__bp=${JSON.stringify(BASE_PATH)};` }} />
         <Script src={`${BASE_PATH}/js/wishlist.js`} strategy="afterInteractive" />
       </body>
     </html>
