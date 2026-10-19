@@ -74,7 +74,7 @@ export class YookassaProviderService extends AbstractPaymentProvider<YookassaPro
 
   async initiatePayment(input: InitiatePaymentInput): Promise<InitiatePaymentOutput> {
     const { amount, currency_code, context, data } = input
-    const amountInRubles = (Number(amount) / 100).toFixed(2)
+    const amountInRubles = Number(amount).toFixed(2)
 
     if (this.options_.simulationMode) {
       const fakeId = `sim_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
@@ -197,7 +197,7 @@ export class YookassaProviderService extends AbstractPaymentProvider<YookassaPro
   async refundPayment(input: RefundPaymentInput): Promise<RefundPaymentOutput> {
     const data = (input.data ?? {}) as Record<string, unknown>
     const id = (data.id ?? data.session_id) as string | undefined
-    const amountInRubles = (Number(input.amount) / 100).toFixed(2)
+    const amountInRubles = Number(input.amount).toFixed(2)
 
     if (this.options_.simulationMode || !id) return { data: { ...data, refunded: true } }
 
