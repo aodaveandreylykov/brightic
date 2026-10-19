@@ -273,7 +273,8 @@ export function ProductPage({ product }: { product: ProductView }) {
           <Qty minus="/assets/product/qty-minus.svg" plus="/assets/product/qty-plus.svg" />
           <BuyButton product={product} />
           <button type="button" className="fav" aria-label="Save" aria-pressed="false">
-            <img src="/assets/product/heart.svg" alt="" />
+            <img className="fav__off" src="/assets/product/heart.svg" alt="" />
+            <img className="fav__on" src="/assets/product/heart-on.svg" alt="" />
           </button>
           <div className="rule rule-a"></div>
           <div className="rule rule-b"></div>

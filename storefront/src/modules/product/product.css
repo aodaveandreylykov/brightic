@@ -194,6 +194,10 @@
   border: 1px solid #fff;
 }
 
+.fav__on { display: none; }
+.fav[aria-pressed="true"] .fav__off { display: none; }
+.fav[aria-pressed="true"] .fav__on { display: block; }
+
 .rule { background: #fff; }
 
 .acc {
@@ -233,6 +237,10 @@
 .also__heart { position: absolute; }
 
 span.also__heart { line-height: 0; cursor: pointer; }
+
+.also__heart-on { display: none; }
+.also__heart[aria-pressed="true"] .also__heart-off { display: none; }
+.also__heart[aria-pressed="true"] .also__heart-on { display: block; }
 
 button.wish-saved {
   position: relative;
