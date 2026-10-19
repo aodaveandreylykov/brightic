@@ -212,7 +212,12 @@
 }
 
 /* ── Shopping bag (right column) ──────────────────────────────── */
-.checkout-bag { }
+.checkout-bag {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
 
 .checkout-bag > h2 {
   font-size: 22px;
@@ -502,6 +507,9 @@
   }
   .checkout-bag {
     order: -1;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
   }
   .co-item {
     grid-template-columns: 80px 1fr auto;
