@@ -329,7 +329,9 @@ export default function CheckoutFlow() {
   }
 
   // ── States ───────────────────────────────────────────────────
-  if (!ready) {
+  const returningFromYookassa = search.get("pay") === "yookassa"
+
+  if (!ready || busy || returningFromYookassa) {
     return (
       <div className="checkout-empty">
         <p>Загружаем корзину…</p>
