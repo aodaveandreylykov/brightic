@@ -89,6 +89,10 @@ export type CdekPoint = {
   name: string
   address: string
   city?: string
+  postal_code?: string
+  region?: string
+  work_time?: string
+  phone?: string
 }
 
 export type PaymentProvider = {
@@ -402,13 +406,19 @@ export async function listShippingOptions() {
   return (shipping_options || []) as ShippingOption[]
 }
 
-export async function listCdekPoints(city: string): Promise<CdekPoint[]> {
-  const query = city.trim()
-  if (!query) return []
+export async function listCdekPoints(
+  city: string,
+  opts?: { postalCode?: string; page?: number; size?: number }
+): Promise<CdekPoint[]> {
   try {
+    const q: Record<string, string> = { size: String(opts?.size ?? 50) }
+    if (opts?.page) q.page = String(opts.page)
+    if (opts?.postalCode?.trim()) q.postal_code = opts.postalCode.trim()
+    else if (city.trim()) q.city = city.trim()
+
     const result = await sdk.client.fetch<{ points?: CdekPoint[] }>("/store/cdek/delivery-points", {
       method: "GET",
-      query: { city: query },
+      query: q,
     })
     return result.points || []
   } catch {

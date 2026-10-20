@@ -83,6 +83,8 @@ export default function CheckoutFlow() {
   // CDEK
   const [pvz, setPvz] = useState("")
   const [cdekPoints, setCdekPoints] = useState<CdekPoint[]>([])
+  const [cdekSearch, setCdekSearch] = useState("")
+  const [cdekLoading, setCdekLoading] = useState(false)
 
   // Shipping options
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([])
@@ -171,18 +173,6 @@ export default function CheckoutFlow() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, cart?.id, cart?.region_id, cart?.region?.id, providers.length])
 
-  // CDEK points
-  useEffect(() => {
-    if (!needsPvz || !city.trim() || isLocalCart(cart)) {
-      setCdekPoints([])
-      return
-    }
-    let cancelled = false
-    void listCdekPoints(city).then((pts) => { if (!cancelled) setCdekPoints(pts) })
-    return () => { cancelled = true }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, cart?.id])
-
   // YooKassa return
   useEffect(() => {
     if (search.get("pay") !== "yookassa" || !ready || !cart || isLocalCart(cart)) return
@@ -209,6 +199,28 @@ export default function CheckoutFlow() {
   const grandTotal = Number(cart?.total) || total + shippingTotal
   const selectedShipping = shippingOptions.find((o) => o.id === shippingId)
   const needsPvz = shippingKind(selectedShipping?.name) === "cdek"
+
+  // CDEK points — sync search field with shipping city
+  useEffect(() => {
+    if (needsPvz && city.trim()) setCdekSearch(city.trim())
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsPvz, city])
+
+  // CDEK points — load when search changes
+  useEffect(() => {
+    if (!needsPvz || !cdekSearch.trim()) {
+      setCdekPoints([])
+      return
+    }
+    let cancelled = false
+    setCdekLoading(true)
+    void listCdekPoints(cdekSearch.trim()).then((pts) => {
+      if (!cancelled) { setCdekPoints(pts); setCdekLoading(false) }
+    })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsPvz, cdekSearch])
+
   const visibleProviders = providers.filter((p) => !isStripeProvider(p.id))
 
   const formValid =
@@ -491,29 +503,39 @@ export default function CheckoutFlow() {
             {needsPvz ? (
               <div className="co-pvz">
                 <p className="co-sub">Пункт выдачи СДЭК</p>
-                {cdekPoints.length ? (
+                <div className="co-pvz__search">
+                  <input
+                    value={cdekSearch}
+                    onChange={(e) => setCdekSearch(e.target.value)}
+                    placeholder="Введите город, например Москва"
+                    aria-label="Город для поиска ПВЗ"
+                  />
+                  {cdekLoading && <span className="co-pvz__spinner" />}
+                </div>
+                {cdekPoints.length > 0 && (
                   <select value={pvz} onChange={(e) => setPvz(e.target.value)}>
-                    <option value="">Выберите ПВЗ</option>
+                    <option value="">— Выберите пункт выдачи —</option>
                     {cdekPoints.map((pt) => (
                       <option
                         key={pt.code || pt.address}
                         value={`${pt.code} ${pt.address}`.trim()}
                       >
-                        {pt.name}{pt.address ? ` — ${pt.address}` : ""}
+                        {pt.code} — {pt.address}
                       </option>
                     ))}
                   </select>
-                ) : (
-                  <input
-                    value={pvz}
-                    onChange={(e) => setPvz(e.target.value)}
-                    placeholder="Код или адрес ПВЗ, например MOS76"
-                  />
+                )}
+                {pvz && (
+                  <p className="co-pvz__chosen">Выбран: {pvz}</p>
                 )}
                 <span className="co-hint">
-                  {cdekPoints.length
-                    ? "Список пунктов выдачи из СДЭК по городу доставки."
-                    : "Живой список ПВЗ появится, когда на бэкенде включён модуль СДЭК."}
+                  {cdekLoading
+                    ? `Загрузка ПВЗ для «${cdekSearch}»…`
+                    : cdekPoints.length
+                    ? `Найдено ${cdekPoints.length} пунктов выдачи`
+                    : cdekSearch.trim()
+                    ? "ПВЗ не найдены — проверьте название города"
+                    : "Укажите город для поиска пунктов выдачи"}
                 </span>
               </div>
             ) : null}

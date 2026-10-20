@@ -1,9 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 
-// Use sandbox when CDEK test credentials detected (client id starts with EMscd)
 const IS_CDEK_TEST = (process.env.CDEK_CLIENT_ID || "").startsWith("EMscd")
 const CDEK_BASE = IS_CDEK_TEST ? "https://api.edu.cdek.ru/v2" : "https://api.cdek.ru/v2"
-const CDEK_API = CDEK_BASE
 const CDEK_TOKEN_URL = `${CDEK_BASE}/oauth/token`
 
 let cachedToken: { value: string; expiresAt: number } | null = null
@@ -31,7 +29,8 @@ async function getCdekToken(): Promise<string> {
   })
 
   if (!res.ok) {
-    throw new Error(`CDEK OAuth failed: ${res.status}`)
+    const body = await res.text().catch(() => "")
+    throw new Error(`CDEK OAuth failed: ${res.status} ${body}`)
   }
 
   const data = (await res.json()) as { access_token: string; expires_in: number }
@@ -44,33 +43,44 @@ async function getCdekToken(): Promise<string> {
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const city = String(req.query?.city || "").trim()
-
-  if (!city) {
-    return res.status(400).json({ error: "city is required", points: [] })
-  }
+  const postal = String(req.query?.postal_code || "").trim()
+  const page = Math.max(0, parseInt(String(req.query?.page || "0"), 10) || 0)
+  const size = Math.min(50, Math.max(1, parseInt(String(req.query?.size || "50"), 10) || 50))
 
   try {
     const token = await getCdekToken()
 
     const params = new URLSearchParams({
-      city_name: city,
       type: "PVZ",
       is_handout: "true",
-      size: "30",
+      country_codes: "RU",
+      size: String(size),
+      page: String(page),
     })
 
-    const cdekRes = await fetch(`${CDEK_API}/deliverypoints?${params}`, {
+    if (postal) params.set("postal_code", postal)
+    else if (city) params.set("city_name", city)
+
+    const cdekRes = await fetch(`${CDEK_BASE}/deliverypoints?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
 
     if (!cdekRes.ok) {
-      return res.status(200).json({ points: [] })
+      console.error("[CDEK] deliverypoints failed:", cdekRes.status)
+      return res.status(200).json({ points: [], error: `CDEK ${cdekRes.status}` })
     }
 
     const raw = (await cdekRes.json()) as Array<{
       code?: string
       name?: string
-      location?: { address?: string; city?: string }
+      location?: {
+        address?: string
+        city?: string
+        postal_code?: string
+        region?: string
+      }
+      work_time?: string
+      phones?: { number?: string }[]
     }>
 
     const points = (raw || [])
@@ -80,12 +90,15 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         name: p.name || p.code!,
         address: p.location!.address!,
         city: p.location?.city || city,
+        postal_code: p.location?.postal_code || "",
+        region: p.location?.region || "",
+        work_time: p.work_time || "",
+        phone: p.phones?.[0]?.number || "",
       }))
 
-    return res.status(200).json({ points })
+    return res.status(200).json({ points, total: points.length, page, size })
   } catch (err) {
-    // Never expose internal errors to the storefront
     console.error("[CDEK route]", err instanceof Error ? err.message : err)
-    return res.status(200).json({ points: [] })
+    return res.status(200).json({ points: [], error: "CDEK unavailable" })
   }
 }

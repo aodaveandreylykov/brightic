@@ -193,6 +193,44 @@
 
 .co-pvz input::placeholder { color: rgba(255, 255, 255, 0.35); }
 
+.co-pvz__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.co-pvz__search input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.co-pvz__spinner {
+  position: absolute;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  animation: co-spin 0.7s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes co-spin { to { transform: rotate(360deg); } }
+
+.co-pvz select {
+  margin-top: 10px;
+}
+
+.co-pvz__chosen {
+  font-size: 12px;
+  opacity: 0.75;
+  margin: 6px 0 0;
+  padding: 6px 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+}
+
 .co-hint {
   font-size: 12px;
   opacity: 0.5;
