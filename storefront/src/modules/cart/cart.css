@@ -562,6 +562,19 @@
   display: none;
 }
 
+.footer-cart-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-cart-link .cart-badge {
+  position: static;
+  top: auto;
+  right: auto;
+}
+
 button.icon-btn[aria-controls="panel-cart"],
 button[aria-controls="panel-cart"] {
   position: relative;

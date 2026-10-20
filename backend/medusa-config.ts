@@ -28,6 +28,7 @@ module.exports = defineConfig({
     },
   },
   modules: [
+    { resolve: "./src/modules/contact" },
     ...(YK_ENABLED
       ? [
           {

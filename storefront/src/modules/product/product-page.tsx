@@ -28,7 +28,7 @@ function Thumbs({ product }: { product: ProductView }) {
           data-src={src}
         >
           <span className="thumb__crop">
-            <img className={index === 0 ? "img-fit" : crops[index]} src={src} alt="" />
+            <img className="img-fit" src={src} alt="" />
           </span>
         </button>
       ))}
@@ -62,7 +62,7 @@ function FooterCols() {
         <a href="/#collections">New collections</a>
         <a href="/#popular">Popular products</a>
         <a href="/catalog">Selected</a>
-        <CartTrigger>Basket</CartTrigger>
+        <CartTrigger className="footer-cart-link">Basket</CartTrigger>
       </div>
       <div className="ft__col ft__col-c">
         <h2>Legal information</h2>

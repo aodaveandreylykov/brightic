@@ -374,7 +374,7 @@ export function HomePage({
           <a href="#collections">New collections</a>
           <a href="#popular">Popular products</a>
           <a href="#catalog">Selected</a>
-          <CartTrigger>Basket</CartTrigger>
+          <CartTrigger className="footer-cart-link">Basket</CartTrigger>
         </div>
         <div className="footer__col">
           <h2>Legal information</h2>

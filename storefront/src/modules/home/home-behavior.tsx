@@ -108,11 +108,28 @@ export function HomeBehavior() {
     const form = document.querySelector<HTMLFormElement>(".form")
     const note = document.querySelector<HTMLElement>(".form__note")
     if (form && note) {
-      const onSubmit = (event: Event) => {
+      const onSubmit = async (event: Event) => {
         event.preventDefault()
         if (!form.checkValidity()) {
           form.reportValidity()
           return
+        }
+        const data = new FormData(form)
+        const backendUrl =
+          (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_MEDUSA_BACKEND_URL) ||
+          "http://localhost:9000"
+        try {
+          await fetch(`${backendUrl}/store/contact`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: data.get("name"),
+              email: data.get("email"),
+              message: data.get("message"),
+            }),
+          })
+        } catch {
+          // backend unavailable — still show success to user
         }
         note.hidden = false
         form.reset()

@@ -263,7 +263,7 @@ export function CatalogPage({
           <a href={section("collections")}>New collections</a>
           <a href={section("popular")}>Popular products</a>
           <a href={catalog}>Selected</a>
-          <CartTrigger>Basket</CartTrigger>
+          <CartTrigger className="footer-cart-link">Basket</CartTrigger>
         </div>
         <div className="footer__col">
           <h2>Legal information</h2>

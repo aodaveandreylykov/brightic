@@ -573,17 +573,19 @@ export default function CheckoutFlow() {
         <aside className="checkout-bag">
           <h2>Shopping Bag ({items.reduce((s, i) => s + i.qty, 0)})</h2>
 
-          {items.map((item) => (
-            <div key={item.id} className="co-item">
-              <img className="co-item__img" src={item.image} alt="" />
-              <div>
-                <p className="co-item__name">{item.title}</p>
-                <p className="co-item__blurb">{item.blurb}</p>
-                <p className="co-item__qty">Quantity: {item.qty}</p>
+          <div className="co-items-scroll">
+            {items.map((item) => (
+              <div key={item.id} className="co-item">
+                <img className="co-item__img" src={item.image} alt="" />
+                <div>
+                  <p className="co-item__name">{item.title}</p>
+                  <p className="co-item__blurb">{item.blurb}</p>
+                  <p className="co-item__qty">Quantity: {item.qty}</p>
+                </div>
+                <span className="co-item__price">{formatMoney(item.price)}</span>
               </div>
-              <span className="co-item__price">{formatMoney(item.price)}</span>
-            </div>
-          ))}
+            ))}
+          </div>
 
           {/* Promo code — UI placeholder */}
           <div className="co-promo">

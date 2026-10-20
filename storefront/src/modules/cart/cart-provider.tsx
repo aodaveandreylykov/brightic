@@ -11,6 +11,7 @@ import {
 } from "react"
 import { withBase } from "@/lib/base-path"
 import { formatMoney } from "@/lib/money"
+import { findAdminLamp, slugifyLamp } from "@/lib/admin-catalog"
 import {
   addItemToCart,
   deleteLineItem,
@@ -112,10 +113,12 @@ function blurbOf(item: StoreCartItem) {
 
 function imageOf(item: StoreCartItem) {
   const title = titleOf(item).toLowerCase()
+  const lamp = findAdminLamp(slugifyLamp(title))
   return (
     item.thumbnail ||
     item.product?.images?.[0]?.url ||
     IMAGE_FALLBACK[title] ||
+    lamp?.catalogImage ||
     `${ASSETS}/item-flux.png`
   )
 }

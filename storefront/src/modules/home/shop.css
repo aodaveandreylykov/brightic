@@ -1521,19 +1521,23 @@ button.wish-saved {
   }
 
   .contact .field span {
+    top: 10px;
     font-family: var(--font);
-    font-size: 20px;
-    opacity: 0.8;
+    font-size: 13px;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .contact .field input,
   .contact .field textarea {
     height: 66px;
+    padding: 30px 16px 10px;
     font-family: var(--font);
     font-size: 20px;
   }
 
-  .contact .field--message textarea { height: 122px; }
+  .contact .field--message textarea { height: 122px; padding-top: 30px; }
 
   .contact .check {
     font-family: var(--font);
