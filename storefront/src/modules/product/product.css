@@ -455,12 +455,13 @@ button.wish-saved {
   gap: 17px;
   width: 162px;
   height: calc((100vh - 20px) * 1920px / 100cqw - 90px);
+  max-height: calc(2279px - 90px);
+  overflow: hidden;
 }
 
 .pdp-frame--d .thumb {
   width: 162px;
   flex: 1 1 0;
-  height: auto;
   max-height: 183px;
   min-height: 0;
 }
@@ -540,6 +541,12 @@ button.wish-saved {
   left: 1835px;
   width: 45px;
   height: 45px;
+}
+
+.pdp-frame--d .fav img {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
 }
 
 .pdp-frame--d .rule {

@@ -249,40 +249,40 @@ export function CatalogPage({
         </div>
       </main>
 
-      <footer className="footer">
-        <img className="footer__mark" src={`${shop}/wordmark.svg`} width="403" height="100" alt="Brightic" />
-        <div className="footer__col">
+      <footer className="ft">
+        <img className="ft__mark" src={`${shop}/wordmark.svg`} width="403" height="100" alt="Brightic" />
+        <div className="ft__col ft__col-a">
           <h2>Navigation</h2>
           <a href={catalog}>Catalog</a>
           <a href={section("about")}>About the company</a>
           <a href={section("about")}>FAQ</a>
           <a href={section("contact")}>Contacts</a>
         </div>
-        <div className="footer__col">
+        <div className="ft__col ft__col-b">
           <h2>Internal sections</h2>
           <a href={section("collections")}>New collections</a>
           <a href={section("popular")}>Popular products</a>
           <a href={catalog}>Selected</a>
           <CartTrigger className="footer-cart-link">Basket</CartTrigger>
         </div>
-        <div className="footer__col">
+        <div className="ft__col ft__col-c">
           <h2>Legal information</h2>
           <a href={section("contact")}>Privacy Policy</a>
           <a href={section("contact")}>Public Offer</a>
         </div>
-        <div className="footer__social">
+        <div className="ft__social">
           <a href="https://t.me" aria-label="Telegram">
-            <img src={`${shop}/icon-telegram.svg`} width="40" height="40" alt="" />
+            <img src={`${shop}/icon-telegram.svg`} width="20" height="20" alt="" />
           </a>
           <a href="https://instagram.com" aria-label="Instagram">
-            <img src={`${shop}/icon-instagram.svg`} width="40" height="40" alt="" />
+            <img src={`${shop}/icon-instagram.svg`} width="20" height="20" alt="" />
           </a>
           <a href="https://vk.com" aria-label="VK">
-            <img src={`${shop}/icon-vk.svg`} width="40" height="40" alt="" />
+            <img src={`${shop}/icon-vk.svg`} width="20" height="20" alt="" />
           </a>
         </div>
-        <p className="footer__copy">©  2026 Brightic. All rights reserved</p>
-        <div className="footer__pay">
+        <p className="ft__copy">©  2026 Brightic. All rights reserved</p>
+        <div className="ft__pay">
           <img src={`${shop}/pay-apple.svg`} width="37" height="30" alt="Apple Pay" />
           <img src={`${shop}/pay-visa.svg`} width="30" height="30" alt="Visa" />
           <img src={`${shop}/pay-mastercard.svg`} width="30" height="30" alt="Mastercard" />
