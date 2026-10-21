@@ -421,14 +421,6 @@ export default function CheckoutFlow() {
                   ))}
                 </select>
               </label>
-              <label className="co-field co-field--full">
-                <span>Address</span>
-                <input
-                  value={address1}
-                  onChange={(e) => setAddress1(e.target.value)}
-                  autoComplete="address-line1"
-                />
-              </label>
               <label className="co-field">
                 <span>Zip / Postal code</span>
                 <input
@@ -437,6 +429,14 @@ export default function CheckoutFlow() {
                   inputMode="numeric"
                   autoComplete="postal-code"
                   placeholder="123456"
+                />
+              </label>
+              <label className="co-field co-field--full">
+                <span>Address</span>
+                <input
+                  value={address1}
+                  onChange={(e) => setAddress1(e.target.value)}
+                  autoComplete="address-line1"
                 />
               </label>
               {countryOptions.length > 1 ? (
