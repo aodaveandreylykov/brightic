@@ -607,7 +607,7 @@ button.wish-saved {
 
 .pdp-frame--d .also__meta {
   position: absolute;
-  top: 381px;
+  bottom: 20px;
   left: 20px;
   display: flex;
   align-items: flex-end;
