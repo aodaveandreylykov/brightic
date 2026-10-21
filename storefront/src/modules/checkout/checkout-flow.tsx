@@ -200,12 +200,6 @@ export default function CheckoutFlow() {
   const selectedShipping = shippingOptions.find((o) => o.id === shippingId)
   const needsPvz = shippingKind(selectedShipping?.name) === "cdek"
 
-  // CDEK points — sync search field with shipping city
-  useEffect(() => {
-    if (needsPvz && city.trim()) setCdekSearch(city.trim())
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [needsPvz, city])
-
   // CDEK points — load when search changes
   useEffect(() => {
     if (!needsPvz || !cdekSearch.trim()) {
@@ -228,7 +222,6 @@ export default function CheckoutFlow() {
     Boolean(firstName.trim()) &&
     Boolean(lastName.trim()) &&
     Boolean(address1.trim()) &&
-    Boolean(city.trim()) &&
     Boolean(province) &&
     isRuPostal(postalCode) &&
     isRuPhone(phone) &&
@@ -267,7 +260,7 @@ export default function CheckoutFlow() {
         last_name: lastName.trim(),
         address_1: address1.trim(),
         address_2: needsPvz && pvz.trim() ? `ПВЗ: ${pvz.trim()}` : undefined,
-        city: city.trim(),
+        city: needsPvz ? cdekSearch.trim() : city.trim(),
         province,
         postal_code: postalCode,
         country_code: countryCode || STORE_COUNTRY,
@@ -373,13 +366,9 @@ export default function CheckoutFlow() {
         {/* ── LEFT: form ────────────────────────────────────── */}
         <div className="co-form">
 
-          {/* 1. Information */}
+          {/* 1. Personal information */}
           <section className="co-section">
-            <div className="co-section-head">
-              <span>Information</span>
-            </div>
-
-            <p className="co-sub">Personal information</p>
+            <div className="co-section-head"><span>Personal information</span></div>
             <div className="co-fields">
               <label className="co-field">
                 <span>First name</span>
@@ -417,8 +406,11 @@ export default function CheckoutFlow() {
                 />
               </label>
             </div>
+          </section>
 
-            <p className="co-sub">Shipping information</p>
+          {/* 2. Shipping information */}
+          <section className="co-section">
+            <div className="co-section-head"><span>Shipping information</span></div>
             <div className="co-fields">
               <label className="co-field">
                 <span>Country / Region</span>
@@ -428,14 +420,6 @@ export default function CheckoutFlow() {
                     <option key={name} value={name}>{name}</option>
                   ))}
                 </select>
-              </label>
-              <label className="co-field">
-                <span>City</span>
-                <input
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  autoComplete="address-level2"
-                />
               </label>
               <label className="co-field co-field--full">
                 <span>Address</span>
@@ -470,7 +454,7 @@ export default function CheckoutFlow() {
             </div>
           </section>
 
-          {/* 2. Delivery */}
+          {/* 3. Delivery */}
           <section className="co-section">
             <div className="co-section-head"><span>Delivery</span></div>
 
@@ -480,68 +464,72 @@ export default function CheckoutFlow() {
               </p>
             ) : (
               <div className="co-options">
-                {shippingOptions.map((opt) => (
-                  <label key={opt.id} className="co-option">
-                    <input
-                      type="radio"
-                      name="shipping"
-                      checked={shippingId === opt.id}
-                      onChange={() => setShippingId(opt.id)}
-                    />
-                    <span className="co-option__body">
-                      <span className="co-option__name">{opt.name || "Доставка"}</span>
-                      <span className="co-option__desc">{shippingDesc(opt.name)}</span>
-                    </span>
-                    <span className="co-option__price">
-                      {opt.amount ? formatMoney(opt.amount) : "Free"}
-                    </span>
-                  </label>
-                ))}
+                {shippingOptions.map((opt) => {
+                  const isSelected = shippingId === opt.id
+                  const isCdek = shippingKind(opt.name) === "cdek"
+                  return (
+                    <div key={opt.id}>
+                      <label className="co-option">
+                        <input
+                          type="radio"
+                          name="shipping"
+                          checked={isSelected}
+                          onChange={() => setShippingId(opt.id)}
+                        />
+                        <span className="co-option__body">
+                          <span className="co-option__name">{opt.name || "Доставка"}</span>
+                          <span className="co-option__desc">{shippingDesc(opt.name)}</span>
+                        </span>
+                        <span className="co-option__price">
+                          {opt.amount ? formatMoney(opt.amount) : "Free"}
+                        </span>
+                      </label>
+                      {isSelected && isCdek && (
+                        <div className="co-pvz">
+                          <div className="co-pvz__search">
+                            <input
+                              value={cdekSearch}
+                              onChange={(e) => setCdekSearch(e.target.value)}
+                              placeholder="Введите город, например Москва"
+                              aria-label="Город для поиска ПВЗ"
+                            />
+                            {cdekLoading && <span className="co-pvz__spinner" />}
+                          </div>
+                          {cdekPoints.length > 0 && (
+                            <select value={pvz} onChange={(e) => setPvz(e.target.value)}>
+                              <option value="">— Выберите пункт выдачи —</option>
+                              {cdekPoints.map((pt) => (
+                                <option
+                                  key={pt.code || pt.address}
+                                  value={`${pt.code} ${pt.address}`.trim()}
+                                >
+                                  {pt.code} — {pt.address}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                          {pvz && (
+                            <p className="co-pvz__chosen">Выбран: {pvz}</p>
+                          )}
+                          <span className="co-hint">
+                            {cdekLoading
+                              ? `Загрузка ПВЗ для «${cdekSearch}»…`
+                              : cdekPoints.length
+                              ? `Найдено ${cdekPoints.length} пунктов выдачи`
+                              : cdekSearch.trim()
+                              ? "ПВЗ не найдены — проверьте название города"
+                              : "Укажите город для поиска пунктов выдачи"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             )}
-
-            {needsPvz ? (
-              <div className="co-pvz">
-                <p className="co-sub">Пункт выдачи СДЭК</p>
-                <div className="co-pvz__search">
-                  <input
-                    value={cdekSearch}
-                    onChange={(e) => setCdekSearch(e.target.value)}
-                    placeholder="Введите город, например Москва"
-                    aria-label="Город для поиска ПВЗ"
-                  />
-                  {cdekLoading && <span className="co-pvz__spinner" />}
-                </div>
-                {cdekPoints.length > 0 && (
-                  <select value={pvz} onChange={(e) => setPvz(e.target.value)}>
-                    <option value="">— Выберите пункт выдачи —</option>
-                    {cdekPoints.map((pt) => (
-                      <option
-                        key={pt.code || pt.address}
-                        value={`${pt.code} ${pt.address}`.trim()}
-                      >
-                        {pt.code} — {pt.address}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                {pvz && (
-                  <p className="co-pvz__chosen">Выбран: {pvz}</p>
-                )}
-                <span className="co-hint">
-                  {cdekLoading
-                    ? `Загрузка ПВЗ для «${cdekSearch}»…`
-                    : cdekPoints.length
-                    ? `Найдено ${cdekPoints.length} пунктов выдачи`
-                    : cdekSearch.trim()
-                    ? "ПВЗ не найдены — проверьте название города"
-                    : "Укажите город для поиска пунктов выдачи"}
-                </span>
-              </div>
-            ) : null}
           </section>
 
-          {/* 3. Payment */}
+          {/* 4. Payment */}
           <section className="co-section">
             <div className="co-section-head"><span>Payment</span></div>
 
