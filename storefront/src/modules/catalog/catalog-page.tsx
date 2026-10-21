@@ -231,22 +231,6 @@ export function CatalogPage({
             ))}
         </div>
 
-        <div className="catalog-pager">
-          <span className="catalog-pager__more">SHOW MORE</span>
-          <div className="catalog-pager__row">
-            <span className="catalog-pager__turn catalog-pager__turn--prev">
-              <img src={`${photos}/page-prev.svg`} width="20" height="20" alt="" />
-            </span>
-            <div className="catalog-pager__nums">
-              <span className="is-current">1</span>
-              <span>2</span>
-              <span>3</span>
-            </div>
-            <span className="catalog-pager__turn catalog-pager__turn--next">
-              <img src={`${photos}/page-next.svg`} width="20" height="20" alt="" />
-            </span>
-          </div>
-        </div>
       </main>
 
       <footer className="ft">
