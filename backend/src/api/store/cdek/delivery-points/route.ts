@@ -104,16 +104,19 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         phone: p.phones?.[0]?.number || "",
       }))
 
-    return res.status(200).json({ points, total: points.length, page, size })
+    if (points.length > 0) {
+      return res.status(200).json({ points, total: points.length, page, size })
+    }
   } catch (err) {
     console.error("[CDEK route]", err instanceof Error ? err.message : err)
-    const search = (city || postal).toLowerCase()
-    const fallback = MOCK_POINTS.filter((p) =>
-      !search ||
-      p.city.toLowerCase().includes(search) ||
-      p.postal_code.includes(search) ||
-      p.address.toLowerCase().includes(search)
-    )
-    return res.status(200).json({ points: fallback, error: "CDEK unavailable (mock)" })
   }
+
+  const search = (city || postal).toLowerCase()
+  const fallback = MOCK_POINTS.filter((p) =>
+    !search ||
+    p.city.toLowerCase().includes(search) ||
+    p.postal_code.includes(search) ||
+    p.address.toLowerCase().includes(search)
+  )
+  return res.status(200).json({ points: fallback })
 }
