@@ -83,7 +83,6 @@ export default function CheckoutFlow() {
   // CDEK
   const [pvz, setPvz] = useState("")
   const [cdekPoints, setCdekPoints] = useState<CdekPoint[]>([])
-  const [cdekSearch, setCdekSearch] = useState("")
   const [cdekLoading, setCdekLoading] = useState(false)
 
   // Shipping options
@@ -200,28 +199,23 @@ export default function CheckoutFlow() {
   const selectedShipping = shippingOptions.find((o) => o.id === shippingId)
   const needsPvz = shippingKind(selectedShipping?.name) === "cdek"
 
-  // Auto-fill city from province when CDEK option is selected
+  // Auto-load CDEK points by postal code (primary) or province/city (fallback)
   useEffect(() => {
-    if (needsPvz && !cdekSearch.trim() && province) {
-      setCdekSearch(province)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [needsPvz])
-
-  // CDEK points — load when search changes
-  useEffect(() => {
-    if (!needsPvz || !cdekSearch.trim()) {
+    if (!needsPvz) {
       setCdekPoints([])
       return
     }
+    const searchCity = province || city
+    if (!postalCode && !searchCity) return
     let cancelled = false
     setCdekLoading(true)
-    void listCdekPoints(cdekSearch.trim()).then((pts) => {
-      if (!cancelled) { setCdekPoints(pts); setCdekLoading(false) }
-    })
+    void listCdekPoints(searchCity, { postalCode: postalCode || undefined })
+      .then((pts) => {
+        if (!cancelled) { setCdekPoints(pts); setCdekLoading(false) }
+      })
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [needsPvz, cdekSearch])
+  }, [needsPvz, postalCode, province, city])
 
   const visibleProviders = providers.filter((p) => !isStripeProvider(p.id))
 
@@ -268,7 +262,7 @@ export default function CheckoutFlow() {
         last_name: lastName.trim(),
         address_1: address1.trim(),
         address_2: needsPvz && pvz.trim() ? `ПВЗ: ${pvz.trim()}` : undefined,
-        city: needsPvz ? cdekSearch.trim() : city.trim(),
+        city: needsPvz ? (province || city).trim() : city.trim(),
         province,
         postal_code: postalCode,
         country_code: countryCode || STORE_COUNTRY,
@@ -494,16 +488,9 @@ export default function CheckoutFlow() {
                       </label>
                       {isSelected && isCdek && (
                         <div className="co-pvz">
-                          <div className="co-pvz__search">
-                            <input
-                              value={cdekSearch}
-                              onChange={(e) => setCdekSearch(e.target.value)}
-                              placeholder="Введите город, например Москва"
-                              aria-label="Город для поиска ПВЗ"
-                            />
-                            {cdekLoading && <span className="co-pvz__spinner" />}
-                          </div>
-                          {cdekPoints.length > 0 && (
+                          {cdekLoading ? (
+                            <span className="co-hint">Загружаем пункты выдачи…</span>
+                          ) : cdekPoints.length > 0 ? (
                             <select value={pvz} onChange={(e) => setPvz(e.target.value)}>
                               <option value="">— Выберите пункт выдачи —</option>
                               {cdekPoints.map((pt) => (
@@ -515,19 +502,14 @@ export default function CheckoutFlow() {
                                 </option>
                               ))}
                             </select>
+                          ) : (postalCode || province || city) ? (
+                            <span className="co-hint">ПВЗ не найдены по указанному адресу</span>
+                          ) : (
+                            <span className="co-hint">Укажите регион и индекс для поиска ПВЗ</span>
                           )}
                           {pvz && (
                             <p className="co-pvz__chosen">Выбран: {pvz}</p>
                           )}
-                          <span className="co-hint">
-                            {cdekLoading
-                              ? `Загрузка ПВЗ для «${cdekSearch}»…`
-                              : cdekPoints.length
-                              ? `Найдено ${cdekPoints.length} пунктов выдачи`
-                              : cdekSearch.trim()
-                              ? "ПВЗ не найдены — проверьте название города"
-                              : "Укажите город для поиска пунктов выдачи"}
-                          </span>
                         </div>
                       )}
                     </div>
