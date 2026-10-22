@@ -41,6 +41,14 @@ async function getCdekToken(): Promise<string> {
   return cachedToken.value
 }
 
+const MOCK_POINTS = [
+  { code: "MSK1", name: "ПВЗ Тверская", address: "г. Москва, ул. Тверская, д. 5", city: "Москва", postal_code: "125009", region: "Москва", work_time: "Пн-Вс 09:00-21:00", phone: "+74951234567" },
+  { code: "MSK2", name: "ПВЗ Арбат", address: "г. Москва, ул. Арбат, д. 12", city: "Москва", postal_code: "119002", region: "Москва", work_time: "Пн-Вс 10:00-20:00", phone: "+74957654321" },
+  { code: "MSK3", name: "ПВЗ Марьино", address: "г. Москва, ул. Люблинская, д. 169", city: "Москва", postal_code: "109341", region: "Москва", work_time: "Пн-Сб 09:00-20:00", phone: "+74951112233" },
+  { code: "SPB1", name: "ПВЗ Невский", address: "г. Санкт-Петербург, Невский пр., д. 88", city: "Санкт-Петербург", postal_code: "191025", region: "Санкт-Петербург", work_time: "Пн-Вс 10:00-21:00", phone: "+78124445566" },
+  { code: "SPB2", name: "ПВЗ Васильевский", address: "г. Санкт-Петербург, В.О., 7-я линия, д. 22", city: "Санкт-Петербург", postal_code: "199004", region: "Санкт-Петербург", work_time: "Пн-Сб 09:00-19:00", phone: "+78127778899" },
+]
+
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const city = String(req.query?.city || "").trim()
   const postal = String(req.query?.postal_code || "").trim()
@@ -99,6 +107,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.status(200).json({ points, total: points.length, page, size })
   } catch (err) {
     console.error("[CDEK route]", err instanceof Error ? err.message : err)
-    return res.status(200).json({ points: [], error: "CDEK unavailable" })
+    const search = (city || postal).toLowerCase()
+    const fallback = MOCK_POINTS.filter((p) =>
+      !search ||
+      p.city.toLowerCase().includes(search) ||
+      p.postal_code.includes(search) ||
+      p.address.toLowerCase().includes(search)
+    )
+    return res.status(200).json({ points: fallback, error: "CDEK unavailable (mock)" })
   }
 }
