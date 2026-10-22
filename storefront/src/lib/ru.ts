@@ -146,9 +146,9 @@ export function isRuPostal(raw: string) {
 
 export function shippingKind(name?: string | null): ShippingKind {
   const value = (name || "").toLowerCase()
+  if (/курьер|courier/.test(value)) return "courier"
   if (/сдэк|cdek|пвз/.test(value)) return "cdek"
   if (/почт|pochta|post/.test(value)) return "post"
-  if (/курьер|courier/.test(value)) return "courier"
   return "other"
 }
 

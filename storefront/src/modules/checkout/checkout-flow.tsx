@@ -200,6 +200,14 @@ export default function CheckoutFlow() {
   const selectedShipping = shippingOptions.find((o) => o.id === shippingId)
   const needsPvz = shippingKind(selectedShipping?.name) === "cdek"
 
+  // Auto-fill city from province when CDEK option is selected
+  useEffect(() => {
+    if (needsPvz && !cdekSearch.trim() && province) {
+      setCdekSearch(province)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsPvz])
+
   // CDEK points — load when search changes
   useEffect(() => {
     if (!needsPvz || !cdekSearch.trim()) {
